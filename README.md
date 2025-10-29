@@ -8,7 +8,7 @@ It provides an easy way to record, organize, and track orders, while also keepin
 - Track microgreen product offerings  
 - Record and monitor orders in real time  
 - Generate delivery records for clients  
-- Gain a clear overview of daily operations  
+- Gain a clear overview of daily operations (seeding and germination)
 
 ## Why GreenTrack?
 Microgreen businesses often work on a **grow-to-order model**, where crop cycles depend directly on incoming orders. GreenTrack streamlines this process by giving employees the tools they need to understand operations at both a **macro and micro level**—from individual order details to overall business trends.  
