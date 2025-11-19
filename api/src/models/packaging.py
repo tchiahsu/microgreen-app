@@ -1,4 +1,5 @@
 from pydantic import BaseModel
 
+
 class UpdatePackaging(BaseModel):
-    size_type:str
+    size_type: str
