@@ -1,17 +1,17 @@
 from fastapi import APIRouter, HTTPException
 from database import connect_db
 
-router = APIRouter(prefix="/crops", tags=["Crops"])
+router = APIRouter(prefix="/orders", tags=["Orders"])
 
 
 # ----------------------------------------
 # GET ALL ORDERS FOR THE GIVEN DATE
 # ----------------------------------------
-@router.get("/order/{user}/{delivery_date}")
-async def get_orders(delivery_date: ):
+@router.get("/{delivery_date}")
+def get_orders(delivery_date: str):
     '''
     Get all order to fulfill for a given delivery date
-    Example: GET /orders/10/?delivery_date=2026-12-23
+    Example: GET /orders/2026-01-01
     '''
     db = connect_db()
 
