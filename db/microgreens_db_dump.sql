@@ -1296,9 +1296,9 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_germination_summary`(
 	input_date_p DATE
 )
 BEGIN
-	SELECT crop_name, COUNT(trays_needed) AS trays_used  FROM microgreens_view
+	SELECT crop_name, COUNT(trays_needed) AS trays_used, planting_date FROM microgreens_view
 		WHERE germination_date = input_date_p
-		GROUP BY crop_name;
+		GROUP BY crop_name, planting_date;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1394,9 +1394,9 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_switch_summary`(
 	input_date_p DATE
 )
 BEGIN
-	SELECT crop_name, COUNT(trays_needed) AS trays_used FROM microgreens_view
+	SELECT crop_name, COUNT(trays_needed) AS trays_used, planting_date FROM microgreens_view
 		WHERE (switch_date = input_date_p AND switch_date <> planting_date)
-		GROUP BY crop_name;
+		GROUP BY crop_name, planting_date;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1678,4 +1678,4 @@ USE `microgreens_db`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-18 17:00:42
+-- Dump completed on 2025-11-19 11:50:09
