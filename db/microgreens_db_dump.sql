@@ -1259,7 +1259,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `get_crops_to_harvest_today` */;
+/*!50003 DROP PROCEDURE IF EXISTS `get_crops_to_harvest` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -1269,7 +1269,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_crops_to_harvest_today`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_crops_to_harvest`(
 	order_delivery_date_p DATE
 )
 BEGIN
@@ -1296,9 +1296,9 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_germination_summary`(
 	input_date_p DATE
 )
 BEGIN
-	SELECT crop_name, COUNT(trays_needed) AS trays_used  FROM microgreens_view
+	SELECT crop_name, COUNT(trays_needed) AS trays_used, planting_date FROM microgreens_view
 		WHERE germination_date = input_date_p
-		GROUP BY crop_name;
+		GROUP BY crop_name, planting_date;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1331,7 +1331,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `get_orders_to_fulfill_today` */;
+/*!50003 DROP PROCEDURE IF EXISTS `get_orders_to_fulfill` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -1341,7 +1341,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_orders_to_fulfill_today`(
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_orders_to_fulfill`(
 	order_delivery_date_p DATE
 )
 BEGIN
@@ -1394,9 +1394,9 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_switch_summary`(
 	input_date_p DATE
 )
 BEGIN
-	SELECT crop_name, COUNT(trays_needed) AS trays_used FROM microgreens_view
+	SELECT crop_name, COUNT(trays_needed) AS trays_used, planting_date FROM microgreens_view
 		WHERE (switch_date = input_date_p AND switch_date <> planting_date)
-		GROUP BY crop_name;
+		GROUP BY crop_name, planting_date;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1678,4 +1678,4 @@ USE `microgreens_db`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-18 17:00:42
+-- Dump completed on 2025-11-19 15:20:57
