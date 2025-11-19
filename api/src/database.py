@@ -5,11 +5,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def connect_db():
-    """
-        Function helps to establish a connection with the microgreens_db database.
-        It gathers the user information from the env file (such as password) to connect to the database.
-        Returns the connection if successful otherwise, prints an error message and returns None.
-    """
+    '''
+    Function helps to establish a connection with the microgreens_db database.
+    It gathers the user information from the env file (such as password) to connect to the database.
+    Returns the connection if successful otherwise, prints an error message and returns None.
+    '''
     try:
         db_connection = pymysql.connect(
             host=os.getenv("DB_HOST"),
