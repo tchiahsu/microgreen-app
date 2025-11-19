@@ -25,7 +25,7 @@ async def get_orders(delivery_date: date):
 
     try:
         cursor = db.cursor()
-        cursor.callproc("get_orders_to_fulfill_today", (delivery_date, ))
+        cursor.callproc("get_orders_to_fulfill", (delivery_date, ))
         result = cursor.fetchall()
         cursor.close()
     except Exception:
@@ -41,8 +41,8 @@ async def get_orders(delivery_date: date):
 # ----------------------------------------
 # ADD A NEW ORDER
 # ----------------------------------------
-@router.post("/")
-async def add_order(data: OrderData):
+@router.post("/{employee_id}")
+async def add_order(employee_id: int, data: OrderData):
     '''
     Add a new order to the system
     Example: POST /orders/
@@ -89,7 +89,7 @@ async def add_order(data: OrderData):
                                       data.end_date,
                                       data.delivery_date,
                                       data.order_status,
-                                      data.employee_id,))
+                                      employee_id,))
 
         db.commit()
         cursor.close()

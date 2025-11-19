@@ -11,4 +11,3 @@ class OrderData(BaseModel):
     end_date: date
     delivery_date: date
     order_status: str
-    employee_id: int
