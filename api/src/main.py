@@ -4,11 +4,13 @@ from fastapi import FastAPI
 
 from src.database import connect_db
 from src.routers.home import router as home_router
+from src.routers.product import router as product_router
 from src.routers.order import router as order_router
 
 app = FastAPI()
 
 app.include_router(home_router)
+app.include_router(product_router)
 app.include_router(order_router)
 
 
