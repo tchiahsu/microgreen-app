@@ -204,9 +204,9 @@ Used to display information in the harvest page.
 For a given harvest day, it gets the crops that needed to harvested that day as well as the number of trays
 for that crop.
 */
-DROP PROCEDURE IF EXISTS get_crops_to_harvest_today;
+DROP PROCEDURE IF EXISTS get_crops_to_harvest;
 DELIMITER //
-CREATE PROCEDURE get_crops_to_harvest_today(
+CREATE PROCEDURE get_crops_to_harvest(
 	order_delivery_date_p DATE
 )
 BEGIN
@@ -217,7 +217,7 @@ END //
 DELIMITER ;
 
 -- Test for the above procedure 
-CALL get_crops_to_harvest_today('2025-12-23');
+CALL get_crops_to_harvest('2025-12-23');
 
 /*
 PROCEDURE
@@ -226,9 +226,9 @@ Used in the order page
 For a given date, this procedure gets the information of the orders that need to be delivered on
 that date. It specified the restaurant name, the product name, the packaging type and the product quantity.
 */
-DROP PROCEDURE IF EXISTS get_orders_to_fulfill_today;
+DROP PROCEDURE IF EXISTS get_orders_to_fulfill;
 DELIMITER //
-CREATE PROCEDURE get_orders_to_fulfill_today(
+CREATE PROCEDURE get_orders_to_fulfill(
 	order_delivery_date_p DATE
 )
 BEGIN
@@ -242,7 +242,7 @@ END //
 DELIMITER ;
 
 -- Test for the above procedure 
-CALL get_orders_to_fulfill_today('2025-12-23');
+CALL get_orders_to_fulfill('2025-12-23');
 
 /*
 PROCEDURE
