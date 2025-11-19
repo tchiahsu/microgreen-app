@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from database import connect_db
+from datetime import date
+from src.database import connect_db
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
@@ -8,7 +9,7 @@ router = APIRouter(prefix="/orders", tags=["Orders"])
 # GET ALL ORDERS FOR THE GIVEN DATE
 # ----------------------------------------
 @router.get("/{delivery_date}")
-def get_orders(delivery_date: str):
+def get_orders(delivery_date: date):
     '''
     Get all order to fulfill for a given delivery date
     Example: GET /orders/2026-01-01
@@ -21,9 +22,13 @@ def get_orders(delivery_date: str):
 
     try:
         cursor = db.cursor()
-        cursor.callproc("get_orders_to_fulfill_today", (delivery_date,))
+        cursor.callproc("get_orders_to_fulfill_today", (delivery_date, ))
         result = cursor.fetchall()
         cursor.close()
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=400,
+                            detail="Unable to access Procedure")
     finally:
         db.close()
 

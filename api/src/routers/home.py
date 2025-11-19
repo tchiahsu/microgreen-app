@@ -12,8 +12,9 @@ def get_planting_summary(delivery_date: str):
     '''
     db = connect_db()
     if db is None:
-        raise HTTPException(status_code=500, detail="Connection to database failed.")
-    
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
+
     cursor = db.cursor()
     cursor.callproc("get_planting_summary", (delivery_date, ))
     result = cursor.fetchall()
@@ -23,6 +24,7 @@ def get_planting_summary(delivery_date: str):
 
     return result
 
+
 @router.get("/germination_summary/{delivery_date}")
 def get_germination_summary(delivery_date: str):
     '''
@@ -31,8 +33,9 @@ def get_germination_summary(delivery_date: str):
     '''
     db = connect_db()
     if db is None:
-        raise HTTPException(status_code=500, detail="Connection to database failed.") 
-    
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
+
     cursor = db.cursor()
     cursor.callproc("get_germination_summary", (delivery_date, ))
     result = cursor.fetchall()
@@ -40,7 +43,8 @@ def get_germination_summary(delivery_date: str):
     cursor.close()
     db.close()
 
-    return result 
+    return result
+
 
 @router.get("/rack_switch_summary/{delivery_date}")
 def get_rack_switch_summary(delivery_date: str):
@@ -50,8 +54,9 @@ def get_rack_switch_summary(delivery_date: str):
     '''
     db = connect_db()
     if db is None:
-        raise HTTPException(status_code=500, detail="Connection to database failed.") 
-    
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
+
     cursor = db.cursor()
     cursor.callproc("get_switch_summary", (delivery_date, ))
     result = cursor.fetchall()
@@ -59,4 +64,4 @@ def get_rack_switch_summary(delivery_date: str):
     cursor.close()
     db.close()
 
-    return result 
+    return result
