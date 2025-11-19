@@ -18,12 +18,14 @@ def read_root():
 def read_item(item_id: int, q: Union[str, None] = None):
     return {"item_id": item_id, "q": q}
 
-# Testing if the connection to the databse is established through the test-db-connection endpoint.
+
+# Testing if the connection to the databse is established through the
+# test-db-connection endpoint.
 @app.get("/test-db-connection")
 def test_db_connection():
     connection = connect_db()
     if connection:
-        connection.close() # close the connection
+        connection.close()  # close the connection
         return {"Connection was succesful."}
     return {"Connection was unsuccesful."}
 
