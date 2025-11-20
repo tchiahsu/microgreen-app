@@ -25,3 +25,7 @@ class CropUpdate(BaseModel):
     days_indirect_light: Optional[int] = None
     rack_grow_days: Optional[int] = None
     yield_per_tray: Optional[float] = None
+
+
+class CropRatioUpdate(BaseModel):
+    crop_ratio: Optional[float] = None
