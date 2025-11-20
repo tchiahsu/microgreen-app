@@ -20,11 +20,12 @@ class ContactInfoAdd(BaseModel):
 
 
 class ContactInfoUpdate(BaseModel):
-    email: str
+    contact_id: int
+    restaurant_id: Optional[int] = None
+    email: Optional[str] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     phone: Optional[str] = None
-    restaurant_id: Optional[int] = None
 
 
 class ContactInfoDelete(BaseModel):

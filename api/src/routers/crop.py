@@ -99,7 +99,7 @@ async def edit_crop(data: CropUpdate):
 
         db.commit()
         cursor.close()
-        return {"message": "Order added successfully!"}
+        return {"message": "Crop added successfully!"}
     except Exception:
         db.rollback()
         raise HTTPException(status_code=400,
