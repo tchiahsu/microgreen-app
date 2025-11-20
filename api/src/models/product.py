@@ -1,5 +1,9 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
+
+class SingleComposition(BaseModel):
+    crop_id: int
+    crop_ratio:float
 
 
 class AddProduct(BaseModel):
@@ -7,6 +11,7 @@ class AddProduct(BaseModel):
     weight_grams: int
     is_active: bool
     package_id: int
+    list_of_composition: List[SingleComposition]
 
 
 class UpdateProduct(BaseModel):
