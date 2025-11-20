@@ -4,9 +4,8 @@ from src.models.employee import EmployeeData
 
 router = APIRouter(prefix="/employee", tags=["employee"])
 
-
 # ----------------------------------------
-# ADD EMPLOYEE TO SYSTEM
+# ADD A NEW EMPLOYEE
 # ----------------------------------------
 @router.post("/add_employee")
 async def add_employee(data: EmployeeData):

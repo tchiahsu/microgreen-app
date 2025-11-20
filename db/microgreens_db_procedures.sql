@@ -1091,6 +1091,39 @@ BEGIN
 END //
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS assign_employee_to_planting;
+DELIMITER //
+CREATE PROCEDURE assign_employee_to_planting(
+	employee_id_p INT,
+    crop_id_p INT
+)
+BEGIN
+	DECLARE found_id1 INT;
+    DECLARE found_id2 INT;
+	-- Check if value provided for product_id is valid
+	SELECT employee_id INTO found_id1 FROM employee
+		WHERE employee_id = employee_id_p;
+		
+	IF found_id1 IS NULL THEN 
+		SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'The value provided for employee_id is not valid.';
+	END IF;
+	
+	SELECT crop_id INTO found_id2 FROM crop 
+		WHERE crop_id = crop_id_p;
+	
+	IF found_id2 IS NULL THEN 
+		SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'The value provided for crop_id is not valid.';
+	END IF;
+	
+	DELETE FROM plants WHERE crop_id = crop_id_p;
+	
+	INSERT INTO plants (employee_id, crop_id)
+	VALUES (employee_id_p, crop_id_p);
+END //
+DELIMITER ;
+
 /*
 PROCEDURE
 ----------
