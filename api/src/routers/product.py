@@ -1,8 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from src.database import connect_db
 from src.models.crop import CropRatioUpdate
-from src.models.packaging import UpdatePackaging
-from src.models.packaging import AddPackaging
+from src.models.packaging import PackagingData
 from src.models.product import UpdateProduct
 from src.models.product import AddProduct
 
@@ -20,7 +19,7 @@ async def update_crop_ratio(package_id: int, crop_id: int, data: CropRatioUpdate
     cursor = db.cursor()
     
     try:
-        cursor.callproc("update_composed_of_table", (package_id, crop_id, data.crop_ratio))
+        cursor.callproc("update_composed_of", (package_id, crop_id, data.crop_ratio))
         db.commit()
         return {"message": "Crop ratio was updated succesfully."}
     
@@ -34,7 +33,7 @@ async def update_crop_ratio(package_id: int, crop_id: int, data: CropRatioUpdate
 
 
 @router.put("/update_packaging/{package_id}")
-async def update_packaging(package_id: int, data: UpdatePackaging):
+async def update_packaging(package_id: int, data: PackagingData):
     '''
     Update packaging type given the packaging id.
     Example: PUT /product/update_packaging/4
@@ -45,7 +44,7 @@ async def update_packaging(package_id: int, data: UpdatePackaging):
     cursor = db.cursor()
     
     try:
-        cursor.callproc("update_packaging_table", (package_id, data.size_type))
+        cursor.callproc("update_packaging", (package_id, data.size_type))
         db.commit()
         return {"message": "Package type updated succesfully."}
     
@@ -58,7 +57,7 @@ async def update_packaging(package_id: int, data: UpdatePackaging):
         db.close()
 
 @router.post("/add_packaging")
-async def add_packaging(data: AddPackaging):
+async def add_packaging(data: PackagingData):
     '''
     Add new packaging type.
     Example: POST /product/add_packaging
@@ -93,7 +92,7 @@ async def update_product(product_id: int, data: UpdateProduct):
     cursor = db.cursor()
     
     try:
-        cursor.callproc("update_product_table", (
+        cursor.callproc("update_product", (
             product_id,
             data.product_name,
             data.weight_grams,
@@ -115,7 +114,7 @@ async def update_product(product_id: int, data: UpdateProduct):
 async def add_product(data: AddProduct):
     '''
     Add new product.
-    Example: PUT /product/add_product
+    Example: POST /product/add_product
     '''
     db = connect_db()
     if db is None:
@@ -145,7 +144,7 @@ async def add_product(data: AddProduct):
 async def delete_product(product_id: int):
     '''
     Delete a product using product id.
-    Example: PUT /delete_product/105
+    Example: DELETE /delete_product/105
     '''
     db = connect_db()
     if db is None:
@@ -162,7 +161,7 @@ async def delete_product(product_id: int):
         db.commit
         # Finalize by deleting product from the product table
         cursor.callproc("delete_product", (product_id,))
-        db.commit
+        db.commit()
         return {"message": "Product has been succesfully deleted."}
     
     except Exception as e:
