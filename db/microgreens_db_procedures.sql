@@ -23,8 +23,6 @@ BEGIN
 END //
 DELIMITER ;
 
-SELECT get_restaurant_id('Capo');
-
 /*
 FUNCTIONS
 ----------
@@ -51,8 +49,6 @@ BEGIN
 END //
 DELIMITER ;
 
-SELECT get_product_id('Radish, Sango', 1);
-
 /*
 FUNCTIONS
 ----------
@@ -75,8 +71,6 @@ BEGIN
     RETURN package_id;
 END //
 DELIMITER ;
-
-SELECT get_package_id('20" Live Tray');
 
 /*
 FUNCTIONS
@@ -101,8 +95,6 @@ BEGIN
 END //
 DELIMITER ;
 
-SELECT get_crop_id('Amaranth');
-
 
 -- =========================== VIEW PROCEDURES ====================================
 
@@ -125,9 +117,6 @@ BEGIN
 END//
 DELIMITER ;
 
--- Test for the above procedure 
-CALL get_planting_summary('2025-11-22');
-
 /*
 PROCEDURE
 ----------
@@ -147,9 +136,6 @@ BEGIN
 END // 
 DELIMITER ;
 
--- Test for the above procedure 
-CALL get_germination_summary('2025-11-22');
-
 /*
 PROCEDURE
 ----------
@@ -168,9 +154,6 @@ BEGIN
 		GROUP BY crop_name, planting_date;
 END //
 DELIMITER ;
-
--- Test for the above procedure 
-CALL get_switch_summary('2025-11-22');
 
 /*
 PROCEDURE
@@ -194,9 +177,6 @@ BEGIN
 END // 
 DELIMITER ;
 
--- Test for the above procedure 
-CALL get_orders_to_deliver('2025-12-23');
-
 /*
 PROCEDURE
 ----------
@@ -215,9 +195,6 @@ BEGIN
 		GROUP BY crop_name, planting_date;
 END //
 DELIMITER ;
-
--- Test for the above procedure 
-CALL get_crops_to_harvest('2025-12-23');
 
 /*
 PROCEDURE
@@ -241,9 +218,6 @@ BEGIN
 END //
 DELIMITER ;
 
--- Test for the above procedure 
-CALL get_orders_to_fulfill('2025-12-23');
-
 /*
 PROCEDURE
 ----------
@@ -259,9 +233,6 @@ BEGIN
 END //
 DELIMITER ;
 
--- Test for the above procedure 
-CALL get_all_crop_information();
-
 /*
 PROCEDURE
 ----------
@@ -275,9 +246,6 @@ BEGIN
 	SELECT DISTINCT product_name FROM product;
 END //
 DELIMITER ;
-
--- Test for the above procedure 
-CALL get_all_product_name();
 
 /*
 PROCEDURE
@@ -297,9 +265,6 @@ BEGIN
 END //
 DELIMITER ;
 
--- Test for the above procedure 
-CALL get_all_product_composition();
-
 /*
 PROCEDURE
 ----------
@@ -316,9 +281,6 @@ BEGIN
 END //
 DELIMITER ;
 
--- Test for the above procedure 
-CALL get_all_product_packages();
-
 /*
 PROCEDURE
 ----------
@@ -332,9 +294,6 @@ BEGIN
 	SELECT restaurant_id, restaurant_name FROM restaurant;
 END //
 DELIMITER ;
-
--- Test for the above procedure 
-CALL get_all_restaurant_names();
 
 /*
 PROCEDURE
@@ -354,9 +313,6 @@ BEGIN
 		ORDER BY restaurant.restaurant_id;
 END //
 DELIMITER ;
-
--- Test for the above procedure 
-CALL get_all_restaurant_contact_info();
 
 
 -- =========================== ADD PROCEDURES ====================================
@@ -502,17 +458,6 @@ BEGIN
 END //
 DELIMITER ;
 
-CALL add_order(1, 135, 10, 'weekly','2025-02-01', '2025-01-03','scheduled', 9); -- FORCED
-CALL add_order(1, 135, 10, 'weekly','2025-02-01', '2026-01-13','scheduled', 9); -- NOT FORCED
-
-CALL add_order(1000, 135, 10, 'weekly','2026-02-01', '2026-01-13','scheduled', 9); -- Invalid Restaurant
-CALL add_order(1, 1000, 10, 'weekly','2026-02-01', '2026-01-13','scheduled', 9);-- Invalid Product
-CALL add_order(1, 135, 10, 'weekly','2026-02-01', '2026-01-13','scheduled', 999); -- Invalid Employee
-CALL add_order(1, 135, 10, 'never','2025-02-01', '2025-01-03','scheduled', 9); -- Invalid Order Type
-CALL add_order(1, 135, 10, 'weekly','2025-02-01', '2025-01-03','something', 9); -- Invalid Order Status
-CALL add_order(1, 135, -10, 'weekly','2025-02-01', '2025-01-03','scheduled', 9);-- Invalid Quantity
-CALL add_order(1, 135, 10, 'weekly','2025-02-01', '2024-01-03','scheduled', 9); -- Invalid Data Range
-CALL add_order(1, 135, 10, 'weekly','2024-02-01', '2025-01-03','scheduled', 9); -- Invalid Delivery Date
 
 /*
 PROCEDURE
@@ -569,16 +514,6 @@ BEGIN
 END //
 DELIMITER ;
 
-CALL add_crop('Tony', 'Hsu Tai Seed', 4, TRUE, 'blackout', 0, 3, 7, 20.0);
-CALL add_crop('Tony', 'Hsu Tai Seed', 4, TRUE, 'blackoutss', 0, 3, 7, -20.0);
-CALL add_crop('Tony', 'Hsu Tai Seed', 4, TRUE, 'blackout', -1, 3, 7, 20.0);
-CALL add_crop('Tony', 'Hsu Tai Seed', 4, TRUE, 'blackout', 0, -3, 7, 20.0);
-CALL add_crop('Tony', 'Hsu Tai Seed', 4, TRUE, 'blackout', 0, 3, -7, 20.0);
-CALL add_crop('Tony', 'Hsu Tai Seed', 4, TRUE, 'blackout', 0, 3, 7, -20.0);
-
-
-
-
 /*
 PROCEDURE
 ----------
@@ -604,8 +539,6 @@ BEGIN
 	INSERT INTO packaging (size_type) VALUES (size_type_p);
 END //
 DELIMITER ;
-
-CALL add_packaging('Medium');
 
 /*
 PROCEDURE
@@ -646,10 +579,6 @@ BEGIN
 		(product_name_p, weight_grams_p, is_active_p, package_id_p);
 END //
 DELIMITER ;
-
-CALL add_product_offering('Tony Hsu', 100, TRUE, 5); -- valid
-CALL add_product_offering('Hsu', 100, TRUE, 7); -- invalid package
-CALL add_product_offering('Hsuter', 100, TRUE, 7); -- invalid name
 
 /*
 PROCEDURE
@@ -699,9 +628,6 @@ BEGIN
 END //
 DELIMITER ;
 
-CALL add_product_crop_composition(300, 1, 0.50);
-CALL add_product_crop_composition(105, 100, 0.50);
-
 /*
 PROCEDURE
 ----------
@@ -732,9 +658,6 @@ BEGIN
 		(restaurant_id_p, email_p, first_name_p, last_name_p, phone_p);
 END //
 DELIMITER ;
-
-CALL add_contact_info(1, 'tony@kitchen.test', 'Tony', 'Hsu', '123-567-8900');
-CALL add_contact_info(1, 'tony@kitchen.test', 'Tonys', 'Hsu T', '222-567-8900');
 
 /*
 PROCEDURE
@@ -771,11 +694,6 @@ BEGIN
 		(restaurant_name_p, street_num_p, street_name_p, city_p, state_p, zip_code_p);
 END //
 DELIMITER ;
-
-CALL add_client('Tony Kitchen', 99, 'Hemenway Street', 'Boston', 'MA', '02118');
-CALL add_client('Mish Kitchen', 99, 'Hemenway Street', 'Boston', '1', '02118'); -- bad state
-CALL add_client('Harr Kitchen', 99, 'Hemenway Street', 'Boston', 'MA', '0211'); -- bad zipcode
-
 
 /*
 PROCEDURE
@@ -818,10 +736,6 @@ BEGIN
 END //
 DELIMITER ;
 
-CALL add_employee('123-43-2093', 'Tony', 'Hsu', 'tony@gmail.com', 'janitor'); -- Good
-CALL add_employee('123-43-2093', 'Tony', 'Hsu', 'tony2@gmail.com', 'janitor'); -- SSN fails
-CALL add_employee('123-43-2092', 'Tony', 'Hsu', 'tony@gmail.com', 'janitor'); -- Email fails
- 
 
 -- ======================== DELETE PROCEDURES =================================
  
@@ -842,7 +756,7 @@ BEGIN
     COMMIT;
 END //
 DELIMITER ;
- 
+
 /*
 PROCEDURE
 ----------
@@ -860,7 +774,7 @@ BEGIN
     COMMIT;
 END //
 DELIMITER ;
- 
+
 /*
 PROCEDURE
 ----------
@@ -893,20 +807,7 @@ BEGIN
 		DELETE FROM product WHERE product.product_id = product_id_p;
     COMMIT;
 END //
-DELIMITER ;
- 
--- Tests deleting a product in the product table without deleting it first in contains and composed_of. 
-CALL delete_product(101);
- 
--- Tests deleting a product in the contains table. 
-CALL delete_from_contains(101);
- 
--- Tests deleting a product in the composed_if table. 
-CALL delete_from_composed_of(101);
- 
--- Tests deleting the product again in the product table after removing the row in the parent tables. 
-CALL delete_product(101);
- 
+DELIMITER ; 
  
 /*
 PROCEDURE
@@ -952,14 +853,6 @@ BEGIN
     COMMIT;
 END //
 DELIMITER ;
- 
--- Tests deleting the contact_info in the product table without deleting it first in customer_order table. 
-CALL delete_contact_info("adrian.s@zuma.test");
--- Tests deleting the contact_info in the customer_order table. 
-CALL delete_from_customer_order("adrian.s@zuma.test");
--- Tests deleting the contact_info again in the customer_order table after removing the row in the parent table. 
-CALL delete_contact_info("adrian.s@zuma.test");
-
 
 /*
 PROCEDURE
@@ -975,9 +868,6 @@ BEGIN
 	DELETE FROM employee WHERE employee.employee_id = employee_id_p;
 END //
 DELIMITER ;
- 
--- Tests deleting a row in the employee table.
-CALL delete_employee(1);
 
 
 -- ======================== UPDATE PROCEDURES =================================
@@ -987,9 +877,9 @@ PROCEDURE
 ----------
 This procedure updates new crop information provided on the crop table.
 */
-DROP PROCEDURE IF EXISTS update_crop_table;
+DROP PROCEDURE IF EXISTS update_crop;
 DELIMITER //
-CREATE PROCEDURE update_crop_table(
+CREATE PROCEDURE update_crop(
 	crop_id_p INT, 
     crop_name_p VARCHAR(64), 
     seed_type_p VARCHAR(64), 
@@ -1042,35 +932,15 @@ BEGIN
 END //
 DELIMITER ; 
 
--- Test the above procedure by changing the name of the crop, germ type, days in direct/indirect light, rack grow days and yield per tray.
-CALL update_crop_table(1, 'Amaranth TEST', 'Amaranth, Red Garnet', 4, FALSE, 'stacked', 4, 5, 6, 111);
-
--- Test above procedure when an unvalid crop_id is provided
-CALL update_crop_table(0, 'Amaranth TEST', 'Amaranth, Red Garnet', 4, FALSE, 'stacked', 4, 5, 6, 111);
-
--- Test above procedure when an unvalid sow_rate value ( <= 0) is provided
-CALL update_crop_table(1, 'Amaranth TEST', 'Amaranth, Red Garnet', 0, FALSE, 'stacked', 4, 5, 6, 111);	
-
--- Test above procedure when an unvalid yield_per_tray value ( <= 0) is provided
-CALL update_crop_table(1, 'Amaranth TEST', 'Amaranth, Red Garnet', 4, FALSE, 'stacked', 4, 5, 6, 0);	
-
--- Test above procedure when an unvalid germination_type value is provided
-CALL update_crop_table(1, 'Amaranth TEST', 'Amaranth, Red Garnet', 4, FALSE, 'test', 4, 5, 6, 111);	
-
--- Test above procedure when only some values are provided and some are left null
-CALL update_crop_table(1, NULL, 'Amaranth, Red Garnet', 4, FALSE, 'stacked', NULL, NULL, NULL, 112);	
-
--- Test above procedure when THE crop_id provided is null
-CALL update_crop_table(NULL, 'Amaranth TEST', 'Amaranth, Red Garnet', 4, FALSE, 'stacked', 4, 5, 6, 112);	
 
 /*
 PROCEDURE
 ----------
 This procedure updates new packaging information provided on the packaging table.
 */
-DROP PROCEDURE IF EXISTS update_packaging_table;
+DROP PROCEDURE IF EXISTS update_packaging;
 DELIMITER //
-CREATE PROCEDURE update_packaging_table(
+CREATE PROCEDURE update_packaging(
 	package_id_p INT, 
     size_type_p VARCHAR(32)
 )
@@ -1091,26 +961,14 @@ BEGIN
 END //
 DELIMITER ; 
 
--- Test above procedure by providing a new value to size_type
-CALL update_packaging_table(4, 'A Test');
-
--- Test above procedure by providing null to size_type
-CALL update_packaging_table(4, NULL);
-
--- Test above procedure by providing an invalid package_id
-CALL update_packaging_table(200, 'A Test');
-
--- Test above procedure by providing an null value for package_id
-CALL update_packaging_table(NULL, 'A Test');
-
 /*
 PROCEDURE
 ----------
 This procedure updates new product information provided on the product table.
 */
-DROP PROCEDURE IF EXISTS update_product_table;
+DROP PROCEDURE IF EXISTS update_product;
 DELIMITER //
-CREATE PROCEDURE update_product_table(
+CREATE PROCEDURE update_product(
 	product_id_p INT,
     product_name_p VARCHAR(64),
     weight_grams_p INT, 
@@ -1143,29 +1001,14 @@ BEGIN
 END //
 DELIMITER ; 
 
--- Test above procedure by updating product's name and package_id from 1 to 4
-CALL update_product_table(102, 'Amaranth TEST2', 43, TRUE, 4);
-
--- Test above procedure by providing invalid value for weight_grams
-CALL update_product_table(102, 'Amaranth TEST2', 0, TRUE, 4);	
-
--- Test above procedure by providing NULL vals to some parameters
-CALL update_product_table(102, NULL, NULL, TRUE, 4);	
-
--- Test above procedure by providing an invalid product_id
-CALL update_product_table(1010, 'Amaranth TEST2', 43, TRUE, 4);	
-
--- Test above procedure by providing an null value for product_id
-CALL update_product_table(NULL, 'Amaranth TEST2', 43, TRUE, 4);	
-
 /*
 PROCEDURES
 -----------
 Update the crop ratios for a given product.
 */
-DROP PROCEDURE IF EXISTS update_composed_of_table;
+DROP PROCEDURE IF EXISTS update_composed_of;
 DELIMITER //
-CREATE PROCEDURE update_composed_of_table(
+CREATE PROCEDURE update_composed_of(
 	product_id_p INT, 
     crop_id_p INT,
 	crop_ratio_p DECIMAL(10,2) 
@@ -1206,20 +1049,14 @@ BEGIN
 END //
 DELIMITER ;
 
-CALL update_composed_of_table(102, 1, 0.5);
-
-CALL update_composed_of_table(1000, 1, 0.5);
-
-CALL update_composed_of_table(102, 1000, 0.5);
-
 /*
 PROCEDURE
 ----------
 This procedure updates new client contact information provided on the contact_info table.
 */
-DROP PROCEDURE IF EXISTS update_contact_info_table;
+DROP PROCEDURE IF EXISTS update_contact_info;
 DELIMITER //
-CREATE PROCEDURE update_contact_info_table(
+CREATE PROCEDURE update_contact_info(
 	email_p VARCHAR(128), 
     first_name_p VARCHAR(64), 
     last_name_p VARCHAR(64), 
@@ -1247,36 +1084,21 @@ BEGIN
 END //
 DELIMITER ; 
 
--- Test above procedure by updating contact's name and phone number 
-CALL update_contact_info_table('tyler@hobsons.test', 'Tyler UPDATE', 'Khan UPDATE', '(111) 111-TEST', 'ALL001');
-
--- Test above procedure by updating contact's restaurant_id from ALL001 to ALL002
-CALL update_contact_info_table('tyler@hobsons.test', 'Tyler UPDATE', 'Khan UPDATE', '(111) 111-TEST', 'ALL002');	
-
--- Test above procedure by providing NULL values 
-CALL update_contact_info_table('tyler@hobsons.test', 'Tyler UPDATE', NULL, NULL);	
-
--- Test above procedure by providing invalid values for the email
-CALL update_contact_info_table('tyler@hobsons.test.UPDATE', 'Tyler UPDATE', 'Khan UPDATE', '(111) 111-TEST');	
-
--- Test above procedure by providing invalid values for the email
-CALL update_contact_info_table(NULL, 'Tyler UPDATE', 'Khan UPDATE', '(111) 111-TEST');	
-
-
 /*
 PROCEDURE
 ----------
 This procedure updates new client contact information provided on the contact_info table.
 */
-DROP PROCEDURE IF EXISTS update_employee_table;
+DROP PROCEDURE IF EXISTS update_employee;
 DELIMITER //
-CREATE PROCEDURE update_employee_table(
+CREATE PROCEDURE update_employee(
 	employee_id_p INT, 
     ssn_p VARCHAR(12), 
     first_name_p VARCHAR(64), 
     last_name_p VARCHAR(64), 
     email_p VARCHAR(64), 
-    title_p VARCHAR(64)
+    title_p VARCHAR(64),
+    is_active_p BOOLEAN
 )
 BEGIN
 	DECLARE found_id VARCHAR(128);
@@ -1293,14 +1115,8 @@ BEGIN
 		first_name = COALESCE(first_name_p, first_name),
 		last_name = COALESCE(last_name_p, last_name),
         email = COALESCE(email_p, email),
-        title = COALESCE(title_p, title)
+        title = COALESCE(title_p, title),
+        is_active = COALESCE(is_active_p, is_active)
 	WHERE employee_id = employee_id_p;
 END //
 DELIMITER ;
- 
--- Test above procedure by updating all info fields for the given employee
-CALL update_employee_table(2, '239-51-TEST', 'Liam TEST', 'Carter TEST', 'liam.carter@TEST.boston', 'Farm Manager TEST');
- 
--- Test above procedure by giving an invalid employee id
-CALL update_employee_table(22222, '239-51-TEST', 'Liam TEST', 'Carter TEST', 'liam.carter@TEST.boston', 'Farm Manager TEST');
-
