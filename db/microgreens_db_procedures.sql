@@ -961,6 +961,25 @@ CALL delete_from_customer_order("adrian.s@zuma.test");
 CALL delete_contact_info("adrian.s@zuma.test");
 
 
+/*
+PROCEDURE
+----------
+This procedure deletes info of an employee from the employee table. 
+*/
+DROP PROCEDURE IF EXISTS delete_employee;
+DELIMITER //
+CREATE PROCEDURE delete_employee(
+	employee_id_p INT
+)
+BEGIN
+	DELETE FROM employee WHERE employee.employee_id = employee_id_p;
+END //
+DELIMITER ;
+ 
+-- Tests deleting a row in the employee table.
+CALL delete_employee(1);
+
+
 -- ======================== UPDATE PROCEDURES =================================
 
 /*
