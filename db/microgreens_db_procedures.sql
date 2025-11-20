@@ -1027,30 +1027,21 @@ This procedure updates new client contact information provided on the contact_in
 DROP PROCEDURE IF EXISTS update_contact_info;
 DELIMITER //
 CREATE PROCEDURE update_contact_info(
+	contact_id_p INT,
+    restaurant_id_p INT,
 	email_p VARCHAR(128), 
     first_name_p VARCHAR(64), 
     last_name_p VARCHAR(64), 
-    phone_p VARCHAR(20),
-    restaurant_id_p INT
+    phone_p VARCHAR(20)
 )
 BEGIN
-	DECLARE found_email VARCHAR(128);
-    -- Check if value provided for email is valid
-    SELECT email INTO found_email FROM contact_info
-		WHERE email = email_p;
-        
-	IF found_email IS NULL THEN
-		SIGNAL SQLSTATE '45000'
-				SET MESSAGE_TEXT = 'The value provided for email is not valid.';
-    END IF;
-    
-    
 	UPDATE contact_info
-    SET first_name = COALESCE(first_name_p, first_name),
+    SET email = COALESCE(email_p, email),
+		first_name = COALESCE(first_name_p, first_name),
 		last_name = COALESCE(last_name_p, last_name),
 		phone = COALESCE(phone_p, phone),
         restaurant_id = COALESCE(restaurant_id_p, restaurant_id)
-	WHERE email = email_p;
+	WHERE contact_info.contact_id = contact_id_p;
 END //
 DELIMITER ; 
 
