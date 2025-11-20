@@ -161,7 +161,7 @@ async def delete_product(product_id: int):
         db.commit
         # Finalize by deleting product from the product table
         cursor.callproc("delete_product", (product_id,))
-        db.commit
+        db.commit()
         return {"message": "Product has been succesfully deleted."}
     
     except Exception as e:
