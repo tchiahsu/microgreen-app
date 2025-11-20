@@ -147,3 +147,6 @@ CALL update_contact_info_table(NULL, 'Tyler UPDATE', 'Khan UPDATE', '(111) 111-T
 CALL update_employee_table(2, '239-51-TEST', 'Liam TEST', 'Carter TEST', 'liam.carter@TEST.boston', 'Farm Manager TEST', TRUE);
 -- Test above procedure by giving an invalid employee id
 CALL update_employee_table(22222, '239-51-TEST', 'Liam TEST', 'Carter TEST', 'liam.carter@TEST.boston', 'Farm Manager TEST', TRUE);
+
+-- Test Updating a delivery
+CALL update_delivery('2025-12-02', 'cancelled', 2)
