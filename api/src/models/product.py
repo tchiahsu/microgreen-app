@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 
+
 class AddProduct(BaseModel):
     product_name: str
     weight_grams: int

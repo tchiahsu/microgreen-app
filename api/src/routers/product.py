@@ -7,31 +7,42 @@ from src.models.product import AddProduct
 
 router = APIRouter(prefix="/product", tags=["product"])
 
+
+# ----------------------------------------
+# UPDATE CROP RATIO FOR A PRODUCT
+# ----------------------------------------
 @router.put("/update_crop_ratio/{package_id}/{crop_id}")
-async def update_crop_ratio(package_id: int, crop_id: int, data: CropRatioUpdate):
+async def update_crop_ratio(package_id: int, crop_id: int,
+                            data: CropRatioUpdate):
     '''
     Update crop ratio given the packaging and crop id.
     Example: PUT /product/update_crop_ratio/101/1
     '''
     db = connect_db()
     if db is None:
-        raise HTTPException(status_code=500, detail="Connection to database failed.")
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
     cursor = db.cursor()
-    
+
     try:
-        cursor.callproc("update_composed_of", (package_id, crop_id, data.crop_ratio))
+        cursor.callproc("update_composed_of", (package_id, crop_id,
+                                               data.crop_ratio))
         db.commit()
         return {"message": "Crop ratio was updated succesfully."}
-    
+
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
-    
+
     finally:
         cursor.close()
         db.close()
 
 
+# ----------------------------------------
+# UPDATE PACKAGING INFORMATION FOR A
+# PRODUCT
+# ----------------------------------------
 @router.put("/update_packaging/{package_id}")
 async def update_packaging(package_id: int, data: PackagingData):
     '''
@@ -40,22 +51,28 @@ async def update_packaging(package_id: int, data: PackagingData):
     '''
     db = connect_db()
     if db is None:
-        raise HTTPException(status_code=500, detail="Connection to database failed.")
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
     cursor = db.cursor()
-    
+
     try:
         cursor.callproc("update_packaging", (package_id, data.size_type))
         db.commit()
         return {"message": "Package type updated succesfully."}
-    
+
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
-    
+
     finally:
         cursor.close()
         db.close()
 
+
+# ----------------------------------------
+# ADD PACKAGING INFORMATION TO A
+# PRODUCT
+# ----------------------------------------
 @router.post("/add_packaging")
 async def add_packaging(data: PackagingData):
     '''
@@ -64,22 +81,27 @@ async def add_packaging(data: PackagingData):
     '''
     db = connect_db()
     if db is None:
-        raise HTTPException(status_code=500, detail="Connection to database failed.")
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
     cursor = db.cursor()
 
     try:
-        cursor.callproc("add_packaging", (data.size_type,))                      
+        cursor.callproc("add_packaging", (data.size_type,))
         db.commit()
         return {"message": "New package type added succesfully."}
 
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
-    
+
     finally:
         cursor.close()
         db.close()
 
+
+# ----------------------------------------
+# UPDATE PRODUCT INFORMATION
+# ----------------------------------------
 @router.put("/update_product/{product_id}")
 async def update_product(product_id: int, data: UpdateProduct):
     '''
@@ -88,9 +110,10 @@ async def update_product(product_id: int, data: UpdateProduct):
     '''
     db = connect_db()
     if db is None:
-        raise HTTPException(status_code=500, detail="Connection to database failed.")
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
     cursor = db.cursor()
-    
+
     try:
         cursor.callproc("update_product", (
             product_id,
@@ -101,15 +124,19 @@ async def update_product(product_id: int, data: UpdateProduct):
             ))
         db.commit()
         return {"message": "Product updated succesfully."}
-    
+
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
-    
+
     finally:
         cursor.close()
         db.close()
 
+
+# ----------------------------------------
+# ADD A NEW PRODUCT TO THE SYSTEM
+# ----------------------------------------
 @router.post("/add_product")
 async def add_product(data: AddProduct):
     '''
@@ -118,7 +145,8 @@ async def add_product(data: AddProduct):
     '''
     db = connect_db()
     if db is None:
-        raise HTTPException(status_code=500, detail="Connection to database failed.") 
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
     cursor = db.cursor()
 
     try:
@@ -126,20 +154,22 @@ async def add_product(data: AddProduct):
             data.product_name,
             data.weight_grams,
             data.is_active,
-            data.package_id
-            ))                    
+            data.package_id))
         db.commit()
         return {"message": "New product type added succesfully."}
-    
+
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
-    
+
     finally:
         cursor.close()
         db.close()
 
 
+# ----------------------------------------
+# DELETE A PRODUCT FROM THE SYSTEM
+# ----------------------------------------
 @router.delete("/delete_product/{product_id}")
 async def delete_product(product_id: int):
     '''
@@ -148,12 +178,14 @@ async def delete_product(product_id: int):
     '''
     db = connect_db()
     if db is None:
-        raise HTTPException(status_code=500, detail="Connection to database failed.")   
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
     cursor = db.cursor()
 
     try:
-        # Due to the ON DELETE RESTRICT relationship between the tables product, contains, and composed_of:
-        # First delete product form the table contains 
+        # Due to the ON DELETE RESTRICT relationship between the tables
+        # product, contains, and composed_of:
+        # First delete product form the table contains
         cursor.callproc("delete_from_contains", (product_id,))
         db.commit
         # Then delete product from the table composed_of
@@ -163,13 +195,11 @@ async def delete_product(product_id: int):
         cursor.callproc("delete_product", (product_id,))
         db.commit()
         return {"message": "Product has been succesfully deleted."}
-    
+
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
-    
+
     finally:
         cursor.close()
         db.close()
-
-

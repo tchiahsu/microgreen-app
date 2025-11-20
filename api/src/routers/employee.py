@@ -15,7 +15,8 @@ async def add_employee(data: EmployeeData):
     '''
     db = connect_db()
     if db is None:
-        raise HTTPException(status_code=500, detail="Connection to database failed.") 
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
     cursor = db.cursor()
 
     try:
@@ -23,18 +24,16 @@ async def add_employee(data: EmployeeData):
             data.ssn,
             data.first_name,
             data.last_name,
-            data.email, 
+            data.email,
             data.title
-            ))                    
+            ))
         db.commit()
+        cursor.close()
         return {"message": "New employee added succesfully."}
-    
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
-    
     finally:
-        cursor.close()
         db.close()
 
 
@@ -49,14 +48,14 @@ async def update_employee(employee_id: int, data: EmployeeData):
     '''
     db = connect_db()
     if db is None:
-        raise HTTPException(status_code=500, detail="Connection to database failed.")   
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
     cursor = db.cursor()
 
     try:
-        
         cursor.callproc("update_employee", (
             employee_id,
-            data.ssn, 
+            data.ssn,
             data.first_name,
             data.last_name,
             data.email,
@@ -64,44 +63,10 @@ async def update_employee(employee_id: int, data: EmployeeData):
             data.is_active
             ))
         db.commit()
+        cursor.close()
         return {"message": "Employee info has been succesfully updated."}
-    
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
-    
     finally:
-        cursor.close()
-        db.close()
-
-
-# ----------------------------------------
-# ASSIGN AN EMPLOYEE TO PLANT A CROP
-# ----------------------------------------
-@router.put("/assign_employee_to_planting/{employee_id}/{crop_id}")
-async def update_employee(employee_id: int, crop_id: int):
-    '''
-    Assign an employee to plan a crop using employee and crop id.
-    Example: PUT /assign_employee_to_planting/10/43
-    '''
-    db = connect_db()
-    if db is None:
-        raise HTTPException(status_code=500, detail="Connection to database failed.")   
-    cursor = db.cursor()
-
-    try:
-        
-        cursor.callproc("assign_employee_to_planting", (
-            employee_id,
-            crop_id,
-            ))
-        db.commit()
-        return {"message": "Employee info has been successfuly assgined to plant the crop."}
-    
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=400, detail=str(e))
-    
-    finally:
-        cursor.close()
         db.close()

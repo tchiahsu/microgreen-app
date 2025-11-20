@@ -150,12 +150,12 @@ CALL update_employee_table(22222, '239-51-TEST', 'Liam TEST', 'Carter TEST', 'li
 
 -- Test reassigning an employee to plant crop 1 instead
 CALL assign_employee_to_planting(6, 1);
-
 -- Test assignging a new employee to plant a crop
 CALL assign_employee_to_planting(7, 43);
-
 -- Test providing invalid employee id
 CALL assign_employee_to_planting(700, 43);
-
 -- Test providing invalid crop id
 CALL assign_employee_to_planting(7, 88);
+
+-- Test Updating a delivery
+CALL update_delivery('2025-12-02', 'cancelled', 2)

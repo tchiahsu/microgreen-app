@@ -86,16 +86,17 @@ async def edit_crop(data: CropUpdate):
 
     try:
         cursor = db.cursor()
-        cursor.callproc("update_crop_table", (data.crop_id,
-                                              data.crop_name,
-                                              data.seed_type,
-                                              data.sow_rate,
-                                              data.overnight_soak,
-                                              data.germination_type,
-                                              data.days_direct_light,
-                                              data.days_indirect_light,
-                                              data.rack_grow_days,
-                                              data.yield_per_tray,))
+        cursor.callproc("update_crop", (data.crop_id,
+                                        data.crop_name,
+                                        data.seed_type,
+                                        data.sow_rate,
+                                        data.overnight_soak,
+                                        data.germination_type,
+                                        data.days_direct_light,
+                                        data.days_indirect_light,
+                                        data.rack_grow_days,
+                                        data.yield_per_tray,))
+
         db.commit()
         cursor.close()
         return {"message": "Order added successfully!"}
