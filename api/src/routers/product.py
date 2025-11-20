@@ -8,6 +8,9 @@ from src.models.product import AddProduct
 router = APIRouter(prefix="/product", tags=["product"])
 
 
+# ----------------------------------------
+# UPDATE CROP RATIO FOR A PRODUCT
+# ----------------------------------------
 @router.put("/update_crop_ratio/{package_id}/{crop_id}")
 async def update_crop_ratio(package_id: int, crop_id: int,
                             data: CropRatioUpdate):
@@ -36,6 +39,10 @@ async def update_crop_ratio(package_id: int, crop_id: int,
         db.close()
 
 
+# ----------------------------------------
+# UPDATE PACKAGING INFORMATION FOR A
+# PRODUCT
+# ----------------------------------------
 @router.put("/update_packaging/{package_id}")
 async def update_packaging(package_id: int, data: PackagingData):
     '''
@@ -62,6 +69,10 @@ async def update_packaging(package_id: int, data: PackagingData):
         db.close()
 
 
+# ----------------------------------------
+# ADD PACKAGING INFORMATION TO A
+# PRODUCT
+# ----------------------------------------
 @router.post("/add_packaging")
 async def add_packaging(data: PackagingData):
     '''
@@ -88,6 +99,9 @@ async def add_packaging(data: PackagingData):
         db.close()
 
 
+# ----------------------------------------
+# UPDATE PRODUCT INFORMATION
+# ----------------------------------------
 @router.put("/update_product/{product_id}")
 async def update_product(product_id: int, data: UpdateProduct):
     '''
@@ -120,6 +134,9 @@ async def update_product(product_id: int, data: UpdateProduct):
         db.close()
 
 
+# ----------------------------------------
+# ADD A NEW PRODUCT TO THE SYSTEM
+# ----------------------------------------
 @router.post("/add_product")
 async def add_product(data: AddProduct):
     '''
@@ -150,6 +167,9 @@ async def add_product(data: AddProduct):
         db.close()
 
 
+# ----------------------------------------
+# DELETE A PRODUCT FROM THE SYSTEM
+# ----------------------------------------
 @router.delete("/delete_product/{product_id}")
 async def delete_product(product_id: int):
     '''

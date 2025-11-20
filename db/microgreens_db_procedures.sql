@@ -1090,3 +1090,49 @@ BEGIN
 	WHERE employee_id = employee_id_p;
 END //
 DELIMITER ;
+
+/*
+PROCEDURE
+----------
+Updates the status of a delivery
+*/
+DROP PROCEDURE IF EXISTS update_delivery;
+DELIMITER //
+CREATE PROCEDURE update_delivery(
+	delivery_date_p DATE,
+	delivery_status_p VARCHAR(64),
+    employee_id_p INT
+)
+BEGIN
+	DECLARE valid_id INT;
+    DECLARE valid_date INT;
+
+	-- Invalid delivery status
+	IF delivery_status_p NOT IN ("scheduled", "completed", "cancelled") THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = "The new status is invalid";
+	END IF;
+    
+    -- Invalid employee ID
+    SELECT COUNT(*) INTO valid_id FROM employee
+		WHERE employee_id = employee_id_p;
+    IF valid_id = 0 THEN	
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Employee ID does not exist';
+	END IF;
+    
+    -- Invalid delivery date
+    SELECT COUNT(*) INTO valid_date FROM delivery
+		WHERE delivery_date = delivery_date_p;
+	IF valid_date = 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Delivery date does not exist';
+	END IF;
+
+	-- Update delivery
+	UPDATE delivery
+    SET delivery_status = COALESCE(delivery_status_p, delivery_status),
+		employee_id = COALESCE(employee_id_p, employee_id)
+	WHERE delivery_date = delivery_date_p;
+END //
+DELIMITER ;

@@ -5,6 +5,9 @@ from src.models.employee import EmployeeData
 router = APIRouter(prefix="/employee", tags=["employee"])
 
 
+# ----------------------------------------
+# ADD EMPLOYEE TO SYSTEM
+# ----------------------------------------
 @router.post("/add_employee")
 async def add_employee(data: EmployeeData):
     '''
@@ -35,6 +38,9 @@ async def add_employee(data: EmployeeData):
         db.close()
 
 
+# ----------------------------------------
+# UPDATE EMPLOYEE INFORMATION
+# ----------------------------------------
 @router.put("/update_employee/{employee_id}")
 async def update_employee(employee_id: int, data: EmployeeData):
     '''

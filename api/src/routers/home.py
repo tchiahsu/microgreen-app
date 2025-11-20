@@ -5,6 +5,10 @@ from datetime import date
 router = APIRouter(prefix="/home", tags=["home"])
 
 
+# ----------------------------------------
+# GET CROPS THAT WILL BE PLANTED ON A
+# GIVEN DATE
+# ----------------------------------------
 @router.get("/planting_summary/{delivery_date}")
 async def get_planting_summary(delivery_date: date):
     '''
@@ -30,6 +34,10 @@ async def get_planting_summary(delivery_date: date):
     return result
 
 
+# ----------------------------------------
+# GET CROPS THAT MOVE OUT OF GERMIANTION
+# FOR A DATE
+# ----------------------------------------
 @router.get("/germination_summary/{delivery_date}")
 async def get_germination_summary(delivery_date: date):
     '''
@@ -56,8 +64,12 @@ async def get_germination_summary(delivery_date: date):
     return result
 
 
-@router.get("/rack_switch_summary/{delivery_date}")
-async def get_rack_switch_summary(delivery_date: date):
+# ----------------------------------------
+# GET THE CROPS THAT MOVE FROM INDIRECT
+# LIGHT TO DIRECT LIGHT
+# ----------------------------------------
+@router.get("/light_switch_summary/{delivery_date}")
+async def get_light_switch_summary(delivery_date: date):
     '''
     Get the rack switch summary for a given date (defaulted to today's date)
     Example: GET /home/rack_switch_summary/2026-01-01
