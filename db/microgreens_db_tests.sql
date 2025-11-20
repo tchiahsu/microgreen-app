@@ -147,3 +147,15 @@ CALL update_contact_info_table(NULL, 'Tyler UPDATE', 'Khan UPDATE', '(111) 111-T
 CALL update_employee_table(2, '239-51-TEST', 'Liam TEST', 'Carter TEST', 'liam.carter@TEST.boston', 'Farm Manager TEST', TRUE);
 -- Test above procedure by giving an invalid employee id
 CALL update_employee_table(22222, '239-51-TEST', 'Liam TEST', 'Carter TEST', 'liam.carter@TEST.boston', 'Farm Manager TEST', TRUE);
+
+-- Test reassigning an employee to plant crop 1 instead
+CALL assign_employee_to_planting(6, 1);
+
+-- Test assignging a new employee to plant a crop
+CALL assign_employee_to_planting(7, 43);
+
+-- Test providing invalid employee id
+CALL assign_employee_to_planting(700, 43);
+
+-- Test providing invalid crop id
+CALL assign_employee_to_planting(7, 88);

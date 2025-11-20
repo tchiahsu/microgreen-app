@@ -4,6 +4,9 @@ from src.models.employee import EmployeeData
 
 router = APIRouter(prefix="/employee", tags=["employee"])
 
+# ----------------------------------------
+# ADD A NEW EMPLOYEE
+# ----------------------------------------
 @router.post("/add_employee")
 async def add_employee(data: EmployeeData):
     '''
@@ -35,7 +38,9 @@ async def add_employee(data: EmployeeData):
         db.close()
 
 
-
+# ----------------------------------------
+# UPDATE EMPLOYEE INFORMATION
+# ----------------------------------------
 @router.put("/update_employee/{employee_id}")
 async def update_employee(employee_id: int, data: EmployeeData):
     '''
@@ -60,6 +65,38 @@ async def update_employee(employee_id: int, data: EmployeeData):
             ))
         db.commit()
         return {"message": "Employee info has been succesfully updated."}
+    
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    
+    finally:
+        cursor.close()
+        db.close()
+
+
+# ----------------------------------------
+# ASSIGN AN EMPLOYEE TO PLANT A CROP
+# ----------------------------------------
+@router.put("/assign_employee_to_planting/{employee_id}/{crop_id}")
+async def update_employee(employee_id: int, crop_id: int):
+    '''
+    Assign an employee to plan a crop using employee and crop id.
+    Example: PUT /assign_employee_to_planting/10/43
+    '''
+    db = connect_db()
+    if db is None:
+        raise HTTPException(status_code=500, detail="Connection to database failed.")   
+    cursor = db.cursor()
+
+    try:
+        
+        cursor.callproc("assign_employee_to_planting", (
+            employee_id,
+            crop_id,
+            ))
+        db.commit()
+        return {"message": "Employee info has been successfuly assgined to plant the crop."}
     
     except Exception as e:
         db.rollback()
