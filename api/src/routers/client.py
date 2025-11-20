@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from src.database import connect_db
 from src.models.client import ClientAdd, ContactInfoAdd, ContactInfoUpdate
+from src.models.client import ContactInfoDelete
 
 router = APIRouter(prefix="/clients", tags=["clients"])
 
