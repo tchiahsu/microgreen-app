@@ -52,14 +52,12 @@ async def add_new_restaurant(data: ClientAdd):
 
     try:
         cursor = db.cursor()
-
         cursor.callproc("add_client", (data.restaurant_name,
                                        data.street_num,
                                        data.street_name,
                                        data.city,
                                        data.state,
                                        data.zip_code,))
-
         db.commit()
         cursor.close()
         return {"message": "Client added successfully!"}
@@ -84,7 +82,6 @@ async def add_new_contact_info(data: ContactInfoAdd):
     if db is None:
         raise HTTPException(status_code=500,
                             detail="Connection to database failed.")
-
     try:
         cursor = db.cursor()
 
@@ -93,7 +90,6 @@ async def add_new_contact_info(data: ContactInfoAdd):
                                              data.first_name,
                                              data.last_name,
                                              data.phone,))
-
         db.commit()
         cursor.close()
         return {"message": "Client added successfully!"}
@@ -151,15 +147,15 @@ async def edit_contact_info(data: ContactInfoUpdate):
 
     try:
         cursor = db.cursor()
-        cursor.callproc("update_contact_info", (data.email,
+        cursor.callproc("update_contact_info", (data.contact_id,
+                                                data.restaurant_id,
+                                                data.email,
                                                 data.first_name,
                                                 data.last_name,
-                                                data.phone,
-                                                data.restaurant_id))
-
+                                                data.phone))
         db.commit()
         cursor.close()
-        return {"message": "Order added successfully!"}
+        return {"message": "Contact Infofromation was successfully!"}
     except Exception:
         db.rollback()
         raise HTTPException(status_code=400,

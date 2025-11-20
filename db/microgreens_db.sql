@@ -31,8 +31,9 @@ CREATE TABLE restaurant(
 );
 
 CREATE TABLE contact_info(
+	contact_id INT AUTO_INCREMENT PRIMARY KEY,
     restaurant_id INT,
-	email VARCHAR(128) PRIMARY KEY, 
+	email VARCHAR(128) UNIQUE, 
     first_name VARCHAR(64) NOT NULL, 
     last_name VARCHAR(64) NOT NULL, 
     phone VARCHAR(20) NOT NULL, 
