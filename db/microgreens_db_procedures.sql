@@ -1263,3 +1263,44 @@ CALL update_contact_info_table('tyler@hobsons.test.UPDATE', 'Tyler UPDATE', 'Kha
 CALL update_contact_info_table(NULL, 'Tyler UPDATE', 'Khan UPDATE', '(111) 111-TEST');	
 
 
+/*
+PROCEDURE
+----------
+This procedure updates new client contact information provided on the contact_info table.
+*/
+DROP PROCEDURE IF EXISTS update_employee_table;
+DELIMITER //
+CREATE PROCEDURE update_employee_table(
+	employee_id_p INT, 
+    ssn_p VARCHAR(12), 
+    first_name_p VARCHAR(64), 
+    last_name_p VARCHAR(64), 
+    email_p VARCHAR(64), 
+    title_p VARCHAR(64)
+)
+BEGIN
+	DECLARE found_id VARCHAR(128);
+    -- Check if value provided for employee_id is valid
+    SELECT employee_id_p INTO found_id FROM employee
+		WHERE employee_id = employee_id_p;
+	IF found_id IS NULL THEN
+		SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'The value provided for employee_id is not valid.';
+    END IF;
+    -- Update the employee info if employee_id is valid
+	UPDATE employee
+    SET ssn = COALESCE(ssn_p, ssn),
+		first_name = COALESCE(first_name_p, first_name),
+		last_name = COALESCE(last_name_p, last_name),
+        email = COALESCE(email_p, email),
+        title = COALESCE(title_p, title)
+	WHERE employee_id = employee_id_p;
+END //
+DELIMITER ;
+ 
+-- Test above procedure by updating all info fields for the given employee
+CALL update_employee_table(2, '239-51-TEST', 'Liam TEST', 'Carter TEST', 'liam.carter@TEST.boston', 'Farm Manager TEST');
+ 
+-- Test above procedure by giving an invalid employee id
+CALL update_employee_table(22222, '239-51-TEST', 'Liam TEST', 'Carter TEST', 'liam.carter@TEST.boston', 'Farm Manager TEST');
+
