@@ -40,6 +40,9 @@ async def update_packaging(package_id: int, data: PackagingData):
     '''
     db = connect_db()
     if db is None:
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
+
         raise HTTPException(status_code=500, detail="Connection to database failed.")
     cursor = db.cursor()
     
@@ -137,6 +140,7 @@ async def add_product(data: AddProduct):
     
     finally:
         cursor.close()
+
         db.close()
 
 
@@ -167,9 +171,10 @@ async def delete_product(product_id: int):
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
-    
+
     finally:
         cursor.close()
         db.close()
 
+    return result
 
