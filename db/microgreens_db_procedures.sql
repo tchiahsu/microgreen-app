@@ -141,9 +141,9 @@ CREATE PROCEDURE get_germination_summary(
 	input_date_p DATE
 )
 BEGIN
-	SELECT crop_name, COUNT(trays_needed) AS trays_used  FROM microgreens_view
+	SELECT planting_date, crop_name, COUNT(trays_needed) AS trays_used FROM microgreens_view
 		WHERE germination_date = input_date_p
-		GROUP BY crop_name;
+		GROUP BY crop_name, planting_date;
 END // 
 DELIMITER ;
 
@@ -163,9 +163,9 @@ CREATE PROCEDURE get_switch_summary(
 	input_date_p DATE
 )
 BEGIN
-	SELECT crop_name, COUNT(trays_needed) AS trays_used FROM microgreens_view
+	SELECT planting_date, crop_name, COUNT(trays_needed) AS trays_used FROM microgreens_view
 		WHERE (switch_date = input_date_p AND switch_date <> planting_date)
-		GROUP BY crop_name;
+		GROUP BY crop_name, planting_date;
 END //
 DELIMITER ;
 
@@ -486,14 +486,14 @@ BEGIN
 		INSERT INTO contains (order_id, product_id, quantity) VALUE
 			(new_order_id, product_id_p, product_quantity_p);
 		
-        IF (order_type_p NOT IN ('weekly', 'biweekly')) THEN
+        IF (order_type_p NOT IN ('weekly', 'bi-weekly')) THEN
 			LEAVE recurring_loop;
 		END IF;
         
         -- Increment date
         IF (order_type_p = 'weekly') THEN
 			SET curr_delivery_date = DATE_ADD(curr_delivery_date, INTERVAL 7 DAY);
-		ELSEIF (order_type_p = 'biweekly') THEN
+		ELSEIF (order_type_p = 'bi-weekly') THEN
 			SET curr_delivery_date = DATE_ADD(curr_delivery_date, INTERVAL 14 DAY);
 		END IF;
 	
@@ -530,7 +530,7 @@ CREATE PROCEDURE add_crop(
     days_direct_light_p INT, 
     days_indirect_light_p INT, 
     rack_grow_days_p INT, 
-    yield_per_tray_p INT
+    yield_per_tray_p DECIMAL(10, 2)
 )
 BEGIN
 	-- Check germination type is valid option
