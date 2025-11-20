@@ -11,8 +11,8 @@ router = APIRouter(prefix="/product", tags=["product"])
 # ----------------------------------------
 # UPDATE CROP RATIO FOR A PRODUCT
 # ----------------------------------------
-@router.put("/update_crop_ratio/{package_id}/{crop_id}")
-async def update_crop_ratio(package_id: int, crop_id: int,
+@router.put("/update_crop_ratio/{product_id}/{crop_id}")
+async def update_crop_ratio(product_id: int, crop_id: int,
                             data: CropRatioUpdate):
     '''
     Update crop ratio given the packaging and crop id.
@@ -25,7 +25,7 @@ async def update_crop_ratio(package_id: int, crop_id: int,
     cursor = db.cursor()
 
     try:
-        cursor.callproc("update_composed_of", (package_id, crop_id,
+        cursor.callproc("update_composed_of", (product_id, crop_id,
                                                data.crop_ratio))
         db.commit()
         return {"message": "Crop ratio was updated succesfully."}
@@ -43,8 +43,8 @@ async def update_crop_ratio(package_id: int, crop_id: int,
 # UPDATE PACKAGING INFORMATION FOR A
 # PRODUCT
 # ----------------------------------------
-@router.put("/update_packaging/{package_id}")
-async def update_packaging(package_id: int, data: PackagingData):
+@router.put("/update_packaging/{package_name}")
+async def update_packaging(package_name: str, data: PackagingData):
     '''
     Update packaging type given the packaging id.
     Example: PUT /product/update_packaging/4
@@ -56,6 +56,14 @@ async def update_packaging(package_id: int, data: PackagingData):
     cursor = db.cursor()
 
     try:
+        # Get the package ID
+        cursor.execute("SELECT get_package_id(%s) AS id", (package_name,))
+        result = cursor.fetchone()
+        if result is None or result["id"] is None:
+            raise HTTPException(status_code=500,
+                                detail=f"{package_name} does not exist")
+        package_id = result["id"]
+
         cursor.callproc("update_packaging", (package_id, data.size_type))
         db.commit()
         return {"message": "Package type updated succesfully."}
@@ -102,11 +110,11 @@ async def add_packaging(data: PackagingData):
 # ----------------------------------------
 # UPDATE PRODUCT INFORMATION
 # ----------------------------------------
-@router.put("/update_product/{product_id}")
-async def update_product(product_id: int, data: UpdateProduct):
+@router.put("/update_product/{product_name}/{package_name}")
+async def update_product(product_name: str, package_name: str, data: UpdateProduct):
     '''
     Update product given the product id.
-    Example: PUT /product/update_product/101
+    Example: PUT /product/update_product/101/1
     '''
     db = connect_db()
     if db is None:
@@ -115,6 +123,23 @@ async def update_product(product_id: int, data: UpdateProduct):
     cursor = db.cursor()
 
     try:
+         # Get the package ID
+        cursor.execute("SELECT get_package_id(%s) AS id", (package_name,))
+        result = cursor.fetchone()
+        if result is None or result["id"] is None:
+            raise HTTPException(status_code=500,
+                                detail=f"{package_name} does not exist")
+        package_id = result["id"]
+
+        # Get the product ID
+        cursor.execute("SELECT get_product_id(%s, %s) AS id",
+                       (product_name, package_id))
+        result = cursor.fetchone()
+        if result is None:
+            raise HTTPException(status_code=400,
+                                detail=f"{product_name} does not exist")
+        product_id = result["id"]
+
         cursor.callproc("update_product", (
             product_id,
             data.product_name,
@@ -154,7 +179,26 @@ async def add_product(data: AddProduct):
             data.product_name,
             data.weight_grams,
             data.is_active,
-            data.package_id))
+            data.package_id
+            ))
+        db.commit()
+
+         # Get the product ID
+        cursor.execute("SELECT get_product_id(%s, %s) AS id",
+                       (data.product_name, data.package_id))
+        result = cursor.fetchone()
+        if result is None:
+            raise HTTPException(status_code=400,
+                                detail=f"{data.product_name} does not exist")
+        product_id = result["id"]
+        print(product_id)
+
+        # Insert new product's ratio composition into composed_of table
+        for composition in data.list_of_composition:
+            crop_id, crop_ratio = composition.crop_id, composition.crop_ratio
+            cursor.callproc("add_product_crop_composition", (product_id,
+                                                             crop_id,
+                                                             crop_ratio))
         db.commit()
         return {"message": "New product type added succesfully."}
 
