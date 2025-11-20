@@ -812,28 +812,7 @@ DELIMITER ;
 /*
 PROCEDURE
 ----------
-This procedure deletes the contact info of the client referenced by the email in the customer_order table.
-*/
-DROP PROCEDURE IF EXISTS delete_from_customer_order;
-DELIMITER //
-CREATE PROCEDURE delete_from_customer_order(
-	email_p VARCHAR(128) 
-)
-BEGIN
-	START TRANSACTION;
-    DELETE FROM customer_order
-		WHERE customer_order.email = email_p;
-    COMMIT;
-END //
-DELIMITER ;
- 
-/*
-PROCEDURE
-----------
 This procedure deletes a client's contact info in the contact_info table. 
-It first checks if the row with the given meail has been deleted in the parent table: customer_order.
-If it has been deleted, it proceeds to delete the row of the given email in the table. 
-It it hasn't been deleted an error gets signaled. 
 */
 DROP PROCEDURE IF EXISTS delete_contact_info;
 DELIMITER //
@@ -841,16 +820,7 @@ CREATE PROCEDURE delete_contact_info(
 	email_p VARCHAR(128) 
 )
 BEGIN
-	DECLARE count_check INT DEFAULT 0;
-    START TRANSACTION;
-        SELECT COUNT(*) INTO count_check FROM customer_order 
-			WHERE customer_order.email = email_p;
-		IF count_check > 0 THEN ROLLBACK;
-			SIGNAL SQLSTATE '45000'
-				SET MESSAGE_TEXT = "Can't delete this row, it is being referenced in the customer_order table.";
-		END IF;
-		DELETE FROM contact_info WHERE contact_info.email = email_p;
-    COMMIT;
+	DELETE FROM contact_info WHERE contact_info.email = email_p;
 END //
 DELIMITER ;
 
@@ -1061,7 +1031,7 @@ CREATE PROCEDURE update_contact_info(
     first_name_p VARCHAR(64), 
     last_name_p VARCHAR(64), 
     phone_p VARCHAR(20),
-    restaurant_id_p VARCHAR(6)
+    restaurant_id_p INT
 )
 BEGIN
 	DECLARE found_email VARCHAR(128);
