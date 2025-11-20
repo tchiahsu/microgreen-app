@@ -530,7 +530,7 @@ CREATE PROCEDURE add_crop(
     days_direct_light_p INT, 
     days_indirect_light_p INT, 
     rack_grow_days_p INT, 
-    yield_per_tray_p INT
+    yield_per_tray_p DECIMAL(10, 2)
 )
 BEGIN
 	-- Check germination type is valid option

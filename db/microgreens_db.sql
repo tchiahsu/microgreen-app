@@ -102,7 +102,7 @@ CREATE TABLE crop(
     days_direct_light INT NOT NULL DEFAULT 0, 
     days_indirect_light INT NOT NULL, 
     rack_grow_days INT NOT NULL, 
-    yield_per_tray INT CHECK(yield_per_tray > 0) NOT NULL 
+    yield_per_tray DECIMAL(10, 2) CHECK(yield_per_tray > 0) NOT NULL 
 );
 
 CREATE TABLE plants(
