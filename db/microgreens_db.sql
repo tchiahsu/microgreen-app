@@ -8,7 +8,8 @@ CREATE TABLE employee(
     first_name VARCHAR(64) NOT NULL, 
     last_name VARCHAR(64) NOT NULL, 
     email VARCHAR(64) UNIQUE NOT NULL, 
-    title VARCHAR(64) NOT NULL
+    title VARCHAR(64) NOT NULL,
+    is_active BOOLEAN NOT NULL
 );
 
 CREATE TABLE delivery(
