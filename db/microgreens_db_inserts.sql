@@ -160,11 +160,6 @@ INSERT INTO employee (ssn, first_name, last_name, email, title, is_active) VALUE
 	('546-12-7820', 'Chloe', 'Kim', 'chloe.kim@microgreens.boston', 'Sanitaion Associate', TRUE),
 	('817-45-9123', 'Jason', 'Gonzalez', 'jason.gonzalez@microgreens.boston', 'Sales Associate', TRUE),
 	('917-65-9810', 'Michael', 'Aaronson', 'michael.aaronson@microgreens.boston', 'Sales Associate', TRUE);
-    
-INSERT INTO order_type (type_name) VALUES
-	("one-time"), 
-    ("bi-weekly"), 
-    ("weekly");
 
 INSERT INTO delivery (delivery_date, delivery_status, employee_id) VALUES
 	('2025-12-02', 'scheduled', 7),
