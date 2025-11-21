@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import type { PlantingItem, GermItem } from "../../types/crop";
+import { Table } from "../../components/table";
 
-export default function Crop() {
+export default function Home() {
     const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().slice(0,10));
     const [plantingInfo, setPlantingInfo] = useState<PlantingItem[]>([]);
     const [outGerm, setOutGerm] = useState<GermItem[]>([]);
@@ -31,9 +32,27 @@ export default function Crop() {
         fetchData();
     }, [selectedDate]);
 
+    const plantingColumns = [
+        {key: "crop_name", header_name: "Crop Name"},
+        {key: "trays_used", header_name: "Tray Count", align: "center"}
+    ];
+
+    const germinationColumns = [
+        {key: "planting_date", header_name: "Planting Date"},
+        {key: "crop_name", header_name: "Crop Name"},
+        {key: "trays_used", header_name: "Tray Count", align: "center"}
+    ];
+
+     const switchColumns = [
+         {key: "planting_date", header_name: "Planting Date"},
+        {key: "crop_name", header_name: "Crop Name"},
+        {key: "trays_used", header_name: "Tray Count", align: "center"}
+    ];
+
+
     return (
-        <div className="p-6 text-sm font-mono z-100 overflow-y">
-            <div className="flex items-center gap-4">
+        <div className="p-6 text-sm font-mono">
+            <div className="flex items-center gap-5 mb-5 px-20">
                 <input
                     id="date"
                     type="date"
@@ -42,23 +61,19 @@ export default function Crop() {
                     onChange={(e) => setSelectedDate(e.target.value)}
                 />
             </div>
-            <div className="mb-2">
-                <h2 className="font-semibold">Planting Summary</h2>
-                <pre className="p-3 rounded-lg overflow-x-auto">
-                    {JSON.stringify(plantingInfo, null, 2)}
-                </pre>
-            </div>
-            <div className="mb-2">
-                <h2 className="font-semibold">Germination Summary</h2>
-                <pre className="p-3 rounded-lg overflow-x-auto">
-                    {JSON.stringify(outGerm, null, 2)}
-                </pre>
-            </div>
-            <div className="mb-2">
-                <h2 className="font-semibold">Switch Summary</h2>
-                <pre className="p-3 rounded-lg overflow-x-auto">
-                    {JSON.stringify(switchGerm, null, 2)}
-                </pre>
+            <div className="flex w-full items-start justify-between px-20">
+                <div className="p-5 bg-white/40 rounded-lg">
+                    <h2 className="font-semibold text-lg mb-5">Planting Summary</h2>
+                    <Table columns={plantingColumns} data={plantingInfo}/>
+                </div>
+                <div className="p-5 bg-white/40 rounded-lg">
+                    <h2 className="font-semibold text-lg mb-5">Germination Summary</h2>
+                     <Table columns={germinationColumns} data={outGerm}/>
+                </div>
+                <div className="p-5 bg-white/40 rounded-lg">
+                    <h2 className="font-semibold text-lg mb-5">Switch Summary</h2>
+                     <Table columns={switchColumns} data={switchGerm}/>
+                </div>
             </div>
         </div>
     );
