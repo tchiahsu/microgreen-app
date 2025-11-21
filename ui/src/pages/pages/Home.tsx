@@ -8,9 +8,8 @@ export default function Crop() {
     const [switchGerm, setSwitchGerm] = useState<GermItem[]>([]);
 
     useEffect(() => {
-        async function fetchDate() {
+        async function fetchData() {
             try {
-                console.log(selectedDate)
                 const [plantInfo, germInfo, switchInfo] = await Promise.all([
                     fetch(`http://127.0.0.1:8000/home/planting_summary/${selectedDate}`),
                     fetch(`http://127.0.0.1:8000/home/germination_summary/${selectedDate}`),
@@ -29,11 +28,11 @@ export default function Crop() {
             }
         }
 
-        fetchDate();
+        fetchData();
     }, [selectedDate]);
 
     return (
-        <div className="p-6 text-sm font-mono z-100">
+        <div className="p-6 text-sm font-mono z-100 overflow-y">
             <div className="flex items-center gap-4">
                 <input
                     id="date"
