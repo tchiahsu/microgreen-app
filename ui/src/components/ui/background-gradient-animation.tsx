@@ -51,8 +51,8 @@ export const BackgroundGradientAnimation = ({
     document.body.style.setProperty("--first-color", firstColor);
     document.body.style.setProperty("--second-color", secondColor);
     document.body.style.setProperty("--third-color", thirdColor);
-    document.body.style.setProperty("--second-color", fourthColor);
-    document.body.style.setProperty("--third-color", fifthColor);
+    document.body.style.setProperty("--fourth-color", fourthColor);
+    document.body.style.setProperty("--fifth-color", fifthColor);
     document.body.style.setProperty("--pointer-color", pointerColor);
     document.body.style.setProperty("--size", size);
     document.body.style.setProperty("--blending-value", blendingValue);
