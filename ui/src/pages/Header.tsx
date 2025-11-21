@@ -1,5 +1,4 @@
 import { CgMenuRightAlt } from "react-icons/cg";
-import { FaUserCircle } from "react-icons/fa";
 
 
 const navItems = [
@@ -34,9 +33,8 @@ export default function Header() {
                 </nav>
                 
                 {/* Top Right Side Buttons */}
-                <div className="flex justify-end items-center gap-8 bg-[#0b2f33] text-white rounded-bl-2xl h-full pr-6 pl-9">
-                    <button className="p-2 rounded-full hover:bg-[#308261] hover:scale-105 active:scale-95 cursor-pointer"><FaUserCircle size={38} /></button>
-                    <button className="p-2 rounded-full hover:bg-[#308261] active:scale-95 cursor-pointer"><CgMenuRightAlt size={40} /></button>
+                <div className="flex justify-end items-center gap-8 bg-[#0b2f33] hover:bg-[#308261] text-white rounded-bl-2xl h-full px-2">
+                    <button className="p-2 rounded-full active:scale-95 cursor-pointer"><CgMenuRightAlt size={40} /></button>
                 </div>
 
             </div>
