@@ -1,7 +1,5 @@
-"use client";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
-
 export const BackgroundGradientAnimation = ({
   gradientBackgroundStart = "rgb(235, 234, 225)",
   gradientBackgroundEnd = "rgb(235, 235, 225)",
@@ -34,7 +32,6 @@ export const BackgroundGradientAnimation = ({
   containerClassName?: string;
 }) => {
   const interactiveRef = useRef<HTMLDivElement>(null);
-
   const [curX, setCurX] = useState(0);
   const [curY, setCurY] = useState(0);
   const [tgX, setTgX] = useState(0);
@@ -57,7 +54,6 @@ export const BackgroundGradientAnimation = ({
     document.body.style.setProperty("--size", size);
     document.body.style.setProperty("--blending-value", blendingValue);
   }, []);
-
   useEffect(() => {
     function move() {
       if (!interactiveRef.current) {
@@ -69,10 +65,8 @@ export const BackgroundGradientAnimation = ({
         curX
       )}px, ${Math.round(curY)}px)`;
     }
-
     move();
   }, [tgX, tgY]);
-
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
     if (interactiveRef.current) {
       const rect = interactiveRef.current.getBoundingClientRect();
@@ -89,9 +83,7 @@ export const BackgroundGradientAnimation = ({
   return (
     <div
       className={cn(
-        //"relative h-screen w-screen overflow-hidden top-0 left-0 bg-[linear-gradient(40deg,var(--gradient-background-start),var(--gradient-background-end))]",
-        //"fixed inset-0 -z-10 overflow-hidden bg-[linear-gradient(40deg,var(--gradient-background-start),var(--gradient-background-end))]",
-        "absolute inset-0 -z-10 w-full h-fit overflow-hidden bg-[linear-gradient(40deg,var(--gradient-background-start),var(--gradient-background-end))]",
+        "h-screen w-screen relative overflow-hidden top-0 left-0 bg-[linear-gradient(40deg,var(--gradient-background-start),var(--gradient-background-end))]",
         containerClassName
       )}
     >
@@ -113,10 +105,10 @@ export const BackgroundGradientAnimation = ({
           </filter>
         </defs>
       </svg>
-      <div className={cn("relative z-10", className)}>{children}</div>
+      <div className={cn("", className)}>{children}</div>
       <div
         className={cn(
-          "gradients-container h-full w-full blur-lg pointer-events-none z-0",
+          "gradients-container h-full w-full blur-lg",
           isSafari ? "blur-2xl" : "[filter:url(#blurMe)_blur(40px)]"
         )}
       >
@@ -165,7 +157,6 @@ export const BackgroundGradientAnimation = ({
             `opacity-100`
           )}
         ></div>
-
         {interactive && (
           <div
             ref={interactiveRef}
