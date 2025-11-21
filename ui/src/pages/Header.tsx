@@ -14,6 +14,7 @@ export default function Header() {
     return (
         <header className="sticky top-0 z-50 h-[10vh] min-h-20">
             <div className="flex w-full items-center justify-between h-full">
+
                 {/* Green Track Logo */}
                 <a href="/" className="flex items-center">
                     <img src="/public/logo.png" alt="Logo" className="h-25 w-25" />
