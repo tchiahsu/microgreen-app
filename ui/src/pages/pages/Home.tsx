@@ -62,15 +62,15 @@ export default function Home() {
                 />
             </div>
             <div className="flex w-full items-start justify-between px-20">
-                <div className="p-5 bg-white/40 rounded-lg">
+                <div className="p-5 bg-white/60 rounded-lg">
                     <h2 className="font-semibold text-lg mb-5">Planting Summary</h2>
                     <Table columns={plantingColumns} data={plantingInfo}/>
                 </div>
-                <div className="p-5 bg-white/40 rounded-lg">
+                <div className="p-5 bg-white/60 rounded-lg">
                     <h2 className="font-semibold text-lg mb-5">Germination Summary</h2>
                      <Table columns={germinationColumns} data={outGerm}/>
                 </div>
-                <div className="p-5 bg-white/40 rounded-lg">
+                <div className="p-5 bg-white/60 rounded-lg">
                     <h2 className="font-semibold text-lg mb-5">Switch Summary</h2>
                      <Table columns={switchColumns} data={switchGerm}/>
                 </div>
