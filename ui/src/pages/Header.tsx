@@ -14,6 +14,7 @@ export default function Header() {
     return (
         <header className="sticky top-0 z-50 h-[10vh] min-h-20">
             <div className="flex w-full items-center justify-between h-full">
+
                 {/* Green Track Logo */}
                 <a href="/" className="flex items-center">
                     <img src="/public/logo.png" alt="Logo" className="h-25 w-25" />
@@ -31,10 +32,11 @@ export default function Header() {
                         ))}
                     </ul>
                 </nav>
-
-                <div className="flex justify-end items-center gap-8 bg-[#0b2f33] text-white rounded-bl-2xl h-full pr-9 pl-18">
-                    <button className="px-2 rounded-lg hover:scale-110 hover:text-[#bdc786] active:scale-90 cursor-pointer"><FaUserCircle size={38} /></button>
-                    <button className="px-2 rounded-lg hover:scale-110 hover:text-[#bdc786] active:scale-90 cursor-pointer"><CgMenuRightAlt size={40} /></button>
+                
+                {/* Top Right Side Buttons */}
+                <div className="flex justify-end items-center gap-8 bg-[#0b2f33] text-white rounded-bl-2xl h-full pr-6 pl-9">
+                    <button className="p-2 rounded-full hover:bg-[#308261] hover:scale-105 active:scale-95 cursor-pointer"><FaUserCircle size={38} /></button>
+                    <button className="p-2 rounded-full hover:bg-[#308261] active:scale-95 cursor-pointer"><CgMenuRightAlt size={40} /></button>
                 </div>
 
             </div>
