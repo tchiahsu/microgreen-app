@@ -72,7 +72,7 @@ async def get_germination_summary(delivery_date: date):
 async def get_light_switch_summary(delivery_date: date):
     '''
     Get the rack switch summary for a given date (defaulted to today's date)
-    Example: GET /home/rack_switch_summary/2026-01-01
+    Example: GET /home/light_switch_summary/2026-01-01
     '''
     db = connect_db()
     if db is None:
