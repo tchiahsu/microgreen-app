@@ -31,7 +31,7 @@ export default function Header() {
                         ))}
                     </ul>
                 </nav>
-                
+
                 {/* Top Right Side Buttons */}
                 <div className="flex justify-end items-center gap-8 bg-[#0b2f33] hover:bg-[#308261] text-white rounded-bl-2xl h-full px-2">
                     <button className="p-2 rounded-full active:scale-95 cursor-pointer"><CgMenuRightAlt size={40} /></button>
