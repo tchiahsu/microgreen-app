@@ -1,4 +1,5 @@
 -- ======================== FUNCTIONS TO RETRIEVE ID FROM NAME ================================
+USE microgreens_db;
 
 /*
 FUNCTIONS:
@@ -379,9 +380,9 @@ BEGIN
 	END IF;
     
     -- Validate order status
-    IF order_status_p NOT IN ('pending', 'scheduled', 'completed', 'cancelled') THEN
+    IF order_status_p NOT IN ('scheduled', 'completed', 'cancelled') THEN
 		SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'Invalid Order Status. Valid Option: pending, scheduled, completed, cancelled';
+			SET MESSAGE_TEXT = 'Invalid Order Status. Valid Option: scheduled, completed, cancelled';
 	END IF;   
     
     -- Validate quantity
@@ -1112,6 +1113,11 @@ BEGIN
 END //
 DELIMITER ;
 
+/*
+PROCEDURE
+----------
+This procedure assigns an employee to plant a crop
+*/
 DROP PROCEDURE IF EXISTS assign_employee_to_planting;
 DELIMITER //
 CREATE PROCEDURE assign_employee_to_planting(
@@ -1145,7 +1151,162 @@ BEGIN
 END //
 DELIMITER ;
 
+/*
+PROCEDURE
+----------
+This procedures updates information in an order
+*/
+DROP PROCEDURE IF EXISTS update_order;
+DELIMITER //
+CREATE PROCEDURE update_order(
+	order_id_p INT,
+    order_type_p VARCHAR(32),
+    order_status_p VARCHAR(32),
+    employee_id_p INT,
+    delivery_date_p DATE,
+    product_id_p INT,
+    quantity_p INT,
+    apply_to_future_p BOOL
+)
+BEGIN
+	DECLARE s_restaurant_id INT;
+    DECLARE s_product_id INT;
+    DECLARE s_date_created DATE;
+    DECLARE s_delivery_date DATE;
+    DECLARE s_order_type VARCHAR(32);
+    DECLARE lead_time INT;
+    DECLARE delivery_day_shift INT;
+    DECLARE lead_product_id INT;
 
+	-- Validate order type
+	IF order_type_p IS NOT NULL AND order_type_p NOT IN ("one-time", "bi-weekly", "weekly") THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Invalid Order Type. Valid Options: one-time, bi-weekly, weekly';
+	END IF;
 
+	-- Validate order status
+    IF order_status_p IS NOT NULL AND order_status_p NOT IN ("scheduled", "completed", "cancelled") THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Invalid Order Status. Valid Option: scheduled, completed, cancelled';
+	END IF;
 
+	-- Validate delivery date
+    IF delivery_date_p IS NOT NULL AND delivery_date_p < CURDATE() THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Delivery data cannot be before today';
+	END IF;
+	
+    -- Validate employee
+	IF employee_id_p IS NOT NULL AND NOT EXISTS (SELECT 1 FROM employee WHERE employee.employee_id = employee_id_p) THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Invalid Employee.';
+	END IF;
+    
+    -- Validate product
+    IF product_id_p IS NOT NULL AND
+		NOT EXISTS (SELECT 1 FROM product WHERE product.product_id = product_id_p) THEN
+        SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Invalid Product.';
+	END IF;
+    
+    -- Validate quantity
+    IF quantity_p IS NOT NULL AND quantity_p <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Quantiy must be greater than zero';
+	END IF;
+	
+    -- Get all instance of the order
+	SELECT customer_order.restaurant_id, customer_order.date_created, customer_order.delivery_date, customer_order.order_type, contains.product_id INTO
+		s_restaurant_id, s_date_created, s_delivery_date, s_order_type, s_product_id FROM customer_order
+		JOIN contains ON customer_order.order_id = contains.order_id
+        WHERE customer_order.order_id = order_id_p
+		LIMIT 1;
 
+	-- Validate Order
+    -- If the restaurant doesn't exist then there is no order assign to it.
+	IF s_restaurant_id IS NULL THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Order not found';
+	END IF;
+    
+    -- Find the number of days each delivery needs to be shifted
+    SET delivery_day_shift = CASE WHEN delivery_date_p IS NOT NULL
+        THEN DATEDIFF(delivery_date_p, s_delivery_date)
+        ELSE 0
+	END;
+    
+    -- Determine the lead time
+    SET lead_product_id = COALESCE(product_id_p, s_product_id);
+    
+    -- Find the lead time for this product to determined forced or not
+    SELECT MAX(days_indirect_light + days_direct_light + rack_grow_days) INTO lead_time FROM crop
+		JOIN composed_of ON crop.crop_id = composed_of.crop_id
+		WHERE composed_of.product_id = lead_product_id;
+	
+    IF lead_time IS NULL THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Product has no associated crops - no lead time';
+	END IF;
+    
+    -- Update this order or all future orders
+    IF apply_to_future_p = FALSE THEN
+    
+        IF delivery_date_p IS NOT NULL THEN
+			INSERT IGNORE INTO delivery (delivery_date, delivery_status, employee_id)
+				VALUES (delivery_date_p, 'scheduled', NULL);
+		END IF;
+
+		-- Update only one order
+		UPDATE customer_order
+		SET order_type = COALESCE(order_type_p, order_type),
+			order_status = COALESCE(order_status_p, order_status),
+            employee_id = COALESCE(employee_id_p, employee_id),
+            delivery_date = COALESCE(delivery_date_p, delivery_date),
+            is_forced = lead_time > DATEDIFF(COALESCE(delivery_date_p, delivery_date), CURDATE())
+		WHERE customer_order.order_id = order_id_p;
+		
+        -- update the product and quantity of the order
+        UPDATE contains
+        SET product_id = COALESCE(product_id_p, contains.product_id),
+			quantity = COALESCE(quantity_p, contains.quantity)
+		WHERE contains.order_id = order_id_p;
+	ELSE
+		IF delivery_day_shift <> 0 THEN
+			INSERT IGNORE INTO delivery (delivery_date, delivery_status, employee_id)
+            SELECT DISTINCT DATE_ADD(delivery_date, INTERVAL delivery_day_shift DAY), 'scheduled', NULL FROM customer_order
+				WHERE customer_order.restaurant_id = s_restaurant_id
+                AND customer_order.date_created = s_date_created
+                AND customer_order.order_type = s_order_type
+                AND customer_order.delivery_date >= s_delivery_date;
+		END IF;
+
+		-- Update entire future series
+        UPDATE customer_order
+        SET order_type = COALESCE(order_type_p, order_type),
+			order_status = COALESCE(order_status_p, order_status),
+            employee_id = COALESCE(employee_id_p, employee_id),
+            delivery_date = DATE_ADD(delivery_date, INTERVAL delivery_day_shift DAY)
+			WHERE restaurant_id = s_restaurant_id
+			AND date_created = s_date_created
+			AND order_type = s_order_type
+			AND delivery_date >= s_delivery_date;
+		
+        -- Update product and quantity for all orders
+        UPDATE contains JOIN customer_order ON contains.order_id = customer_order.order_id
+        SET contains.product_id = COALESCE(product_id_p, contains.product_id),
+			contains.quantity = COALESCE(quantity_p, contains.quantity)
+		WHERE customer_order.restaurant_id = s_restaurant_id
+		AND customer_order.date_created = s_date_created
+        AND customer_order.order_type = COALESCE(order_type_p, s_order_type)
+        AND customer_order.delivery_date >= DATE_ADD(s_delivery_date, INTERVAL delivery_day_shift DAY);
+        
+        -- Check for forced orders
+        UPDATE customer_order
+        SET is_forced = lead_time > DATEDIFF(delivery_date, CURDATE())
+			WHERE customer_order.restaurant_id = s_restaurant_id
+			AND customer_order.date_created = s_date_created
+			AND customer_order.order_type = COALESCE(order_type_p, s_order_type)
+			AND customer_order.delivery_date >= DATE_ADD(s_delivery_date, INTERVAL delivery_day_shift DAY);
+    END IF;
+END //
+DELIMITER ;

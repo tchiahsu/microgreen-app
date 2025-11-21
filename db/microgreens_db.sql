@@ -41,22 +41,16 @@ CREATE TABLE contact_info(
 		ON UPDATE CASCADE ON DELETE SET NULL
 );
 
-CREATE TABLE order_type(
-	type_name VARCHAR(32) PRIMARY KEY
-);
-
 CREATE TABLE customer_order(
 	order_id INT AUTO_INCREMENT PRIMARY KEY,
-    order_type VARCHAR(32) NOT NULL,
-    order_status ENUM("pending", "scheduled", "completed", "cancelled") NOT NULL, 
+    order_type ENUM("one-time", "b-weekly", "weekly") NOT NULL,
+    order_status ENUM("scheduled", "completed", "cancelled") NOT NULL, 
     employee_id INT NOT NULL,
     delivery_date DATE NOT NULL,
     restaurant_id INT NOT NULL,
     email VARCHAR(128), 
     date_created DATE NOT NULL,
     is_forced BOOLEAN NOT NULL,
-    FOREIGN KEY (order_type) REFERENCES order_type(type_name)
-		ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (employee_id) REFERENCES employee(employee_id) 
 		ON UPDATE CASCADE ON DELETE RESTRICT, 
 	FOREIGN KEY (delivery_date) REFERENCES delivery(delivery_date)
