@@ -209,13 +209,10 @@ DELIMITER //
 CREATE PROCEDURE get_orders_to_fulfill(
 	order_delivery_date_p DATE
 )
-BEGIN
-	WITH t AS(
-	SELECT DISTINCT order_id, product_id, restaurant_name, product_name, size_type, quantity FROM microgreens_view
-		WHERE (delivery_date = order_delivery_date_p)
-	) SELECT restaurant_name, product_name, size_type AS package_type, SUM(quantity) AS product_quantity FROM t
-		GROUP BY restaurant_name, product_name, size_type
-		ORDER BY restaurant_name;
+BEGIN   
+	SELECT order_id, restaurant_name, restaurant_id, product_id, product_name, size_type AS package_type, quantity, order_status, employee_id, delivery_date, is_forced FROM microgreens_view
+		WHERE delivery_date = order_delivery_date_p
+        ORDER BY restaurant_name, order_id, product_name;
 END //
 DELIMITER ;
 

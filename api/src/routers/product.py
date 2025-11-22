@@ -111,7 +111,8 @@ async def add_packaging(data: PackagingData):
 # UPDATE PRODUCT INFORMATION
 # ----------------------------------------
 @router.put("/update_product/{product_name}/{package_name}")
-async def update_product(product_name: str, package_name: str, data: UpdateProduct):
+async def update_product(product_name: str, package_name: str,
+                         data: UpdateProduct):
     '''
     Update product given the product id.
     Example: PUT /product/update_product/101/1
@@ -123,7 +124,7 @@ async def update_product(product_name: str, package_name: str, data: UpdateProdu
     cursor = db.cursor()
 
     try:
-         # Get the package ID
+        # Get the package ID
         cursor.execute("SELECT get_package_id(%s) AS id", (package_name,))
         result = cursor.fetchone()
         if result is None or result["id"] is None:
@@ -183,7 +184,7 @@ async def add_product(data: AddProduct):
             ))
         db.commit()
 
-         # Get the product ID
+        # Get the product ID
         cursor.execute("SELECT get_product_id(%s, %s) AS id",
                        (data.product_name, data.package_id))
         result = cursor.fetchone()
@@ -191,7 +192,6 @@ async def add_product(data: AddProduct):
             raise HTTPException(status_code=400,
                                 detail=f"{data.product_name} does not exist")
         product_id = result["id"]
-        print(product_id)
 
         # Insert new product's ratio composition into composed_of table
         for composition in data.list_of_composition:
