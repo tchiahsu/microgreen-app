@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { PlantingItem, GermItem } from "../../types/crop";
 import { Table } from "../../components/table";
+import { Calendar28 } from "../../components/date";
 
 export default function Home() {
     const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().slice(0,10));
@@ -51,28 +52,31 @@ export default function Home() {
 
 
     return (
-        <div className="p-6 text-sm font-mono">
+        <div className="text-sm font-mono">
             <div className="flex items-center gap-5 mb-5 px-20">
-                <input
-                    id="date"
-                    type="date"
-                    className="border border-gray-400 rounded-lg px-3 py-2"
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
+                <Calendar28
+                    selectedDate={selectedDate}
+                    onChange={(value) => setSelectedDate(value)}
                 />
             </div>
-            <div className="flex w-full items-start justify-between px-20">
-                <div className="p-5 bg-white/60 rounded-lg">
-                    <h2 className="font-semibold text-lg mb-5">Planting Summary</h2>
-                    <Table columns={plantingColumns} data={plantingInfo}/>
+            <div className="flex w-full items-start justify-between gap-6 px-20">
+                <div className="p-5 bg-white/60 rounded-lg h-160 flex flex-col w-[380px]">
+                    <h2 className="font-semibold text-lg mb-5 text-[#308261] flex-shrink-0">Planting Summary</h2>
+                    <div className="flex-1 overflow-y-auto">
+                        <Table columns={plantingColumns} data={plantingInfo}/>
+                    </div>
                 </div>
-                <div className="p-5 bg-white/60 rounded-lg">
-                    <h2 className="font-semibold text-lg mb-5">Germination Summary</h2>
-                     <Table columns={germinationColumns} data={outGerm}/>
+                <div className="p-5 bg-white/60 rounded-lg h-160 flex flex-col w-[460px]">
+                    <h2 className="font-semibold text-lg mb-5 text-[#308261]">Germination Summary</h2>
+                    <div className="flex-1 overflow-y-auto">
+                        <Table columns={germinationColumns} data={outGerm}/>
+                    </div>
                 </div>
-                <div className="p-5 bg-white/60 rounded-lg">
-                    <h2 className="font-semibold text-lg mb-5">Switch Summary</h2>
-                     <Table columns={switchColumns} data={switchGerm}/>
+                <div className="p-5 bg-white/60 rounded-lg h-160 flex flex-col w-[460px]">
+                    <h2 className="font-semibold text-lg mb-5 text-[#308261]">Switch Summary</h2>
+                     <div className="flex-1 overflow-y-auto">
+                        <Table columns={switchColumns} data={switchGerm}/>
+                    </div>
                 </div>
             </div>
         </div>

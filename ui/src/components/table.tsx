@@ -36,7 +36,7 @@ export function Table({columns, data}: TableProps){
                         {columns.map((column) => (
                             <td key={column.key} 
                             className={clsx(         
-                                "px-4 py-3",
+                                "px-4 py-3 ",
                                 column.align == "center" && "text-center",
                                 column.align == "right" && "text-right"
                             )}
