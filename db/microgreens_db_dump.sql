@@ -60,15 +60,17 @@ DROP TABLE IF EXISTS `contact_info`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `contact_info` (
+  `contact_id` int NOT NULL AUTO_INCREMENT,
   `restaurant_id` int DEFAULT NULL,
-  `email` varchar(128) NOT NULL,
+  `email` varchar(128) DEFAULT NULL,
   `first_name` varchar(64) NOT NULL,
   `last_name` varchar(64) NOT NULL,
   `phone` varchar(20) NOT NULL,
-  PRIMARY KEY (`email`),
+  PRIMARY KEY (`contact_id`),
+  UNIQUE KEY `email` (`email`),
   KEY `restaurant_id` (`restaurant_id`),
   CONSTRAINT `contact_info_ibfk_1` FOREIGN KEY (`restaurant_id`) REFERENCES `restaurant` (`restaurant_id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -77,7 +79,7 @@ CREATE TABLE `contact_info` (
 
 LOCK TABLES `contact_info` WRITE;
 /*!40000 ALTER TABLE `contact_info` DISABLE KEYS */;
-INSERT INTO `contact_info` VALUES (30,'adrian.s@zuma.test','Adrian','Shaw','(617) 555-0204'),(4,'alex.rivera@locosouthboston.test','Alex','Rivera','(617) 917-5626'),(50,'alina.c@rukaboston.test','Alina','Cortez','(617) 555-9925'),(14,'amanda.chen@daviosseaport.test','Amanda','Chen','(617) 261-4810'),(54,'andre@caveauboston.test','Andre','Pascal','(617) 555-7831'),(43,'arnaud@lavoile.test','Arnaud','Lefevre','(617) 555-0049'),(34,'brian.cole@glasshouse.test','Brian','Cole','(617) 555-8830'),(45,'camille@rochambeau.test','Camille','Roux','(617) 555-6620'),(13,'carlos.diaz@hookandlineboston.test','Carlos','Diaz','(617) 860-6003'),(3,'casey.nguyen@fatbabysouthboston.test','Casey','Nguyen','(617) 766-3450'),(51,'chloe@yvonnes.test','Chloe','Martin','(617) 555-8201'),(41,'colin.b@typhoon.test','Colin','Bryce','(617) 555-7211'),(5,'dana.collins@224boston.test','Dana','Collins','(617) 265-1217'),(22,'daniel.reyes@311boston.test','Daniel','Reyes','(617) 555-3110'),(44,'dimitri@krasi.test','Dimitri','Anastos','(617) 555-8870'),(23,'elise.laurent@frenchie.test','Elise','Laurent','(617) 555-7632'),(8,'elise.romano@coquetteboston.test','Elise','Romano','(617) 882-0090'),(31,'emma@littledonkey.test','Emma','Duarte','(617) 555-5501'),(62,'eric@theblock.test','Eric','DeMarco','(617) 555-9091'),(12,'erin.foster@woodshillpier4.test','Erin','Foster','(617) 981-4577'),(35,'hana.m@nagomi.test','Hana','Minami','(617) 555-2094'),(16,'hannah.clarke@trilliumseaport.test','Hannah','Clarke','(857) 449-0083'),(21,'haru.w@oishiiboston.test','Haru','Watanabe','(617) 555-0821'),(29,'isabella.c@portoboston.test','Isabella','Costa','(617) 555-4678'),(9,'jamie.park@mrhchinese.test','Jamie','Park','(617) 458-8008'),(61,'jenna@brewersfork.test','Jenna','Caruso','(617) 555-3741'),(2,'jordan.price@huntersboston.test','Jordan','Price','(617) 221-4200'),(17,'jordan.singh@tradeboston.test','Jordan','Singh','(617) 451-1234'),(32,'julian@pammys.test','Julian','Reed','(617) 555-1119'),(63,'katie@row34.test','Katie','Mills','(617) 555-3488'),(39,'keiko@uniboston.test','Keiko','Fujita','(617) 555-7722'),(28,'ken.n@douzoboston.test','Ken','Nakamura','(617) 555-8023'),(68,'kenji@cafesushi.test','Kenji','Yamamoto','(617) 555-6284'),(10,'lauren.bishop@oceanprimeboston.test','Lauren','Bishop','(617) 670-1345'),(36,'leo@locofenway.test','Leo','Carver','(617) 555-4410'),(26,'luca.b@srvboston.test','Luca','Benetti','(617) 555-2974'),(64,'luca@capristeak.test','Luca','Moretti','(617) 555-7719'),(53,'madeline@oceanaire.test','Madeline','Shaw','(617) 555-6612'),(49,'marcel@bistrodu.test','Marcel','Boucher','(617) 555-1020'),(24,'marcus.yates@kaia.test','Marcus','Yates','(617) 555-9092'),(1,'maria.rossi@caposouthboston.test','Maria','Rossi','(617) 993-8080'),(47,'max.d@thebanks.test','Max','Donovan','(617) 555-7071'),(33,'mei.tan@catalyst.test','Mei','Tan','(617) 555-0042'),(19,'miguel.silva@baleiaboston.test','Miguel','Silva','(617) 505-3243'),(65,'mila@ilona.test','Mila','Kirova','(617) 555-2983'),(11,'morgan.lee@nautilusboston.test','Morgan','Lee','(857) 957-0998'),(18,'naomi.park@oya.boston.test','Naomi','Park','(617) 654-9900'),(37,'natalie@hotelcommonwealth.test','Natalie','OHara','(617) 555-3100'),(57,'nisha@thaigerden.test','Nisha','Boon','(617) 555-7440'),(9,'noah.chen@mrhchinese.test','Noah','Chen','(617) 458-8008'),(20,'olivia.moore@fujiinkblock.test','Olivia','Moore','(617) 936-3282'),(48,'olivia.p@daviosarlington.test','Olivia','Porter','(617) 555-8831'),(58,'patrick@harvest.test','Patrick','Lane','(617) 555-2014'),(38,'pierre@deuxave.test','Pierre','Morel','(617) 555-8803'),(4,'priya.shah@locosouthboston.test','Priya','Shah','(617) 917-5626'),(40,'rachel.moore@citytable.test','Rachel','Moore','(617) 555-4700'),(52,'rafael@mariel.test','Rafeal','Torres','(617) 555-4930'),(67,'raven@essexboston.test','Raven','Brooks','(617) 555-6604'),(70,'rika@washin.test','Rika','Sato','(617) 555-7402'),(6,'riley.morgan@petulasboston.test','Riley','Morgan','(617) 752-4531'),(59,'sabrina@dovetail.test','Sabrina','Mills','(617) 555-9871'),(2,'sam.lee@huntersboston.test','Sam','Lee','(617) 221-4200'),(46,'serena.v@lapadrona.test','Serena','Velanti','(617) 555-3302'),(55,'sofia.romano@mammamaria.test','Sofia','Romano','(617) 555-0147'),(27,'sophie.grant@gigiboston.test','Sophie','Grant','(617) 555-7711'),(25,'tara.f@shoreleave.test','Tara','Flynn','(617) 555-4433'),(7,'taylor.brooks@chickadeeboston.test','Taylor','Brooks','(617) 531-5591'),(71,'tobias.grant@asta.test','Tobias','Grant','(617) 555-4127'),(66,'trevor@1928cambridge.test','Trevor','Shaw','(617) 555-1928'),(56,'tyler@hobsons.test','Tyler','Khan','(617) 555-9022'),(42,'vanessa.k@saltiegirl.test','Vanessa','King','(617) 555-9083'),(15,'victor.russo@serafinaseaport.test','Victor','Russo','(617) 426-1234'),(60,'victor@primaboston.test','Victor','Almeida','(617) 555-6320'),(69,'vivian@nine.test','Vivian','Wong','(617) 555-0909');
+INSERT INTO `contact_info` VALUES (1,1,'maria.rossi@caposouthboston.test','Maria','Rossi','(617) 993-8080'),(2,2,'jordan.price@huntersboston.test','Jordan','Price','(617) 221-4200'),(3,2,'sam.lee@huntersboston.test','Sam','Lee','(617) 221-4200'),(4,3,'casey.nguyen@fatbabysouthboston.test','Casey','Nguyen','(617) 766-3450'),(5,4,'alex.rivera@locosouthboston.test','Alex','Rivera','(617) 917-5626'),(6,4,'priya.shah@locosouthboston.test','Priya','Shah','(617) 917-5626'),(7,5,'dana.collins@224boston.test','Dana','Collins','(617) 265-1217'),(8,6,'riley.morgan@petulasboston.test','Riley','Morgan','(617) 752-4531'),(9,7,'taylor.brooks@chickadeeboston.test','Taylor','Brooks','(617) 531-5591'),(10,8,'elise.romano@coquetteboston.test','Elise','Romano','(617) 882-0090'),(11,9,'noah.chen@mrhchinese.test','Noah','Chen','(617) 458-8008'),(12,9,'jamie.park@mrhchinese.test','Jamie','Park','(617) 458-8008'),(13,10,'lauren.bishop@oceanprimeboston.test','Lauren','Bishop','(617) 670-1345'),(14,11,'morgan.lee@nautilusboston.test','Morgan','Lee','(857) 957-0998'),(15,12,'erin.foster@woodshillpier4.test','Erin','Foster','(617) 981-4577'),(16,13,'carlos.diaz@hookandlineboston.test','Carlos','Diaz','(617) 860-6003'),(17,14,'amanda.chen@daviosseaport.test','Amanda','Chen','(617) 261-4810'),(18,15,'victor.russo@serafinaseaport.test','Victor','Russo','(617) 426-1234'),(19,16,'hannah.clarke@trilliumseaport.test','Hannah','Clarke','(857) 449-0083'),(20,17,'jordan.singh@tradeboston.test','Jordan','Singh','(617) 451-1234'),(21,18,'naomi.park@oya.boston.test','Naomi','Park','(617) 654-9900'),(22,19,'miguel.silva@baleiaboston.test','Miguel','Silva','(617) 505-3243'),(23,20,'olivia.moore@fujiinkblock.test','Olivia','Moore','(617) 936-3282'),(24,21,'haru.w@oishiiboston.test','Haru','Watanabe','(617) 555-0821'),(25,22,'daniel.reyes@311boston.test','Daniel','Reyes','(617) 555-3110'),(26,23,'elise.laurent@frenchie.test','Elise','Laurent','(617) 555-7632'),(27,24,'marcus.yates@kaia.test','Marcus','Yates','(617) 555-9092'),(28,25,'tara.f@shoreleave.test','Tara','Flynn','(617) 555-4433'),(29,26,'luca.b@srvboston.test','Luca','Benetti','(617) 555-2974'),(30,27,'sophie.grant@gigiboston.test','Sophie','Grant','(617) 555-7711'),(31,28,'ken.n@douzoboston.test','Ken','Nakamura','(617) 555-8023'),(32,29,'isabella.c@portoboston.test','Isabella','Costa','(617) 555-4678'),(33,30,'adrian.s@zuma.test','Adrian','Shaw','(617) 555-0204'),(34,31,'emma@littledonkey.test','Emma','Duarte','(617) 555-5501'),(35,32,'julian@pammys.test','Julian','Reed','(617) 555-1119'),(36,33,'mei.tan@catalyst.test','Mei','Tan','(617) 555-0042'),(37,34,'brian.cole@glasshouse.test','Brian','Cole','(617) 555-8830'),(38,35,'hana.m@nagomi.test','Hana','Minami','(617) 555-2094'),(39,36,'leo@locofenway.test','Leo','Carver','(617) 555-4410'),(40,37,'natalie@hotelcommonwealth.test','Natalie','OHara','(617) 555-3100'),(41,38,'pierre@deuxave.test','Pierre','Morel','(617) 555-8803'),(42,39,'keiko@uniboston.test','Keiko','Fujita','(617) 555-7722'),(43,40,'rachel.moore@citytable.test','Rachel','Moore','(617) 555-4700'),(44,41,'colin.b@typhoon.test','Colin','Bryce','(617) 555-7211'),(45,42,'vanessa.k@saltiegirl.test','Vanessa','King','(617) 555-9083'),(46,43,'arnaud@lavoile.test','Arnaud','Lefevre','(617) 555-0049'),(47,44,'dimitri@krasi.test','Dimitri','Anastos','(617) 555-8870'),(48,45,'camille@rochambeau.test','Camille','Roux','(617) 555-6620'),(49,46,'serena.v@lapadrona.test','Serena','Velanti','(617) 555-3302'),(50,47,'max.d@thebanks.test','Max','Donovan','(617) 555-7071'),(51,48,'olivia.p@daviosarlington.test','Olivia','Porter','(617) 555-8831'),(52,49,'marcel@bistrodu.test','Marcel','Boucher','(617) 555-1020'),(53,50,'alina.c@rukaboston.test','Alina','Cortez','(617) 555-9925'),(54,51,'chloe@yvonnes.test','Chloe','Martin','(617) 555-8201'),(55,52,'rafael@mariel.test','Rafeal','Torres','(617) 555-4930'),(56,53,'madeline@oceanaire.test','Madeline','Shaw','(617) 555-6612'),(57,54,'andre@caveauboston.test','Andre','Pascal','(617) 555-7831'),(58,55,'sofia.romano@mammamaria.test','Sofia','Romano','(617) 555-0147'),(59,56,'tyler@hobsons.test','Tyler','Khan','(617) 555-9022'),(60,57,'nisha@thaigerden.test','Nisha','Boon','(617) 555-7440'),(61,58,'patrick@harvest.test','Patrick','Lane','(617) 555-2014'),(62,59,'sabrina@dovetail.test','Sabrina','Mills','(617) 555-9871'),(63,60,'victor@primaboston.test','Victor','Almeida','(617) 555-6320'),(64,61,'jenna@brewersfork.test','Jenna','Caruso','(617) 555-3741'),(65,62,'eric@theblock.test','Eric','DeMarco','(617) 555-9091'),(66,63,'katie@row34.test','Katie','Mills','(617) 555-3488'),(67,64,'luca@capristeak.test','Luca','Moretti','(617) 555-7719'),(68,65,'mila@ilona.test','Mila','Kirova','(617) 555-2983'),(69,66,'trevor@1928cambridge.test','Trevor','Shaw','(617) 555-1928'),(70,67,'raven@essexboston.test','Raven','Brooks','(617) 555-6604'),(71,68,'kenji@cafesushi.test','Kenji','Yamamoto','(617) 555-6284'),(72,69,'vivian@nine.test','Vivian','Wong','(617) 555-0909'),(73,70,'rika@washin.test','Rika','Sato','(617) 555-7402'),(74,71,'tobias.grant@asta.test','Tobias','Grant','(617) 555-4127');
 /*!40000 ALTER TABLE `contact_info` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -154,8 +156,8 @@ DROP TABLE IF EXISTS `customer_order`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `customer_order` (
   `order_id` int NOT NULL AUTO_INCREMENT,
-  `order_type` varchar(32) NOT NULL,
-  `order_status` enum('pending','scheduled','completed','cancelled') NOT NULL,
+  `order_type` enum('one-time','b-weekly','weekly') NOT NULL,
+  `order_status` enum('scheduled','completed','cancelled') NOT NULL,
   `employee_id` int NOT NULL,
   `delivery_date` date NOT NULL,
   `restaurant_id` int NOT NULL,
@@ -163,16 +165,14 @@ CREATE TABLE `customer_order` (
   `date_created` date NOT NULL,
   `is_forced` tinyint(1) NOT NULL,
   PRIMARY KEY (`order_id`),
-  KEY `order_type` (`order_type`),
   KEY `employee_id` (`employee_id`),
   KEY `delivery_date` (`delivery_date`),
   KEY `restaurant_id` (`restaurant_id`),
   KEY `email` (`email`),
-  CONSTRAINT `customer_order_ibfk_1` FOREIGN KEY (`order_type`) REFERENCES `order_type` (`type_name`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `customer_order_ibfk_2` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`employee_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT `customer_order_ibfk_3` FOREIGN KEY (`delivery_date`) REFERENCES `delivery` (`delivery_date`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT `customer_order_ibfk_4` FOREIGN KEY (`restaurant_id`) REFERENCES `restaurant` (`restaurant_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT `customer_order_ibfk_5` FOREIGN KEY (`email`) REFERENCES `contact_info` (`email`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `customer_order_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`employee_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `customer_order_ibfk_2` FOREIGN KEY (`delivery_date`) REFERENCES `delivery` (`delivery_date`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `customer_order_ibfk_3` FOREIGN KEY (`restaurant_id`) REFERENCES `restaurant` (`restaurant_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `customer_order_ibfk_4` FOREIGN KEY (`email`) REFERENCES `contact_info` (`email`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=941 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -267,35 +267,13 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `quantity`,
  1 AS `restaurant_name`,
  1 AS `order_id`,
+ 1 AS `order_status`,
  1 AS `size_type`,
  1 AS `trays_needed`,
  1 AS `planting_date`,
  1 AS `germination_date`,
  1 AS `switch_date`*/;
 SET character_set_client = @saved_cs_client;
-
---
--- Table structure for table `order_type`
---
-
-DROP TABLE IF EXISTS `order_type`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `order_type` (
-  `type_name` varchar(32) NOT NULL,
-  PRIMARY KEY (`type_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `order_type`
---
-
-LOCK TABLES `order_type` WRITE;
-/*!40000 ALTER TABLE `order_type` DISABLE KEYS */;
-INSERT INTO `order_type` VALUES ('bi-weekly'),('one-time'),('weekly');
-/*!40000 ALTER TABLE `order_type` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `packaging`
@@ -781,9 +759,9 @@ BEGIN
 	END IF;
     
     -- Validate order status
-    IF order_status_p NOT IN ('pending', 'scheduled', 'completed', 'cancelled') THEN
+    IF order_status_p NOT IN ('scheduled', 'completed', 'cancelled') THEN
 		SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'Invalid Order Status. Valid Option: pending, scheduled, completed, cancelled';
+			SET MESSAGE_TEXT = 'Invalid Order Status. Valid Option: scheduled, completed, cancelled';
 	END IF;   
     
     -- Validate quantity
@@ -989,6 +967,50 @@ BEGIN
 
 	INSERT INTO product (product_name, weight_grams, is_active, package_id) VALUES
 		(product_name_p, weight_grams_p, is_active_p, package_id_p);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `assign_employee_to_planting` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `assign_employee_to_planting`(
+	employee_id_p INT,
+    crop_id_p INT
+)
+BEGIN
+	DECLARE found_id1 INT;
+    DECLARE found_id2 INT;
+	-- Check if value provided for product_id is valid
+	SELECT employee_id INTO found_id1 FROM employee
+		WHERE employee_id = employee_id_p;
+		
+	IF found_id1 IS NULL THEN 
+		SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'The value provided for employee_id is not valid.';
+	END IF;
+	
+	SELECT crop_id INTO found_id2 FROM crop 
+		WHERE crop_id = crop_id_p;
+	
+	IF found_id2 IS NULL THEN 
+		SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'The value provided for crop_id is not valid.';
+	END IF;
+	
+	DELETE FROM plants WHERE crop_id = crop_id_p;
+	
+	INSERT INTO plants (employee_id, crop_id)
+	VALUES (employee_id_p, crop_id_p);
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1368,7 +1390,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `get_orders_to_fulfill`(
 )
 BEGIN
 	WITH t AS(
-	SELECT DISTINCT order_id, product_id, restaurant_name, product_name, size_type, quantity FROM microgreens_view
+	SELECT DISTINCT order_id, product_id, restaurant_name, product_name, size_type, quantity, order_status FROM microgreens_view
 		WHERE (delivery_date = order_delivery_date_p)
 	) SELECT restaurant_name, product_name, size_type AS package_type, SUM(quantity) AS product_quantity FROM t
 		GROUP BY restaurant_name, product_name, size_type
@@ -1490,30 +1512,21 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `update_contact_info`(
+	contact_id_p INT,
+    restaurant_id_p INT,
 	email_p VARCHAR(128), 
     first_name_p VARCHAR(64), 
     last_name_p VARCHAR(64), 
-    phone_p VARCHAR(20),
-    restaurant_id_p VARCHAR(6)
+    phone_p VARCHAR(20)
 )
 BEGIN
-	DECLARE found_email VARCHAR(128);
-    -- Check if value provided for email is valid
-    SELECT email INTO found_email FROM contact_info
-		WHERE email = email_p;
-        
-	IF found_email IS NULL THEN
-		SIGNAL SQLSTATE '45000'
-				SET MESSAGE_TEXT = 'The value provided for email is not valid.';
-    END IF;
-    
-    
 	UPDATE contact_info
-    SET first_name = COALESCE(first_name_p, first_name),
+    SET email = COALESCE(email_p, email),
+		first_name = COALESCE(first_name_p, first_name),
 		last_name = COALESCE(last_name_p, last_name),
 		phone = COALESCE(phone_p, phone),
         restaurant_id = COALESCE(restaurant_id_p, restaurant_id)
-	WHERE email = email_p;
+	WHERE contact_info.contact_id = contact_id_p;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1629,6 +1642,172 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `update_order` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_order`(
+	order_id_p INT,
+    order_type_p VARCHAR(32),
+    order_status_p VARCHAR(32),
+    employee_id_p INT,
+    delivery_date_p DATE,
+    product_id_p INT,
+    quantity_p INT,
+    apply_to_future_p BOOL
+)
+BEGIN
+	DECLARE s_restaurant_id INT;
+    DECLARE s_product_id INT;
+    DECLARE s_date_created DATE;
+    DECLARE s_delivery_date DATE;
+    DECLARE s_order_type VARCHAR(32);
+    DECLARE lead_time INT;
+    DECLARE delivery_day_shift INT;
+    DECLARE lead_product_id INT;
+
+	-- Validate order type
+	IF order_type_p IS NOT NULL AND order_type_p NOT IN ("one-time", "bi-weekly", "weekly") THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Invalid Order Type. Valid Options: one-time, bi-weekly, weekly';
+	END IF;
+
+	-- Validate order status
+    IF order_status_p IS NOT NULL AND order_status_p NOT IN ("scheduled", "completed", "cancelled") THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Invalid Order Status. Valid Option: scheduled, completed, cancelled';
+	END IF;
+
+	-- Validate delivery date
+    IF delivery_date_p IS NOT NULL AND delivery_date_p < CURDATE() THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Delivery data cannot be before today';
+	END IF;
+	
+    -- Validate employee
+	IF employee_id_p IS NOT NULL AND NOT EXISTS (SELECT 1 FROM employee WHERE employee.employee_id = employee_id_p) THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Invalid Employee.';
+	END IF;
+    
+    -- Validate product
+    IF product_id_p IS NOT NULL AND
+		NOT EXISTS (SELECT 1 FROM product WHERE product.product_id = product_id_p) THEN
+        SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Invalid Product.';
+	END IF;
+    
+    -- Validate quantity
+    IF quantity_p IS NOT NULL AND quantity_p <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Quantiy must be greater than zero';
+	END IF;
+	
+    -- Get all instance of the order
+	SELECT customer_order.restaurant_id, customer_order.date_created, customer_order.delivery_date, customer_order.order_type, contains.product_id INTO
+		s_restaurant_id, s_date_created, s_delivery_date, s_order_type, s_product_id FROM customer_order
+		JOIN contains ON customer_order.order_id = contains.order_id
+        WHERE customer_order.order_id = order_id_p
+		LIMIT 1;
+
+	-- Validate Order
+    -- If the restaurant doesn't exist then there is no order assign to it.
+	IF s_restaurant_id IS NULL THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Order not found';
+	END IF;
+    
+    -- Find the number of days each delivery needs to be shifted
+    SET delivery_day_shift = CASE WHEN delivery_date_p IS NOT NULL
+        THEN DATEDIFF(delivery_date_p, s_delivery_date)
+        ELSE 0
+	END;
+    
+    -- Determine the lead time
+    SET lead_product_id = COALESCE(product_id_p, s_product_id);
+    
+    -- Find the lead time for this product to determined forced or not
+    SELECT MAX(days_indirect_light + days_direct_light + rack_grow_days) INTO lead_time FROM crop
+		JOIN composed_of ON crop.crop_id = composed_of.crop_id
+		WHERE composed_of.product_id = lead_product_id;
+	
+    IF lead_time IS NULL THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Product has no associated crops - no lead time';
+	END IF;
+    
+    -- Update this order or all future orders
+    IF apply_to_future_p = FALSE THEN
+    
+        IF delivery_date_p IS NOT NULL THEN
+			INSERT IGNORE INTO delivery (delivery_date, delivery_status, employee_id)
+				VALUES (delivery_date_p, 'scheduled', NULL);
+		END IF;
+
+		-- Update only one order
+		UPDATE customer_order
+		SET order_type = COALESCE(order_type_p, order_type),
+			order_status = COALESCE(order_status_p, order_status),
+            employee_id = COALESCE(employee_id_p, employee_id),
+            delivery_date = COALESCE(delivery_date_p, delivery_date),
+            is_forced = lead_time > DATEDIFF(COALESCE(delivery_date_p, delivery_date), CURDATE())
+		WHERE customer_order.order_id = order_id_p;
+		
+        -- update the product and quantity of the order
+        UPDATE contains
+        SET product_id = COALESCE(product_id_p, contains.product_id),
+			quantity = COALESCE(quantity_p, contains.quantity)
+		WHERE contains.order_id = order_id_p;
+	ELSE
+		IF delivery_day_shift <> 0 THEN
+			INSERT IGNORE INTO delivery (delivery_date, delivery_status, employee_id)
+            SELECT DISTINCT DATE_ADD(delivery_date, INTERVAL delivery_day_shift DAY), 'scheduled', NULL FROM customer_order
+				WHERE customer_order.restaurant_id = s_restaurant_id
+                AND customer_order.date_created = s_date_created
+                AND customer_order.order_type = s_order_type
+                AND customer_order.delivery_date >= s_delivery_date;
+		END IF;
+
+		-- Update entire future series
+        UPDATE customer_order
+        SET order_type = COALESCE(order_type_p, order_type),
+			order_status = COALESCE(order_status_p, order_status),
+            employee_id = COALESCE(employee_id_p, employee_id),
+            delivery_date = DATE_ADD(delivery_date, INTERVAL delivery_day_shift DAY)
+			WHERE restaurant_id = s_restaurant_id
+			AND date_created = s_date_created
+			AND order_type = s_order_type
+			AND delivery_date >= s_delivery_date;
+		
+        -- Update product and quantity for all orders
+        UPDATE contains JOIN customer_order ON contains.order_id = customer_order.order_id
+        SET contains.product_id = COALESCE(product_id_p, contains.product_id),
+			contains.quantity = COALESCE(quantity_p, contains.quantity)
+		WHERE customer_order.restaurant_id = s_restaurant_id
+		AND customer_order.date_created = s_date_created
+        AND customer_order.order_type = COALESCE(order_type_p, s_order_type)
+        AND customer_order.delivery_date >= DATE_ADD(s_delivery_date, INTERVAL delivery_day_shift DAY);
+        
+        -- Check for forced orders
+        UPDATE customer_order
+        SET is_forced = lead_time > DATEDIFF(delivery_date, CURDATE())
+			WHERE customer_order.restaurant_id = s_restaurant_id
+			AND customer_order.date_created = s_date_created
+			AND customer_order.order_type = COALESCE(order_type_p, s_order_type)
+			AND customer_order.delivery_date >= DATE_ADD(s_delivery_date, INTERVAL delivery_day_shift DAY);
+    END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `update_packaging` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -1729,7 +1908,7 @@ USE `microgreens_db`;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `microgreens_view` AS select `crop`.`crop_name` AS `crop_name`,`crop`.`days_indirect_light` AS `days_indirect_light`,`crop`.`days_direct_light` AS `days_direct_light`,`crop`.`rack_grow_days` AS `rack_grow_days`,`crop`.`yield_per_tray` AS `yield_per_tray`,`delivery`.`delivery_date` AS `delivery_date`,`composed_of`.`crop_ratio` AS `crop_ratio`,`composed_of`.`crop_id` AS `crop_id`,`product`.`product_id` AS `product_id`,`product`.`product_name` AS `product_name`,`product`.`weight_grams` AS `weight_grams`,`contains`.`quantity` AS `quantity`,`restaurant`.`restaurant_name` AS `restaurant_name`,`customer_order`.`order_id` AS `order_id`,`packaging`.`size_type` AS `size_type`,ceiling(ifnull((((`composed_of`.`crop_ratio` * `product`.`weight_grams`) * `contains`.`quantity`) / `crop`.`yield_per_tray`),1)) AS `trays_needed`,(`delivery`.`delivery_date` - interval ((`crop`.`days_indirect_light` + `crop`.`days_direct_light`) + `crop`.`rack_grow_days`) day) AS `planting_date`,(`delivery`.`delivery_date` - interval `crop`.`rack_grow_days` day) AS `germination_date`,(`delivery`.`delivery_date` - interval (`crop`.`days_indirect_light` + `crop`.`rack_grow_days`) day) AS `switch_date` from (((((((`crop` join `composed_of` on((`crop`.`crop_id` = `composed_of`.`crop_id`))) join `product` on((`composed_of`.`product_id` = `product`.`product_id`))) join `contains` on((`contains`.`product_id` = `product`.`product_id`))) join `customer_order` on((`customer_order`.`order_id` = `contains`.`order_id`))) join `packaging` on((`product`.`package_id` = `packaging`.`package_id`))) join `delivery` on((`customer_order`.`delivery_date` = `delivery`.`delivery_date`))) join `restaurant` on((`customer_order`.`restaurant_id` = `restaurant`.`restaurant_id`))) order by `delivery`.`delivery_date` */;
+/*!50001 VIEW `microgreens_view` AS select `crop`.`crop_name` AS `crop_name`,`crop`.`days_indirect_light` AS `days_indirect_light`,`crop`.`days_direct_light` AS `days_direct_light`,`crop`.`rack_grow_days` AS `rack_grow_days`,`crop`.`yield_per_tray` AS `yield_per_tray`,`delivery`.`delivery_date` AS `delivery_date`,`composed_of`.`crop_ratio` AS `crop_ratio`,`composed_of`.`crop_id` AS `crop_id`,`product`.`product_id` AS `product_id`,`product`.`product_name` AS `product_name`,`product`.`weight_grams` AS `weight_grams`,`contains`.`quantity` AS `quantity`,`restaurant`.`restaurant_name` AS `restaurant_name`,`customer_order`.`order_id` AS `order_id`,`customer_order`.`order_status` AS `order_status`,`packaging`.`size_type` AS `size_type`,ceiling(ifnull((((`composed_of`.`crop_ratio` * `product`.`weight_grams`) * `contains`.`quantity`) / `crop`.`yield_per_tray`),1)) AS `trays_needed`,(`delivery`.`delivery_date` - interval ((`crop`.`days_indirect_light` + `crop`.`days_direct_light`) + `crop`.`rack_grow_days`) day) AS `planting_date`,(`delivery`.`delivery_date` - interval `crop`.`rack_grow_days` day) AS `germination_date`,(`delivery`.`delivery_date` - interval (`crop`.`days_indirect_light` + `crop`.`rack_grow_days`) day) AS `switch_date` from (((((((`crop` join `composed_of` on((`crop`.`crop_id` = `composed_of`.`crop_id`))) join `product` on((`composed_of`.`product_id` = `product`.`product_id`))) join `contains` on((`contains`.`product_id` = `product`.`product_id`))) join `customer_order` on((`customer_order`.`order_id` = `contains`.`order_id`))) join `packaging` on((`product`.`package_id` = `packaging`.`package_id`))) join `delivery` on((`customer_order`.`delivery_date` = `delivery`.`delivery_date`))) join `restaurant` on((`customer_order`.`restaurant_id` = `restaurant`.`restaurant_id`))) order by `delivery`.`delivery_date` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -1743,4 +1922,4 @@ USE `microgreens_db`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-20  0:01:30
+-- Dump completed on 2025-11-22 13:31:04
