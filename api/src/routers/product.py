@@ -231,10 +231,10 @@ async def delete_product(product_id: int):
         # product, contains, and composed_of:
         # First delete product form the table contains
         cursor.callproc("delete_from_contains", (product_id,))
-        db.commit
+        db.commit()
         # Then delete product from the table composed_of
         cursor.callproc("delete_from_composed_of", (product_id,))
-        db.commit
+        db.commit()
         # Finalize by deleting product from the product table
         cursor.callproc("delete_product", (product_id,))
         db.commit()

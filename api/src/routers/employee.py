@@ -2,7 +2,8 @@ from fastapi import APIRouter, HTTPException
 from src.database import connect_db
 from src.models.employee import EmployeeData
 
-router = APIRouter(prefix="/employee", tags=["employee"])
+router = APIRouter(prefix="/employees", tags=["employees"])
+
 
 # ----------------------------------------
 # ADD A NEW EMPLOYEE
@@ -70,3 +71,30 @@ async def update_employee(employee_id: int, data: EmployeeData):
         raise HTTPException(status_code=400, detail=str(e))
     finally:
         db.close()
+
+
+# ----------------------------------------
+# VIEW ALL ACTIVE EMPLOYEES
+# ----------------------------------------
+@router.get("/")
+async def get_active_employees():
+    '''
+    Retrieve the name of all active employees
+    '''
+    db = connect_db()
+    if db is None:
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
+    cursor = db.cursor()
+
+    try:
+        cursor.callproc("get_employee_names")
+        result = cursor.fetchall()
+        cursor.close()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        db.close()
+
+    return result

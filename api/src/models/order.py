@@ -14,10 +14,9 @@ class OrderData(BaseModel):
 
 
 class UpdateOrderProduct(BaseModel):
-    order_id: int
-    order_type: str
-    employee_id: int
-    delivery_date: date
-    product_id: int
-    quantity: int
-    apply_to_future: bool
+    order_status: str | None = None
+    employee_id: int | None = None
+    delivery_date: date | None = None
+    product_id: int | None = None
+    quantity: int | None = None
+    apply_to_future: bool = False

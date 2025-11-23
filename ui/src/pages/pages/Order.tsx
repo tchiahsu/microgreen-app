@@ -1,31 +1,65 @@
 import { useEffect, useState } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../components/ui/accordion";
 import { Calendar28 } from "../../components/date";
+import { Actions } from "../../components/actions";
 import type { Restaurant } from "../../types/order";
-import { FiEdit, FiTrash2 } from "react-icons/fi";
 
 
 export default function Order() {
     const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().slice(0, 10));
     const [orderData, setOrderData] = useState<Restaurant | null>(null)
+
+    async function fetchOrders(date: string) {
+        try {
+            const res = await fetch(`http://127.0.0.1:8000/orders/${date}`);
+            if (!res.ok) {
+                throw new Error("Failed to fetch order data");
+            }
+            setOrderData(await res.json());
+        } catch (e) {
+            console.error(e);
+            setOrderData(null);
+        }
+    }
+
+    async function handleUpdate(orderId: number, body: unknown) {
+        try {
+            const res = await fetch(`http://127.0.0.1:8000/orders/update_product/${orderId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+
+            if (!res.ok) {
+                console.error("Failed to update order")
+                return;
+            }
+
+            await fetchOrders(selectedDate);
+        } catch (err) {
+            console.error("Update error:", err)
+        }
+    }
+
+    async function handleDelete(orderId: number, productId: number) {
+        try {
+            const res = await fetch(`http://127.0.0.1:8000/orders/${orderId}/delete_product/${productId}`, {
+                method: "DELETE",
+            });
+
+            if (!res.ok) {
+                console.error("Failed to update order")
+                return;
+            }
+
+            await fetchOrders(selectedDate)
+        } catch (err) {
+            console.error("Delete error:", err)
+        }
+    }
     
     useEffect(() => {
-        async function fetchData() {
-            try {
-                const res = await fetch(`http://127.0.0.1:8000/orders/${selectedDate}`)
-
-                if (!res.ok) {
-                    throw new Error("Failed to fetch order data");
-                }
-
-                setOrderData(await res.json());
-            } catch (e) {
-                console.error(e);
-                setOrderData(null)
-            }
-        }
-
-        fetchData();
+        fetchOrders(selectedDate);
     }, [selectedDate]);
 
     return (
@@ -48,16 +82,13 @@ export default function Order() {
                                     <AccordionTrigger>{restaurantName} - {items.length} items</AccordionTrigger>
                                     <AccordionContent>
                                         <div className="grid grid-cols-[1fr_2fr_2fr_1fr] auto-rows-min gap-4 mx-10">
-                                            {items.map((item, i) => (
-                                                <>
-                                                    <span key={`id-${i}`}>OrderId:{item.order_id}</span>
-                                                    <span key={`name-${i}`}>{item.product_name}</span>
-                                                    <span key={`q-${i}`}>Size: {item.package_type} x{item.quantity}</span>
-                                                    <span key={`btn-${i}`} className="flex flex-row gap-3 justify-end mr-5">
-                                                        <button className="hover:text-blue-600 hover:scale-110 active:scale-95"><FiEdit size={16} /></button>
-                                                        <button className="hover:text-red-500 hover:scale-110 active:scale-95"><FiTrash2 size={16} /></button>
-                                                    </span>
-                                                </>
+                                            {items.map((item) => (
+                                                <Actions 
+                                                    key={item.order_id}
+                                                    item={item}
+                                                    onUpdate={handleUpdate}
+                                                    onDelete={handleDelete}
+                                                />
                                             ))}
                                         </div>
                                     </AccordionContent>
