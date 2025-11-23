@@ -5,6 +5,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
+import { toast } from 'sonner';
 
 
 type ActionsProp = {
@@ -22,6 +23,16 @@ type ActionsProp = {
     onDelete: (orderId: number, productId: number) => Promise<void>;
 }
 
+function isBeforeToday(date: string) {
+    const input = new Date(date);
+    const today = new Date();
+
+    input.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    return input < today;
+}
+
 export function Actions({ item, onUpdate, onDelete }: ActionsProp) {
     const [quantity, setQuantity] = useState(item.quantity);
     const [deliveryDate, setDeliveryDate] = useState(item.delivery_date);
@@ -30,6 +41,17 @@ export function Actions({ item, onUpdate, onDelete }: ActionsProp) {
     const [status, setStatus] = useState<string>(item.order_status);
 
     async function handleConfirm() {
+        if (quantity <= 0) {
+            toast.error("Quantity must be at least 1", {
+                description: "If you wish to remove the item, use the delete button."
+            });
+            return;
+        }
+
+        if (isBeforeToday(deliveryDate)) {
+            toast.error("Delivery date cannot be before today.")
+        }
+
         setSubmitting(true);
 
         await onUpdate(item.order_id, {

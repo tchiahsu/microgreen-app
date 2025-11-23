@@ -3,6 +3,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "..
 import { Calendar28 } from "../../components/date";
 import { Actions } from "../../components/actions";
 import type { Restaurant } from "../../types/order";
+import { toast } from "sonner";
 
 
 export default function Order() {
@@ -53,8 +54,10 @@ export default function Order() {
             }
 
             await fetchOrders(selectedDate)
+            toast.success("Product removed from order successfully!")
         } catch (err) {
             console.error("Delete error:", err)
+            toast.error("Error deleting product.")
         }
     }
     
@@ -72,7 +75,13 @@ export default function Order() {
                     />
                 </div>
                 <div className="flex flex-col justify-center p-5 bg-white/60 rounded-lg">
-                    <div className="flex justify-center font-semibold text-lg mb-5 text-[#308261]">Order Summary</div>
+                    <div className="flex justify-between items-center">
+                        <div className="font-semibold text-lg mb-5 text-[#308261]">Order Summary</div>
+                        <div className="flex flex-row gap-4">
+                            <button className="bg-[#929870] text-white font-semibold p-2 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100">Add Order</button>
+                            <button className="bg-[#929870] text-white font-semibold p-2 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100 ">View Delivery</button>
+                        </div>
+                    </div>
                     {!orderData || Object.keys(orderData).length === 0 ? (
                         <div className="w-[100vh] font-bold text-red-600">No orders found for this date.</div>
                     ) : (
