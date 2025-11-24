@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../components/ui/accordion";
+import { Popover, PopoverTrigger, PopoverContent } from "../../components/ui/popover";
+import {Select, SelectTrigger, SelectValue, SelectContent, SelectItem} from "../../components/ui/select";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
 import { Calendar28 } from "../../components/date";
 import { Actions } from "../../components/actions";
 import type { Restaurant } from "../../types/order";
@@ -8,7 +12,12 @@ import { toast } from "sonner";
 
 export default function Order() {
     const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().slice(0, 10));
-    const [orderData, setOrderData] = useState<Restaurant | null>(null)
+    const [orderData, setOrderData] = useState<Restaurant | null>(null);
+    const [endDate, setEndDate] = useState<string>("");
+    const [deliveryDate, setDeliveryDate] = useState<string>("");
+    const [orderType, setOrderType] = useState<string>("");
+    const [quantity, setQuantity] = useState<number>();
+
 
     async function fetchOrders(date: string) {
         try {
@@ -20,6 +29,24 @@ export default function Order() {
         } catch (e) {
             console.error(e);
             setOrderData(null);
+        }
+    }
+
+    async function fetchProducts() {
+        try {
+            const res = await fetch(`http://127.0.0.1:8000/orders/${date}`);
+        } catch (e) {
+            console.error(e)
+            setProducts(null);
+        }
+    }
+
+    async function fetchRestaurants() {
+        try {
+
+        } catch (e) {
+            console.error(e)
+            setRestaurants(null);
         }
     }
 
@@ -78,7 +105,62 @@ export default function Order() {
                     <div className="flex justify-between items-center">
                         <div className="font-semibold text-lg mb-5 text-[#308261]">Order Summary</div>
                         <div className="flex flex-row gap-4">
-                            <button className="bg-[#929870] text-white font-semibold p-2 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100">Add Order</button>
+                            <Popover>
+                                <PopoverTrigger>
+                                    <button className="bg-[#929870] text-white font-semibold p-2 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100">
+                                        Add Order
+                                    </button>
+                                </PopoverTrigger>
+                                <PopoverContent>
+                                    <div className="flex flex-col gap-2">
+                                        <Label>Restaurant ID</Label>
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <Label>Product ID</Label>
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <Label>Quantity</Label>
+                                        <Input
+                                            type="number"
+                                            min="1"
+                                            value={quantity}
+                                            onChange={(e) => setQuantity(Number(e.target.value))}
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <Label>Order Type</Label>
+                                        <Select value={orderType} onValueChange={setOrderType}>
+                                            <SelectTrigger><SelectValue placeholder="Select Order Type"/></SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="one-time">One-Time Order</SelectItem>
+                                                <SelectItem value="weekly">Recurring Order</SelectItem>
+                                                <SelectItem value="bi-weekly">Bi-Weekly Order</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <Label>Order End Date</Label>
+                                        <Input
+                                            type="date"
+                                            value={endDate}
+                                            onChange={(e) => setEndDate(e.target.value)}
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <Label>Delivery Date</Label>
+                                        <Input
+                                            type="date"
+                                            value={deliveryDate}
+                                            onChange={(e) => setDeliveryDate(e.target.value)}
+                                        />
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
                             <button className="bg-[#929870] text-white font-semibold p-2 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100 ">View Delivery</button>
                         </div>
                     </div>

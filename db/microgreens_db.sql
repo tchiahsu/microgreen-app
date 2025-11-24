@@ -43,7 +43,7 @@ CREATE TABLE contact_info(
 
 CREATE TABLE customer_order(
 	order_id INT AUTO_INCREMENT PRIMARY KEY,
-    order_type ENUM("one-time", "b-weekly", "weekly") NOT NULL,
+    order_type ENUM("one-time", "bi-weekly", "weekly") NOT NULL,
     order_status ENUM("scheduled", "completed", "cancelled") NOT NULL, 
     employee_id INT NOT NULL,
     delivery_date DATE NOT NULL,
