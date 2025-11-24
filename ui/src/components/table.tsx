@@ -9,7 +9,7 @@ export type Columns = {
 
 export type TableProps = {
     columns: Columns[]; 
-    data: Record<string, unknown>[];
+    data: any[];
     underlines?: boolean;
     useActions?: (row: any) => JSX.Element;
 }
@@ -45,8 +45,7 @@ export function Table({columns, data, underlines, useActions}: TableProps){
                                 column.align == "right" && "text-right"
                             )}
                         >
-                            {column.key === "actions" ? useActions && useActions(row) :
-                                row[column.key] != null ? String(row[column.key]) : ""}
+                            {column.key === "actions" ? useActions(row) : row[column.key]}
                         </td>
                         ))}
                     </tr>
