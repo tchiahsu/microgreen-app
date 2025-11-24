@@ -96,6 +96,32 @@ BEGIN
 END //
 DELIMITER ;
 
+/*
+FUNCTIONS
+----------
+Gets the product ID given a product name and packaging
+*/
+DROP FUNCTION IF EXISTS get_product_id_by_name_and_package;
+DELIMITER //
+CREATE FUNCTION get_product_id_by_name_and_package(
+	product_name_p VARCHAR(64),
+    size_type_p VARCHAR(32)
+)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+	DECLARE pid INT;
+    
+    SELECT product.product_id INTO pid FROM product
+    JOIN packaging ON product.package_id = packaging.package_id
+    WHERE product.product_name = product_name_p
+    AND packaging.size_type = size_type_p
+    LIMIT 1;
+    
+    RETURN pid;
+END
+DELIMITER ;
+
 
 -- =========================== VIEW PROCEDURES ====================================
 
@@ -273,6 +299,24 @@ DELIMITER ;
 /*
 PROCEDURE
 ----------
+Used in the order page.
+It gets all the packaging type names
+*/
+DROP PROCEDURE IF EXISTS get_all_package_name;
+DELIMITER //
+CREATE PROCEDURE get_all_package_name(
+	product_name_p VARCHAR(64)
+)
+BEGIN
+	SELECT DISTINCT size_type FROM packaging
+		JOIN product ON packaging.package_id = product.package_id
+        WHERE product_name = product_name_p;
+END //
+DELIMITER ;
+
+/*
+PROCEDURE
+----------
 Used in the product page.
 It obtains the product composition for each unique product (ignores the size of the product)
 */
@@ -298,8 +342,9 @@ DROP PROCEDURE IF EXISTS get_all_product_packages;
 DELIMITER //
 CREATE PROCEDURE get_all_product_packages()
 BEGIN
-	SELECT product.product_name, product.weight_grams, packaging.size_type AS packaging_type FROM product
+	SELECT product.product_id, product.product_name, product.weight_grams, packaging.package_id, packaging.size_type AS packaging_type FROM product
 		JOIN packaging ON product.package_id = packaging.package_id
+        WHERE packaging.is_active = 1
 		ORDER BY product.product_name;
 END //
 DELIMITER ;
@@ -437,7 +482,7 @@ BEGIN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'Delivery date cannot be before today';
 	END IF;
-
+    
 	-- Get the first contact information from the restaurant
 	SELECT contact_info.email INTO contact_email FROM contact_info
 		WHERE contact_info.restaurant_id = restaurant_id_p
@@ -549,6 +594,7 @@ BEGIN
 		VALUES (crop_name_p, seed_type_p, sow_rate_p, overnight_soak_p, germination_type_p, days_direct_light_p, days_indirect_light_p, rack_grow_days_p, yield_per_tray_p);
 END //
 DELIMITER ;
+
 
 /*
 PROCEDURE
