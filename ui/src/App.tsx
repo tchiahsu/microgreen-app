@@ -10,6 +10,7 @@ import Harvest from "./pages/pages/Harvest";
 import Order from "./pages/pages/Order";
 import Product from "./pages/pages/Product";
 import Client from "./pages/pages/Client";
+import Employee from "./pages/pages/Employee";
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
               <Route path="/order" element={<Order />} />
               <Route path="/product" element={<Product />} />
               <Route path="/client" element={<Client />} />
+              <Route path="/employee" element={<Employee />} />
             </Route>
           </Routes>
         </BrowserRouter>
