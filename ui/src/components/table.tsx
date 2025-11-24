@@ -9,9 +9,10 @@ export type Columns = {
 export type TableProps = {
     columns: Columns[]; 
     data: any[];
+    underlines?: boolean;
 }
 
-export function Table({columns, data}: TableProps){
+export function Table({columns, data, underlines}: TableProps){
     return (
         <table className="w-full text-left">
             <thead>
@@ -36,7 +37,8 @@ export function Table({columns, data}: TableProps){
                         {columns.map((column) => (
                             <td key={column.key} 
                             className={clsx(         
-                                "px-4 py-3 ",
+                                "px-4 py-3 align-top",
+                                underlines && "border-b-[0.9px] border-[#f6b8669c]",
                                 column.align == "center" && "text-center",
                                 column.align == "right" && "text-right"
                             )}

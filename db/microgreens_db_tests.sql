@@ -20,6 +20,8 @@ CALL get_switch_summary('2025-11-22');
 
 CALL get_orders_to_deliver('2025-12-23');
 
+CALL get_packagings_per_product('2025-12-23');
+
 CALL get_crops_to_harvest('2025-12-23');
 
 CALL get_orders_to_fulfill('2025-12-23');
