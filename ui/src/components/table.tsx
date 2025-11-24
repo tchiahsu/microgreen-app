@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import type { JSX } from "react";
 
 export type Columns = {
     key: string;
@@ -10,9 +11,10 @@ export type TableProps = {
     columns: Columns[]; 
     data: Record<string, unknown>[];
     underlines?: boolean;
+    useActions?: (row: any) => JSX.Element;
 }
 
-export function Table({columns, data, underlines}: TableProps){
+export function Table({columns, data, underlines, useActions}: TableProps){
     return (
         <table className="w-full text-left">
             <thead>
@@ -35,7 +37,7 @@ export function Table({columns, data, underlines}: TableProps){
                 {data.map((row, index) => (
                     <tr key={index}>
                         {columns.map((column) => (
-                            <td key={column.key} 
+                        <td key={column.key} 
                             className={clsx(         
                                 "px-4 py-3 align-top",
                                 underlines && "border-b-[0.9px] border-[#f6b8669c]",
@@ -43,7 +45,8 @@ export function Table({columns, data, underlines}: TableProps){
                                 column.align == "right" && "text-right"
                             )}
                         >
-                            {row[column.key] != null ? String(row[column.key]) : ""}
+                            {column.key === "actions" ? useActions && useActions(row) :
+                                row[column.key] != null ? String(row[column.key]) : ""}
                         </td>
                         ))}
                     </tr>

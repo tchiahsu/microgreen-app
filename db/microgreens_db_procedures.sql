@@ -277,10 +277,17 @@ DROP PROCEDURE IF EXISTS get_all_crop_information;
 DELIMITER //
 CREATE PROCEDURE get_all_crop_information()
 BEGIN
-	SELECT crop_name, sow_rate, overnight_soak, germination_type, days_direct_light, 
-		days_indirect_light, rack_grow_days, yield_per_tray FROM crop;
+	SELECT crop_id, crop_name, seed_type, sow_rate, overnight_soak, days_direct_light, 
+		days_indirect_light, rack_grow_days, 
+        SUM(days_direct_light + days_indirect_light + rack_grow_days) AS lead_time,
+        yield_per_tray, germination_type 
+        FROM crop
+        GROUP BY crop_name, sow_rate, overnight_soak, days_direct_light, 
+		days_indirect_light, rack_grow_days, yield_per_tray, germination_type;
 END //
 DELIMITER ;
+
+-- total lead time (lead_time): the sum of the direct light + indirect light + grow days 
 
 /*
 PROCEDURE
@@ -979,7 +986,7 @@ This procedure updates new crop information provided on the crop table.
 DROP PROCEDURE IF EXISTS update_crop;
 DELIMITER //
 CREATE PROCEDURE update_crop(
-	crop_id_p INT, 
+	crop_id_p INT,
     crop_name_p VARCHAR(64), 
     seed_type_p VARCHAR(64), 
     sow_rate_p DECIMAL(10, 2), 
@@ -988,9 +995,10 @@ CREATE PROCEDURE update_crop(
     days_direct_light_p INT, 
     days_indirect_light_p INT, 
     rack_grow_days_p INT, 
-    yield_per_tray_p INT 
+    yield_per_tray_p DECIMAL(10, 2) 
 )
 BEGIN
+
 	DECLARE found_id INT;
     -- Check if value provided for crop_id is valid
     SELECT crop_id INTO found_id FROM crop
@@ -1014,7 +1022,7 @@ BEGIN
 	
     IF germination_type_p NOT IN ('domed', 'stacked', 'blackout') THEN
 		SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'The value provided for yield_per_tray must be either: domed, stacked, or blackout.';
+			SET MESSAGE_TEXT = 'The value provided for germination_type must be either: domed, stacked, or blackout.';
     END IF;
     
 	UPDATE crop
