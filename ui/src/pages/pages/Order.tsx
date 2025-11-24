@@ -8,26 +8,29 @@ import { Calendar28 } from "../../components/date";
 import { Actions } from "../../components/actions";
 import { Button } from "../../components/ui/button";
 import { toast } from "sonner";
-import type { ProductOption } from "../../types/product";
 import type { Restaurant, RestaurantOption } from "../../types/order";
+import type { ProductName, PackageType } from "../../types/product";
 
 
 export default function Order() {
     const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().slice(0, 10));
+
     const [orderData, setOrderData] = useState<Restaurant | null>(null);
     const [restaurantNames, setRestaurantNames] = useState<RestaurantOption[]>([]);
-    const [productData, setProductData] = useState<ProductOption[]>([]);
-    const [endDate, setEndDate] = useState<string>(selectedDate);
+    const [productData, setProductData] = useState<ProductName[]>([]);
+    const [packageData, setPackageData] = useState<PackageType[]>([]);
+
+    const [endDate, setEndDate] = useState<string>("");
     const [deliveryDate, setDeliveryDate] = useState<string>(selectedDate);
     const [orderType, setOrderType] = useState<string>("");
-    const [quantity, setQuantity] = useState<number>();
+    const [quantity, setQuantity] = useState<number | undefined>();
+
     const [selectedRestaurantId, setSelectedRestaurantId] = useState<number | null>(null);
-    const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
+    const [selectedProductName, setSelectedProductName] = useState<string>("");
+    const [selectedPackage, setSelectedPackage] = useState<string>("");
+
     const [addOpen, setAddOpen] = useState(false);
     const [adding, setAdding] = useState(false);
-    const productNames = Array.from(new Set(productData.map((p) => p.product_name)));
-    const packageOptions = selectedProductName.length > 0 ? Array.from(new Set(productData.filter((p) => p.product_name === selectedProductName).map((p) => p.size_type))) : [];
-
 
     async function fetchOrders(date: string) {
         try {
@@ -48,10 +51,23 @@ export default function Order() {
             if (!res.ok) {
                 throw new Error("Failed to fetch product data");
             }
-            setProductNames(await res.json())
+            setProductData(await res.json())
         } catch (e) {
             console.error(e)
-            setProductNames([]);
+            setProductData([]);
+        }
+    }
+
+    async function fetchPackaging(product_name: string) {
+        try {
+            const res = await fetch(`http://127.0.0.1:8000/product/${product_name}/packaging_options`);
+            if (!res.ok) {
+                throw new Error("Failed to fetch packaging data")
+            }
+            setPackageData(await res.json())
+        } catch (e) {
+            console.error(e)
+            setPackageData([]);
         }
     }
 
@@ -73,8 +89,12 @@ export default function Order() {
             toast.error("Please select a restaurant.");
             return;
         }
-        if (!selectedProductId) {
+        if (!selectedProductName) {
             toast.error("Please select a product.");
+            return;
+        }
+        if (!selectedPackage) {
+            toast.error("Please select a package.");
             return;
         }
         if (!quantity || quantity <= 0) {
@@ -89,19 +109,35 @@ export default function Order() {
             toast.error("Please select a delivery date.");
             return;
         }
+        if (orderType !== "one-time" && !endDate) {
+            toast.error("Please select an end date for recurring orders.");
+            return;
+        }
+
+        const restaurant = restaurantNames.find(
+            (r) => r.restaurant_id === selectedRestaurantId
+        );
+        if (!restaurant) {
+            toast.error("Selected restaurant is invalid");
+            return;
+        }
 
         setAdding(true);
 
         try {
+            const effectiveEndDate = orderType === "one-time" ? deliveryDate : endDate;
             const body = {
-                restaurant_id: selectedRestaurantId,
-                product_id: selectedProductId,
-                quantity,
+                restaurant_name: restaurant.restaurant_name,
+                product_name: selectedProductName,
+                package_type: selectedPackage,
+                product_quantity: quantity,
                 order_type: orderType,
+                end_date: effectiveEndDate,
                 delivery_date: deliveryDate,
-                end_date: endDate || null,
-            }
-            const res = await fetch("http://127.0.0.1:8000/orders/1/add_order", {
+                order_status: "scheduled",
+            };
+
+            const res = await fetch("http://127.0.0.1:8000/orders/1", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body),
@@ -116,11 +152,14 @@ export default function Order() {
 
             toast.success("Order added successfully!");
             await fetchOrders(selectedDate);
+
             setAddOpen(false);
             setQuantity(undefined);
             setOrderType("");
             setEndDate("");
-            setSelectedProductId(null);
+            setSelectedProductName("");
+            setSelectedPackage("");
+            setSelectedRestaurantId(null);
         } catch (err) {
             console.error("Add order error:", err);
             toast.error("Error adding order.")
@@ -168,6 +207,12 @@ export default function Order() {
     }
     
     useEffect(() => {
+        if (orderType === "one-time") {
+            setEndDate(deliveryDate);
+        }
+    }, [deliveryDate, orderType]);
+
+    useEffect(() => {
         fetchOrders(selectedDate);
         setDeliveryDate(selectedDate);
     }, [selectedDate]);
@@ -191,10 +236,10 @@ export default function Order() {
                         <div className="font-semibold text-lg mb-5 text-[#308261]">Order Summary</div>
                         <div className="flex flex-row gap-4">
                             <Popover open={addOpen} onOpenChange={setAddOpen}>
-                                <PopoverTrigger>
-                                    <button className="bg-[#929870] text-white font-semibold p-2 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100">
+                                <PopoverTrigger asChild>
+                                    <Button className="bg-[#929870] text-white font-semibold p-2 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100">
                                         Add Order
-                                    </button>
+                                    </Button>
                                 </PopoverTrigger>
                                 <PopoverContent>
                                     <div className="flex flex-col gap-2">
@@ -217,16 +262,40 @@ export default function Order() {
                                     <div className="flex flex-col gap-2 mt-3">
                                         <Label>Product</Label>
                                         <Select
-                                            value={selectedProductId ? String(selectedProductId) : ""}
-                                            onValueChange={(v) => setSelectedProductId(Number(v))}
+                                            value={selectedProductName}
+                                            onValueChange={(v) => {
+                                                setSelectedProductName(v);
+                                                setSelectedPackage("");
+                                                fetchPackaging(v);
+                                            }}
                                         >
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Select Product" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {productNames.map((p) => (
-                                                    <SelectItem key={p.product_id} value={String(p.product_id)}>
+                                                {productData.map((p) => (
+                                                    <SelectItem key={p.product_name} value={p.product_name}>
                                                         {p.product_name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="flex flex-col gap-2 mt-3">
+                                        <Label>Package Size</Label>
+                                        <Select
+                                            value={selectedPackage}
+                                            onValueChange={setSelectedPackage}
+                                            disabled={!selectedProductName}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder={selectedProductName ? "Select Product Size" : "Select a product first"} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {packageData.map((p) => (
+                                                    <SelectItem key={p.size_type} value={p.size_type}>
+                                                        {p.size_type}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -238,18 +307,28 @@ export default function Order() {
                                         <Input
                                             type="number"
                                             min="1"
-                                            value={quantity}
-                                            onChange={(e) => setQuantity(Number(e.target.value))}
+                                            value={quantity ?? ""}
+                                            onChange={(e) => setQuantity(e.target.value === "" ? undefined : Number(e.target.value))}
                                         />
                                     </div>
 
                                     <div className="flex flex-col gap-2 mt-3">
                                         <Label>Order Type</Label>
-                                        <Select value={orderType} onValueChange={setOrderType}>
+                                        <Select
+                                            value={orderType}
+                                            onValueChange={(value) => {
+                                                setOrderType(value);
+                                                if (value === "one-time") {
+                                                    setEndDate(deliveryDate);
+                                                } else {
+                                                    setEndDate("");
+                                                }
+                                            }}
+                                        >
                                             <SelectTrigger><SelectValue placeholder="Select Order Type"/></SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="one-time">One-Time Order</SelectItem>
-                                                <SelectItem value="weekly">Recurring Order</SelectItem>
+                                                <SelectItem value="weekly">Weekly Order</SelectItem>
                                                 <SelectItem value="bi-weekly">Bi-Weekly Order</SelectItem>
                                             </SelectContent>
                                         </Select>
@@ -261,6 +340,7 @@ export default function Order() {
                                             type="date"
                                             value={endDate}
                                             onChange={(e) => setEndDate(e.target.value)}
+                                            disabled={orderType === "one-time" || !orderType}
                                         />
                                     </div>
 
@@ -286,7 +366,7 @@ export default function Order() {
                     ) : (
                         <Accordion type='single' collapsible>
                             {Object.entries(orderData).map(([restaurantName, items]) => (
-                                <AccordionItem value={restaurantName}>
+                                <AccordionItem key={restaurantName} value={restaurantName}>
                                     <AccordionTrigger>{restaurantName} - {items.length} items</AccordionTrigger>
                                     <AccordionContent>
                                         <div className="grid grid-cols-[1fr_2fr_2fr_1fr] auto-rows-min gap-4 mx-10">

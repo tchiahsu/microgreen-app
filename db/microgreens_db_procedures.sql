@@ -268,7 +268,25 @@ DROP PROCEDURE IF EXISTS get_all_product_name;
 DELIMITER //
 CREATE PROCEDURE get_all_product_name()
 BEGIN
-	SELECT product_id, product_name FROM product;
+	SELECT DISTINCT product_name FROM product;
+END //
+DELIMITER ;
+
+/*
+PROCEDURE
+----------
+Used in the order page.
+It gets all the packaging type names
+*/
+DROP PROCEDURE IF EXISTS get_all_package_name;
+DELIMITER //
+CREATE PROCEDURE get_all_package_name(
+	product_name_p VARCHAR(64)
+)
+BEGIN
+	SELECT DISTINCT size_type FROM packaging
+		JOIN product ON packaging.package_id = product.package_id
+        WHERE product_name = product_name_p;
 END //
 DELIMITER ;
 
@@ -440,7 +458,7 @@ BEGIN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'Delivery date cannot be before today';
 	END IF;
-
+    
 	-- Get the first contact information from the restaurant
 	SELECT contact_info.email INTO contact_email FROM contact_info
 		WHERE contact_info.restaurant_id = restaurant_id_p
@@ -552,6 +570,7 @@ BEGIN
 		VALUES (crop_name_p, seed_type_p, sow_rate_p, overnight_soak_p, germination_type_p, days_direct_light_p, days_indirect_light_p, rack_grow_days_p, yield_per_tray_p);
 END //
 DELIMITER ;
+
 
 /*
 PROCEDURE

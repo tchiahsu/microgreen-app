@@ -40,6 +40,35 @@ async def update_crop_ratio(product_id: int, crop_id: int,
 
 
 # ----------------------------------------
+# GET PACKAGING OPTION FOR A PRODUCT
+# ----------------------------------------
+@router.get("/{product_name}/packaging_options")
+async def get_packaging(product_name: str):
+    '''
+    Gets all the packaging options available for the specified product
+    Example: GET /Amaranth/packaging_options
+    '''
+    db = connect_db()
+    if db is None:
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
+
+    try:
+        cursor = db.cursor()
+        cursor.callproc("get_all_package_name", (product_name,))
+        result = cursor.fetchall()
+        cursor.close()
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=400,
+                            detail="Unable to access procedure")
+    finally:
+        db.close()
+
+    return result
+
+
+# ----------------------------------------
 # UPDATE PACKAGING INFORMATION FOR A
 # PRODUCT
 # ----------------------------------------
@@ -276,3 +305,4 @@ async def get_product_names():
         db.close()
 
     return result
+
