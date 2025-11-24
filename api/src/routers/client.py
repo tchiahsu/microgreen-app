@@ -37,21 +37,6 @@ async def get_restaurant_information():
 
 
 # ----------------------------------------
-# GET RESTAURANT NAME
-# ----------------------------------------
-# @router.get("/restaurant_names")
-# async def get_restaurant_names():
-#     '''
-#     Get the restaurant name
-#     Example: GET /clients/restaurant_names
-#     '''
-#     db = connect_db()
-#     if db is None:
-#         raise HTTPException(status_code=500,
-#                             detail = "Connection to database failed.")
-
-
-# ----------------------------------------
 # ADD NEW RESTAURANT
 # ----------------------------------------
 @router.post("/")

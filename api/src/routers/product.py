@@ -247,3 +247,32 @@ async def delete_product(product_id: int):
     finally:
         cursor.close()
         db.close()
+
+
+# ----------------------------------------
+# DELETE A PRODUCT FROM THE SYSTEM
+# ----------------------------------------
+@router.get("/product_names")
+async def get_product_names():
+    '''
+    Get the names of all products
+    Example: GET /products/product_names
+    '''
+    db = connect_db()
+    if db is None:
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
+
+    try:
+        cursor = db.cursor()
+        cursor.callproc("get_all_product_name")
+        result = cursor.fetchall()
+        cursor.close()
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=400,
+                            detail="Unable to get product name")
+    finally:
+        db.close()
+
+    return result

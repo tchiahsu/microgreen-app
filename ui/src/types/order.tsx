@@ -12,3 +12,8 @@ export type OrderItem = {
 };
 
 export type Restaurant = Record<string, OrderItem[]>;
+
+export type RestaurantOption = {
+    restaurant_id: number;
+    restaurant_name: string;
+}

@@ -96,6 +96,32 @@ BEGIN
 END //
 DELIMITER ;
 
+/*
+FUNCTIONS
+----------
+Gets the product ID given a product name and packaging
+*/
+DROP FUNCTION IF EXISTS get_product_id_by_name_and_package;
+DELIMITER //
+CREATE FUNCTION get_product_id_by_name_and_package(
+	product_name_p VARCHAR(64),
+    size_type_p VARCHAR(32)
+)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+	DECLARE pid INT;
+    
+    SELECT product.product_id INTO pid FROM product
+    JOIN packaging ON product.package_id = packaging.package_id
+    WHERE product.product_name = product_name_p
+    AND packaging.size_type = size_type_p
+    LIMIT 1;
+    
+    RETURN pid;
+END
+DELIMITER ;
+
 
 -- =========================== VIEW PROCEDURES ====================================
 
@@ -242,7 +268,7 @@ DROP PROCEDURE IF EXISTS get_all_product_name;
 DELIMITER //
 CREATE PROCEDURE get_all_product_name()
 BEGIN
-	SELECT DISTINCT product_name FROM product;
+	SELECT product_id, product_name FROM product;
 END //
 DELIMITER ;
 
@@ -274,8 +300,9 @@ DROP PROCEDURE IF EXISTS get_all_product_packages;
 DELIMITER //
 CREATE PROCEDURE get_all_product_packages()
 BEGIN
-	SELECT product.product_name, product.weight_grams, packaging.size_type AS packaging_type FROM product
+	SELECT product.product_id, product.product_name, product.weight_grams, packaging.package_id, packaging.size_type AS packaging_type FROM product
 		JOIN packaging ON product.package_id = packaging.package_id
+        WHERE packaging.is_active = 1
 		ORDER BY product.product_name;
 END //
 DELIMITER ;
