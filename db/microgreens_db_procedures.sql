@@ -181,6 +181,30 @@ DELIMITER ;
 /*
 PROCEDURE
 ----------
+(Ver.2 of the above procedure)
+Used to display information in the harvest page (for harvest schedule).
+It shows all the order that must be delivered on a specific delivery date.
+It groups all the package types and their quantity based for each product that has them.
+*/
+DROP PROCEDURE IF EXISTS get_packagings_per_product;
+DELIMITER //
+CREATE PROCEDURE get_packagings_per_product(
+	order_delivery_date_p DATE
+)
+BEGIN
+	SELECT product_name, CONCAT(package_count, 'x ', package_type) AS package_info FROM (
+		SELECT product_name, size_type AS package_type, COUNT(*) AS package_count FROM (
+			SELECT DISTINCT order_id, product_id, product_name, size_type, delivery_date FROM 
+            microgreens_view) as mv
+		WHERE delivery_date = order_delivery_date_p
+		GROUP BY product_name, package_type )as t
+    ORDER BY product_name;
+END // 
+DELIMITER ;
+
+/*
+PROCEDURE
+----------
 Used to display information in the harvest page.
 For a given harvest day, it gets the crops that needed to harvested that day as well as the number of trays
 for that crop.
