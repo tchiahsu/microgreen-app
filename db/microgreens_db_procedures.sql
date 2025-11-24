@@ -234,8 +234,9 @@ CREATE PROCEDURE get_orders_to_fulfill(
 	order_delivery_date_p DATE
 )
 BEGIN   
-	SELECT order_id, restaurant_name, restaurant_id, product_id, product_name, size_type AS package_type, quantity, order_status, employee_id, delivery_date, is_forced FROM microgreens_view
+	SELECT order_id, restaurant_name, restaurant_id, product_id, product_name, size_type AS package_type, MAX(quantity) AS quantity, order_status, employee_id, delivery_date, is_forced FROM microgreens_view
 		WHERE delivery_date = order_delivery_date_p
+        GROUP BY order_id, restaurant_name, restaurant_id, product_id, product_name, size_type, order_status, employee_id, delivery_date, is_forced
         ORDER BY restaurant_name, order_id, product_name;
 END //
 DELIMITER ;

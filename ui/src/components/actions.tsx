@@ -39,8 +39,11 @@ export function Actions({ item, onUpdate, onDelete }: ActionsProp) {
     const [applyToFuture, setApplyToFuture] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [status, setStatus] = useState<string>(item.order_status);
+    const [open, setOpen] = useState(false);
 
     async function handleConfirm() {
+        const dateChanged = deliveryDate !== item.delivery_date;
+
         if (quantity <= 0) {
             toast.error("Quantity must be at least 1", {
                 description: "If you wish to remove the item, use the delete button."
@@ -50,10 +53,11 @@ export function Actions({ item, onUpdate, onDelete }: ActionsProp) {
 
         if (isBeforeToday(deliveryDate)) {
             toast.error("Delivery date cannot be before today.")
+            return;
         }
 
         setSubmitting(true);
-
+        
         await onUpdate(item.order_id, {
             quantity,
             delivery_date: deliveryDate,
@@ -62,6 +66,16 @@ export function Actions({ item, onUpdate, onDelete }: ActionsProp) {
         });
 
         setSubmitting(false);
+        if (dateChanged) {
+            toast.info("Order updated!", {
+                description: `New delivery date: ${deliveryDate}`
+            });
+            setOpen(false);
+        } else {
+            toast.success("Order updated!");
+        }
+
+        setOpen(false);
     }
 
     return (
@@ -71,7 +85,7 @@ export function Actions({ item, onUpdate, onDelete }: ActionsProp) {
             <span>Size: {item.package_type} x{item.quantity}</span>
 
             <span className="flex justify-end gap-3 mr-5">
-                <Popover>
+                <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild>
                         <button className="hover:text-blue-600">
                             <FiEdit size={16} />
@@ -80,7 +94,7 @@ export function Actions({ item, onUpdate, onDelete }: ActionsProp) {
 
                     <PopoverContent className="w-72 space-y-3">
                         <div className="flex flex-col gap-2">
-                            <Label>Quantity</Label>
+                            <Label>Update Quantity</Label>
                             <Input 
                                 type="number"
                                 min="1"
@@ -90,7 +104,7 @@ export function Actions({ item, onUpdate, onDelete }: ActionsProp) {
                         </div>
 
                         <div className="flex flex-col gap-2">
-                            <Label>Delivery Date</Label>
+                            <Label>New Delivery Date</Label>
                             <Input
                                 type="date"
                                 value={deliveryDate}
