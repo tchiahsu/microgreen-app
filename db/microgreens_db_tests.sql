@@ -95,20 +95,20 @@ CALL delete_contact_info("adrian.s@zuma.test");
 CALL delete_employee(1);
 
 -- Test the above procedure by changing the name of the crop, germ type, days in direct/indirect light, rack grow days and yield per tray.
-CALL update_crop_table(1, 'Amaranth TEST', 'Amaranth, Red Garnet', 4, FALSE, 'stacked', 4, 5, 6, 111);
+CALL update_crop(1, 'Amaranth TEST', 'Amaranth, Red Garnet', 4, FALSE, 'stacked', 4, 5, 6, 111);
 
 -- Test above procedure when an unvalid crop_id is provided
-CALL update_crop_table(0, 'Amaranth TEST', 'Amaranth, Red Garnet', 4, FALSE, 'stacked', 4, 5, 6, 111);
+CALL update_crop(1, 'Amaranth TEST', 'Amaranth, Red Garnet', 4, FALSE, 'stacked', 4, 5, 6, 111);
 -- Test above procedure when an unvalid sow_rate value ( <= 0) is provided
-CALL update_crop_table(1, 'Amaranth TEST', 'Amaranth, Red Garnet', 0, FALSE, 'stacked', 4, 5, 6, 111);	
+CALL update_crop(1, 'Amaranth TEST', 'Amaranth, Red Garnet', 0, FALSE, 'stacked', 4, 5, 6, 111);	
 -- Test above procedure when an unvalid yield_per_tray value ( <= 0) is provided
-CALL update_crop_table(1, 'Amaranth TEST', 'Amaranth, Red Garnet', 4, FALSE, 'stacked', 4, 5, 6, 0);	
+CALL update_crop(1, 'Amaranth TEST', 'Amaranth, Red Garnet', 4, FALSE, 'stacked', 4, 5, 6, 0);	
 -- Test above procedure when an unvalid germination_type value is provided
-CALL update_crop_table(1, 'Amaranth TEST', 'Amaranth, Red Garnet', 4, FALSE, 'test', 4, 5, 6, 111);	
+CALL update_crop(1, 'Amaranth TEST', 'Amaranth, Red Garnet', 4, FALSE, 'test', 4, 5, 6, 111);	
 -- Test above procedure when only some values are provided and some are left null
-CALL update_crop_table(1, NULL, 'Amaranth, Red Garnet', 4, FALSE, 'stacked', NULL, NULL, NULL, 112);	
+CALL update_crop(1, NULL, 'Amaranth, Red Garnet', 4, FALSE, 'stacked', NULL, NULL, NULL, 112);	
 -- Test above procedure when THE crop_id provided is null
-CALL update_crop_table(NULL, 'Amaranth TEST', 'Amaranth, Red Garnet', 4, FALSE, 'stacked', 4, 5, 6, 112);
+CALL update_crop(1, 'Amaranth TEST', 'Amaranth, Red Garnet', 4, FALSE, 'stacked', 4, 5, 6, 112);
 
 -- Test above procedure by providing a new value to size_type
 CALL update_packaging_table(4, 'A Test');
