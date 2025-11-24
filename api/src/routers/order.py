@@ -1,10 +1,35 @@
 from fastapi import APIRouter, HTTPException
 from datetime import date
 from src.database import connect_db
-from src.models.order import OrderData
+from typing import Any, Dict, List
+from src.models.order import OrderData, UpdateOrderProduct
 
 
 router = APIRouter(prefix="/orders", tags=["orders"])
+
+
+def group_by_restaurant(data: List[Dict[str, Any]]):
+    result: Dict[str, List[Dict[str, Any]]] = {}
+
+    for order in data:
+        restaurant = order["restaurant_name"]
+        if restaurant not in result:
+            result[restaurant] = []
+
+        result[restaurant].append({
+            "order_id": order["order_id"],
+            "restaurant_id": order["restaurant_id"],
+            "product_id": order["product_id"],
+            "product_name": order["product_name"],
+            "package_type": order["package_type"],
+            "quantity": order["quantity"],
+            "order_status": order["order_status"],
+            "employee_id": order["employee_id"],
+            "delivery_date": order["delivery_date"],
+            "is_forced": order["is_forced"]
+        })
+
+    return result
 
 
 # ----------------------------------------
@@ -26,7 +51,7 @@ async def get_orders(delivery_date: date):
     try:
         cursor = db.cursor()
         cursor.callproc("get_orders_to_fulfill", (delivery_date, ))
-        result = cursor.fetchall()
+        result = list(cursor.fetchall())
         cursor.close()
     except Exception:
         db.rollback()
@@ -35,7 +60,7 @@ async def get_orders(delivery_date: date):
     finally:
         db.close()
 
-    return result
+    return group_by_restaurant(result)
 
 
 # ----------------------------------------
@@ -90,7 +115,6 @@ async def add_order(employee_id: int, data: OrderData):
                                       data.delivery_date,
                                       data.order_status,
                                       employee_id,))
-
         db.commit()
         cursor.close()
         return {"message": "Order added successfully!"}
@@ -101,5 +125,68 @@ async def add_order(employee_id: int, data: OrderData):
         db.rollback()
         raise HTTPException(status_code=400,
                             detail="Unable to add order")
+    finally:
+        db.close()
+
+
+# ----------------------------------------
+# UPDATE A PRODUCT FROM AN ORDER
+# ----------------------------------------
+@router.put("/update_product/{order_id}")
+async def update_order_product(order_id: int, data: UpdateOrderProduct):
+    '''
+    Updates a product inside an order
+    Example: PUT /update_product/111
+    '''
+    db = connect_db()
+    if db is None:
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
+    cursor = db.cursor()
+
+    try:
+        cursor.callproc("update_order", (order_id,
+                                         data.order_status,
+                                         data.employee_id,
+                                         data.delivery_date,
+                                         data.product_id,
+                                         data.quantity,
+                                         data.apply_to_future,))
+        db.commit()
+        cursor.close()
+        return {"message": "Order updated successfully"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400,
+                            detail=str(e))
+    finally:
+        db.close()
+
+
+# ----------------------------------------
+# DELETE A PRODUCT FROM AN ORDER
+# ----------------------------------------
+@router.delete("/{order_id}/delete_product/{product_id}")
+async def delete_product_from_order(order_id: int, product_id: int):
+    '''
+    Delete a product from an order
+    Example: DELETE /orders/34/delete_product/111
+    '''
+    db = connect_db()
+    if db is None:
+        raise HTTPException(status_code=500,
+                            detail="Database connection failed")
+
+    try:
+        cursor = db.cursor()
+        # Get the product ID
+        cursor.callproc("delete_order_product", (order_id, product_id))
+        db.commit()
+        cursor.close()
+        return {"message": "Product deleted successfully!"}
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=400,
+                            detail="Unable to delete product")
     finally:
         db.close()

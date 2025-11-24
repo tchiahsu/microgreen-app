@@ -15,8 +15,12 @@ CREATE VIEW microgreens_view AS
         product.product_name,
         product.weight_grams,
         contains.quantity, 
-        restaurant.restaurant_name, 
+        restaurant.restaurant_name,
+        restaurant.restaurant_id,
         customer_order.order_id,
+        customer_order.order_status,
+        customer_order.employee_id,
+        customer_order.is_forced,
         packaging.size_type, 
         CEILING(IFNULL(composed_of.crop_ratio * product.weight_grams * contains.quantity / crop.yield_per_tray, 1)) AS trays_needed,
         DATE_SUB(

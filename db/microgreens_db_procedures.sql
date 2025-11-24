@@ -233,13 +233,10 @@ DELIMITER //
 CREATE PROCEDURE get_orders_to_fulfill(
 	order_delivery_date_p DATE
 )
-BEGIN
-	WITH t AS(
-	SELECT DISTINCT order_id, product_id, restaurant_name, product_name, size_type, quantity FROM microgreens_view
-		WHERE (delivery_date = order_delivery_date_p)
-	) SELECT restaurant_name, product_name, size_type AS package_type, SUM(quantity) AS product_quantity FROM t
-		GROUP BY restaurant_name, product_name, size_type
-		ORDER BY restaurant_name;
+BEGIN   
+	SELECT order_id, restaurant_name, restaurant_id, product_id, product_name, size_type AS package_type, quantity, order_status, employee_id, delivery_date, is_forced FROM microgreens_view
+		WHERE delivery_date = order_delivery_date_p
+        ORDER BY restaurant_name, order_id, product_name;
 END //
 DELIMITER ;
 
@@ -339,6 +336,19 @@ BEGIN
 END //
 DELIMITER ;
 
+/*
+PROCEDURE
+----------
+Retireves the name of the employees
+*/
+DROP PROCEDURE IF EXISTS get_employee_names;
+DELIMITER //
+CREATE PROCEDURE get_employee_names()
+BEGIN
+	SELECT employee_id, first_name, last_name FROM employee
+		WHERE is_active = TRUE;
+END //
+DELIMITER ;
 
 -- =========================== ADD PROCEDURES ====================================
 
@@ -894,6 +904,23 @@ BEGIN
 END //
 DELIMITER ;
 
+/*
+PROCEDURE
+----------
+This procedure deletes a product from an order
+*/
+DROP PROCEDURE IF EXISTS delete_order_product;
+DELIMITER //
+CREATE PROCEDURE delete_order_product(
+	order_id_p INT,
+    product_id_p INT
+)
+BEGIN
+	DELETE FROM contains
+		WHERE order_id = order_id_p
+		AND product_id = product_id_p;
+END //
+DELIMITER ;
 
 -- ======================== UPDATE PROCEDURES =================================
 
@@ -1184,7 +1211,6 @@ DROP PROCEDURE IF EXISTS update_order;
 DELIMITER //
 CREATE PROCEDURE update_order(
 	order_id_p INT,
-    order_type_p VARCHAR(32),
     order_status_p VARCHAR(32),
     employee_id_p INT,
     delivery_date_p DATE,
@@ -1201,12 +1227,6 @@ BEGIN
     DECLARE lead_time INT;
     DECLARE delivery_day_shift INT;
     DECLARE lead_product_id INT;
-
-	-- Validate order type
-	IF order_type_p IS NOT NULL AND order_type_p NOT IN ("one-time", "bi-weekly", "weekly") THEN
-		SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'Invalid Order Type. Valid Options: one-time, bi-weekly, weekly';
-	END IF;
 
 	-- Validate order status
     IF order_status_p IS NOT NULL AND order_status_p NOT IN ("scheduled", "completed", "cancelled") THEN
@@ -1282,8 +1302,7 @@ BEGIN
 
 		-- Update only one order
 		UPDATE customer_order
-		SET order_type = COALESCE(order_type_p, order_type),
-			order_status = COALESCE(order_status_p, order_status),
+		SET order_status = COALESCE(order_status_p, order_status),
             employee_id = COALESCE(employee_id_p, employee_id),
             delivery_date = COALESCE(delivery_date_p, delivery_date),
             is_forced = lead_time > DATEDIFF(COALESCE(delivery_date_p, delivery_date), CURDATE())
@@ -1306,8 +1325,7 @@ BEGIN
 
 		-- Update entire future series
         UPDATE customer_order
-        SET order_type = COALESCE(order_type_p, order_type),
-			order_status = COALESCE(order_status_p, order_status),
+        SET order_status = COALESCE(order_status_p, order_status),
             employee_id = COALESCE(employee_id_p, employee_id),
             delivery_date = DATE_ADD(delivery_date, INTERVAL delivery_day_shift DAY)
 			WHERE restaurant_id = s_restaurant_id
@@ -1321,7 +1339,7 @@ BEGIN
 			contains.quantity = COALESCE(quantity_p, contains.quantity)
 		WHERE customer_order.restaurant_id = s_restaurant_id
 		AND customer_order.date_created = s_date_created
-        AND customer_order.order_type = COALESCE(order_type_p, s_order_type)
+        AND customer_order.order_type = s_order_type
         AND customer_order.delivery_date >= DATE_ADD(s_delivery_date, INTERVAL delivery_day_shift DAY);
         
         -- Check for forced orders
@@ -1329,7 +1347,7 @@ BEGIN
         SET is_forced = lead_time > DATEDIFF(delivery_date, CURDATE())
 			WHERE customer_order.restaurant_id = s_restaurant_id
 			AND customer_order.date_created = s_date_created
-			AND customer_order.order_type = COALESCE(order_type_p, s_order_type)
+			AND customer_order.order_type = s_order_type
 			AND customer_order.delivery_date >= DATE_ADD(s_delivery_date, INTERVAL delivery_day_shift DAY);
     END IF;
 END //

@@ -8,7 +8,7 @@ export type Columns = {
 
 export type TableProps = {
     columns: Columns[]; 
-    data: any[];
+    data: Record<string, unknown>[];
     underlines?: boolean;
 }
 
@@ -43,7 +43,7 @@ export function Table({columns, data, underlines}: TableProps){
                                 column.align == "right" && "text-right"
                             )}
                         >
-                            {row[column.key]}
+                            {row[column.key] != null ? String(row[column.key]) : ""}
                         </td>
                         ))}
                     </tr>

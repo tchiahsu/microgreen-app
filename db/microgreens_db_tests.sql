@@ -165,12 +165,12 @@ CALL update_delivery('2025-12-02', 'cancelled', 2);
 -- ADD A NEW ORDER IN MARCH
 CALL add_order(1, 135, 10, 'weekly','2026-03-27', '2026-03-03','scheduled', 9); -- ALL OF MARCH
 -- EDIT ONE ORDER AT THE START OF MARCH
-CALL update_order(941, 'weekly', 'scheduled', 9, '2026-03-03', NULL, NULL, FALSE);
+CALL update_order(941, 'scheduled', 9, '2026-03-03', NULL, NULL, FALSE);
 -- EDIT ONE ORDER AT THE START OF MARCH
-CALL update_order(941, NULL, NULL, NULL, NULL, NULL, 99, FALSE);
+CALL update_order(941, NULL, NULL, NULL, NULL, 99, FALSE);
 -- UPDATE ALL ORDER IN MARCH
-CALL update_order(941, NULL, NULL, NULL, '2026-03-04', NULL, NULL, TRUE);
+CALL update_order(941, NULL, NULL, '2026-03-04', NULL, NULL, TRUE);
 -- UPDATE HALF OF MARCH
-CALL update_order(943, NULL, NULL, NULL, '2026-04-08', NULL, NULL, TRUE);
+CALL update_order(943, NULL, NULL, '2026-04-08', NULL, NULL, TRUE);
 -- UPDATE HALF OF MARCH
-CALL update_order(944, NULL, NULL, NULL, '2025-11-25', NULL, NULL, TRUE);
+CALL update_order(944, NULL, NULL, '2025-11-25', NULL, NULL, TRUE);

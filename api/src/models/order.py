@@ -11,3 +11,12 @@ class OrderData(BaseModel):
     end_date: date
     delivery_date: date
     order_status: str
+
+
+class UpdateOrderProduct(BaseModel):
+    order_status: str | None = None
+    employee_id: int | None = None
+    delivery_date: date | None = None
+    product_id: int | None = None
+    quantity: int | None = None
+    apply_to_future: bool = False

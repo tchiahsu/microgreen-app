@@ -1,4 +1,4 @@
-import { CgMenuRightAlt } from "react-icons/cg";
+import { CgProfile } from "react-icons/cg";
 
 
 const navItems = [
@@ -7,6 +7,7 @@ const navItems = [
     { href: "/order", label: "Order" },
     { href: "/product", label: "Product" },
     { href: "/client", label: "Client" },
+    { href: "/employee", label: "Employee"}
 ];
 
 export default function Header() {
@@ -33,8 +34,8 @@ export default function Header() {
                 </nav>
 
                 {/* Top Right Side Buttons */}
-                <div className="flex justify-end items-center gap-8 bg-[#0b2f33] hover:bg-[#308261] text-white rounded-bl-2xl h-full px-2">
-                    <button className="p-2 rounded-full active:scale-95 cursor-pointer"><CgMenuRightAlt size={40} /></button>
+                <div className="flex justify-end items-center text-[#0b2f33] pr-4">
+                    <button className="p-2 rounded-full hover:scale-105 hover:text-[#9a6b2c9c] active:scale-95 cursor-pointer"><CgProfile size={40} /></button>
                 </div>
 
             </div>
