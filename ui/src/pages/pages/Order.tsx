@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../components/ui/accordion";
 import { Popover, PopoverTrigger, PopoverContent } from "../../components/ui/popover";
 import {Select, SelectTrigger, SelectValue, SelectContent, SelectItem} from "../../components/ui/select";
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger} from "../../components/ui/dialog";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Calendar28 } from "../../components/date";
@@ -235,7 +236,140 @@ export default function Order() {
                     <div className="flex justify-between items-center">
                         <div className="font-semibold text-lg mb-5 text-[#308261]">Order Summary</div>
                         <div className="flex flex-row gap-4">
-                            <Popover open={addOpen} onOpenChange={setAddOpen}>
+                            <Dialog open={addOpen} onOpenChange={setAddOpen}>
+                                <DialogTrigger asChild>
+                                    <Button
+                                        className="bg-[#929870] text-white font-semibold p-2 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100"
+                                        variant="outline"
+                                    >
+                                        Add Order
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Add New Order</DialogTitle>
+                                        <DialogDescription>
+                                            Please add all the information requested below to add a new product.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="flex flex-col gap-2">
+                                        <Label>Restaurant</Label>
+                                        <Select
+                                            value={selectedRestaurantId ? String(selectedRestaurantId) : ""}
+                                            onValueChange={(v) => setSelectedRestaurantId(Number(v))}
+                                        >
+                                            <SelectTrigger><SelectValue placeholder="Select Restaurant" /></SelectTrigger>
+                                            <SelectContent>
+                                                {restaurantNames.map((r) => (
+                                                    <SelectItem key={r.restaurant_id} value={String(r.restaurant_id)}>
+                                                        {r.restaurant_name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <Label>Product</Label>
+                                        <Select
+                                            value={selectedProductName}
+                                            onValueChange={(v) => {
+                                                setSelectedProductName(v);
+                                                setSelectedPackage("");
+                                                fetchPackaging(v);
+                                            }}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select Product" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {productData.map((p) => (
+                                                    <SelectItem key={p.product_name} value={p.product_name}>
+                                                        {p.product_name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <Label>Package Size</Label>
+                                        <Select
+                                            value={selectedPackage}
+                                            onValueChange={setSelectedPackage}
+                                            disabled={!selectedProductName}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder={selectedProductName ? "Select Product Size" : "Select a product first"} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {packageData.map((p) => (
+                                                    <SelectItem key={p.size_type} value={p.size_type}>
+                                                        {p.size_type}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <Label>Quantity</Label>
+                                        <Input
+                                            type="number"
+                                            min="1"
+                                            value={quantity ?? ""}
+                                            onChange={(e) => setQuantity(e.target.value === "" ? undefined : Number(e.target.value))}
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <Label>Order Type</Label>
+                                        <Select
+                                            value={orderType}
+                                            onValueChange={(value) => {
+                                                setOrderType(value);
+                                                if (value === "one-time") {
+                                                    setEndDate(deliveryDate);
+                                                } else {
+                                                    setEndDate("");
+                                                }
+                                            }}
+                                        >
+                                            <SelectTrigger><SelectValue placeholder="Select Order Type"/></SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="one-time">One-Time Order</SelectItem>
+                                                <SelectItem value="weekly">Weekly Order</SelectItem>
+                                                <SelectItem value="bi-weekly">Bi-Weekly Order</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <Label>Order End Date</Label>
+                                        <Input
+                                            type="date"
+                                            value={endDate}
+                                            onChange={(e) => setEndDate(e.target.value)}
+                                            disabled={orderType === "one-time" || !orderType}
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col gap-2">
+                                        <Label>Delivery Date</Label>
+                                        <Input
+                                            type="date"
+                                            value={deliveryDate}
+                                            onChange={(e) => setDeliveryDate(e.target.value)}
+                                        />
+                                    </div>
+
+                                    <Button className="mt-2" onClick={handleAddOrder} size="sm" disabled={adding}>
+                                        {adding ? "Adding..." : "Add Order"}
+                                    </Button>
+                                </DialogContent>
+                            </Dialog>
+
+                            {/* <Popover open={addOpen} onOpenChange={setAddOpen}>
                                 <PopoverTrigger asChild>
                                     <Button className="bg-[#929870] text-white font-semibold p-2 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100">
                                         Add Order
@@ -357,7 +491,8 @@ export default function Order() {
                                         {adding ? "Adding..." : "Add Order"}
                                     </Button>
                                 </PopoverContent>
-                            </Popover>
+                            </Popover> */}
+
                             <button className="bg-[#929870] text-white font-semibold p-2 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100 ">View Delivery</button>
                         </div>
                     </div>
