@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './App.css'
 import { BackgroundGradientAnimation } from './components/ui/background-gradient-animation'
+import { Toaster } from 'sonner'
 
 import Layout from "./pages/Layout";
 import Home from "./pages/pages/Home";
@@ -14,21 +15,22 @@ import Client from "./pages/pages/Client";
 function App() {
 
   return (
-    <BackgroundGradientAnimation>
-      <BrowserRouter>
-        {/* Application Pages */}
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="/crop" element={<Crop />} />
-            <Route path="/harvest" element={<Harvest />} />
-            <Route path="/order" element={<Order />} />
-            <Route path="/product" element={<Product />} />
-            <Route path="/client" element={<Client />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </BackgroundGradientAnimation>
+      <BackgroundGradientAnimation>
+        <Toaster position="top-right" />
+        <BrowserRouter>
+          {/* Application Pages */}
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="/crop" element={<Crop />} />
+              <Route path="/harvest" element={<Harvest />} />
+              <Route path="/order" element={<Order />} />
+              <Route path="/product" element={<Product />} />
+              <Route path="/client" element={<Client />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </BackgroundGradientAnimation>
   )
 }
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { PlantingItem, GermItem } from "../../types/crop";
 import { Table } from "../../components/table";
 import { Calendar28 } from "../../components/date";
+import type { Columns } from "../../components/table";
 
 export default function Home() {
     const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().slice(0,10));
@@ -33,18 +34,18 @@ export default function Home() {
         fetchData();
     }, [selectedDate]);
 
-    const plantingColumns = [
+    const plantingColumns: Columns[] = [
         {key: "crop_name", header_name: "Crop Name"},
         {key: "trays_used", header_name: "Tray Count", align: "center"}
     ];
 
-    const germinationColumns = [
+    const germinationColumns: Columns[] = [
         {key: "planting_date", header_name: "Planting Date"},
         {key: "crop_name", header_name: "Crop Name"},
         {key: "trays_used", header_name: "Tray Count", align: "center"}
     ];
 
-     const switchColumns = [
+     const switchColumns: Columns[] = [
          {key: "planting_date", header_name: "Planting Date"},
         {key: "crop_name", header_name: "Crop Name"},
         {key: "trays_used", header_name: "Tray Count", align: "center"}
@@ -61,7 +62,7 @@ export default function Home() {
             </div>
             <div className="flex w-full items-start justify-between gap-6 px-20">
                 <div className="p-5 bg-white/60 rounded-lg h-160 flex flex-col w-[380px]">
-                    <h2 className="font-semibold text-lg mb-5 text-[#308261] flex-shrink-0">Planting Summary</h2>
+                    <h2 className="font-semibold text-lg mb-5 text-[#308261] shrink-0">Planting Summary</h2>
                     <div className="flex-1 overflow-y-auto">
                         <Table columns={plantingColumns} data={plantingInfo}/>
                     </div>

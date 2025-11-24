@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from datetime import date
 from src.database import connect_db
 from typing import Any, Dict, List
-from src.models.order import OrderData
+from src.models.order import OrderData, UpdateOrderProduct
 
 
 router = APIRouter(prefix="/orders", tags=["orders"])
@@ -132,41 +132,61 @@ async def add_order(employee_id: int, data: OrderData):
 # ----------------------------------------
 # UPDATE A PRODUCT FROM AN ORDER
 # ----------------------------------------
+@router.put("/update_product/{order_id}")
+async def update_order_product(order_id: int, data: UpdateOrderProduct):
+    '''
+    Updates a product inside an order
+    Example: PUT /update_product/111
+    '''
+    db = connect_db()
+    if db is None:
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
+    cursor = db.cursor()
+
+    try:
+        cursor.callproc("update_order", (order_id,
+                                         data.order_status,
+                                         data.employee_id,
+                                         data.delivery_date,
+                                         data.product_id,
+                                         data.quantity,
+                                         data.apply_to_future,))
+        db.commit()
+        cursor.close()
+        return {"message": "Order updated successfully"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400,
+                            detail=str(e))
+    finally:
+        db.close()
+
 
 # ----------------------------------------
 # DELETE A PRODUCT FROM AN ORDER
 # ----------------------------------------
-# @router.delete("/delete_product")
-# async def delete_product_from_order(delivery_date: date, product_name: str):
-#     '''
-#     Delete a product from an order
-#     Example: DELETE /orders/product
-#     '''
-#     db = connect_db()
+@router.delete("/{order_id}/delete_product/{product_id}")
+async def delete_product_from_order(order_id: int, product_id: int):
+    '''
+    Delete a product from an order
+    Example: DELETE /orders/34/delete_product/111
+    '''
+    db = connect_db()
+    if db is None:
+        raise HTTPException(status_code=500,
+                            detail="Database connection failed")
 
-#     if db is None:
-#         raise HTTPException(status_code=500,
-#                             detail="Database connection failed")
-
-#     try:
-#         cursor = db.cursor()
-
-#         # Get the product ID
-#         cursor.execute("SELECT get_product_id(%s, %s) AS id",
-#                        (product_name,))
-#         result = cursor.fetchone()
-#         if result is None:
-#             raise HTTPException(status_code=400,
-#                                 detail=f"{product_name} does not exist")
-#         product_id = result["id"]
-
-#         cursor.callproc("delete_from_contains", (product_id,))
-#         db.commit()
-#         cursor.close()
-#         return {"message": "Product deleted successfully!"}
-#     except Exception:
-#         db.rollback()
-#         raise HTTPException(status_code=400,
-#                             detail="Unable to delete product")
-#     finally:
-#         db.close()
+    try:
+        cursor = db.cursor()
+        # Get the product ID
+        cursor.callproc("delete_order_product", (order_id, product_id))
+        db.commit()
+        cursor.close()
+        return {"message": "Product deleted successfully!"}
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=400,
+                            detail="Unable to delete product")
+    finally:
+        db.close()
