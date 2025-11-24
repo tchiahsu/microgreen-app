@@ -2,6 +2,7 @@ import { CgProfile } from "react-icons/cg";
 
 
 const navItems = [
+    { href: "/", label: "Home" },
     { href: "/crop", label: "Crop" },
     { href: "/harvest", label: "Harvest" },
     { href: "/order", label: "Order" },
