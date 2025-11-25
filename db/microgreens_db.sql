@@ -27,7 +27,8 @@ CREATE TABLE restaurant(
     street_name VARCHAR(64) NOT NULL, 
     city VARCHAR(32) NOT NULL, 
     state VARCHAR(2) NOT NULL, 	
-    zip_code VARCHAR(5) NOT NULL
+    zip_code VARCHAR(5) NOT NULL,
+    is_active BOOL NOT NULL
 );
 
 CREATE TABLE contact_info(

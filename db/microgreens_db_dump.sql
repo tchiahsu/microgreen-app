@@ -376,6 +376,7 @@ CREATE TABLE `restaurant` (
   `city` varchar(32) NOT NULL,
   `state` varchar(2) NOT NULL,
   `zip_code` varchar(5) NOT NULL,
+  `is_active` tinyint(1) NOT NULL,
   PRIMARY KEY (`restaurant_id`),
   UNIQUE KEY `restaurant_name` (`restaurant_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -387,7 +388,7 @@ CREATE TABLE `restaurant` (
 
 LOCK TABLES `restaurant` WRITE;
 /*!40000 ALTER TABLE `restaurant` DISABLE KEYS */;
-INSERT INTO `restaurant` VALUES (1,'Capo',443,'W Broadway','Boston','MA','02127'),(2,'Hunters (Hunter’s Kitchen & Bar)',110,'Dorchester St','Boston','MA','02127'),(3,'Fat Baby',118,'Dorchester St','Boston','MA','02127'),(4,'Loco (Loco Taqueria & Oyster Bar)',412,'W Broadway','Boston','MA','02127'),(5,'224 Boston',224,'Boston St','Dorchester','MA','02125'),(6,'Petula’s',81,'L St','Boston','MA','02127'),(7,'TA',21,'Drydock Ave','Boston','MA','02210'),(8,'Coquette',450,'Summer St','Boston','MA','02210'),(9,'Mr. H',225,'Northern Ave','Boston','MA','02210'),(10,'Ocean Prime',140,'Seaport Blvd','Boston','MA','02210'),(11,'Nautilus',300,'Pier 4 Boulevard','Boston','MA','02210'),(12,'Woods Hill Pier 4',300,'Pier 4 Boulevard','Boston','MA','02210'),(13,'Hook & Line',10,'Fan Pier Boulevard','Boston','MA','02210'),(14,'Davio’s Seaport',26,'Fan Pier Boulevard','Boston','MA','02210'),(15,'Serafina Seaport',11,'Fan Pier Boulevard','Boston','MA','02210'),(16,'Trillium Brewing Company',50,'Thomson PI','Boston','MA','02210'),(17,'Trade',540,'Atlantic Ave','Boston','MA','02210'),(18,'O Ya',9,'E Street','Boston','MA','02111'),(19,'Baleia',264,'E Berkeley Street','Boston','MA','02118'),(20,'Fuji at Ink Block',352,'Harrison Ave','Boston','MA','02118'),(21,'Oishii',856,'Boylston St','Boston','MA','02199'),(22,'311',311,'Tremont St','Boston','MA','02118'),(23,'Frenchie',560,'Tremont St','Boston','MA','02118'),(24,'Kaia South End',15,'Appleton St','Boston','MA','02116'),(25,'Shore Leave',11,'Shawmut Ave','Boston','MA','02118'),(26,'SRV',569,'Columbus Ave','Boston','MA','02118'),(27,'Gigi',28,'Union Park','Boston','MA','02118'),(28,'Douzo',131,'Dartmouth St','Boston','MA','02116'),(29,'Porto',160,'Massachusetts Ave','Boston','MA','02115'),(30,'Zuma',1,'Dalton St','Boston','MA','02115'),(31,'Little Donkey',505,'Mass Ave','Cambridge','MA','02139'),(32,'Pammy\'s',928,'Mass Ave','Cambridge','MA','02139'),(33,'Catalyst',300,'Technology Sq','Cambridge','MA','02139'),(34,'Glass House',450,'Kendall St','Cambridge','MA','02142'),(35,'Nagomi',108,'Newbury St','Boston','MA','02116'),(36,'Loco Fenway',70,'Brookline Ave','Boston','MA','02215'),(37,'Hotel Commonwealth',500,'Commonwealth Ave','Boston','MA','02215'),(38,'Deuxave',371,'Commonwealth Ave','Boston','MA','02115'),(39,'Uni',370,'Commonwealth Ave','Boston','MA','02115'),(40,'City Table',65,'Exeter St','Boston','MA','02116'),(41,'Typhoon',300,'Newbury St','Boston','MA','02116'),(42,'Saltie Girl',281,'Dartmouth St','Boston','MA','02116'),(43,'La Voile',261,'Newbury St','Boston','MA','02116'),(44,'Krasi',48,'Gloucester St','Boston','MA','02115'),(45,'Rochambeau',900,'Boylston St','Boston','MA','02115'),(46,'La Padrona',470,'Summer St','Boston','MA','02210'),(47,'The Banks Seafood',441,'Stuart St','Boston','MA','02116'),(48,'Davio’s Arlington',75,'Arlington St','Boston','MA','02116'),(49,'Bistro du Midi',272,'Boylston St','Boston','MA','02116'),(50,'Ruka',505,'Washington St','Boston','MA','02111'),(51,'Yvonne’s',2,'Winter Pl','Boston','MA','02108'),(52,'Mariel',10,'Post Office Sq','Boston','MA','02109'),(53,'The Oceanaire',40,'Court St','Boston','MA','02108'),(54,'Caveau',120,'Newbury St','Boston','MA','02116'),(55,'Mamma Maria',3,'North Sq','Boston','MA','02113'),(56,'Hobson’s Allston',180,'Brighton Ave','Boston','MA','02134'),(57,'Thaiger Den',178,'Harvard Ave','Boston','MA','02134'),(58,'Harvest',44,'Brattle St','Cambridge','MA','02138'),(59,'Dovetail Charlestown',20,'Main St','Charlestown','MA','02129'),(60,'Prima',5,'Austin St','Charlestown','MA','02129'),(61,'Brewer’s Fork',171,'Medford St','Charlestown','MA','02129'),(62,'The Block',90,'Main St','Charlestown','MA','02129'),(63,'Row 34',383,'Congress St','Boston','MA','02210'),(64,'Capri Italian Steakhouse',500,'Northern Ave','Boston','MA','02210'),(65,'Ilona',579,'Tremont St','Boston','MA','02118'),(66,'1928',7,'Eliot St','Cambridge','MA','02138'),(67,'Essex Restaurant & Sky Lounge',20,'Essex St','Boston','MA','02111'),(68,'Cafe Sushi',1105,'Mass Ave','Cambridge','MA','02138'),(69,'Nine Restaurant',9,'Beach St','Boston','MA','02111'),(70,'Wa Shin',58,'Kneeland St','Boston','MA','02111'),(71,'Asta',47,'Massachusetts Ave','Boston','MA','02115');
+INSERT INTO `restaurant` VALUES (1,'Capo',443,'W Broadway','Boston','MA','02127',1),(2,'Hunters (Hunter’s Kitchen & Bar)',110,'Dorchester St','Boston','MA','02127',1),(3,'Fat Baby',118,'Dorchester St','Boston','MA','02127',1),(4,'Loco (Loco Taqueria & Oyster Bar)',412,'W Broadway','Boston','MA','02127',1),(5,'224 Boston',224,'Boston St','Dorchester','MA','02125',1),(6,'Petula’s',81,'L St','Boston','MA','02127',1),(7,'TA',21,'Drydock Ave','Boston','MA','02210',1),(8,'Coquette',450,'Summer St','Boston','MA','02210',1),(9,'Mr. H',225,'Northern Ave','Boston','MA','02210',1),(10,'Ocean Prime',140,'Seaport Blvd','Boston','MA','02210',1),(11,'Nautilus',300,'Pier 4 Boulevard','Boston','MA','02210',1),(12,'Woods Hill Pier 4',300,'Pier 4 Boulevard','Boston','MA','02210',1),(13,'Hook & Line',10,'Fan Pier Boulevard','Boston','MA','02210',1),(14,'Davio’s Seaport',26,'Fan Pier Boulevard','Boston','MA','02210',1),(15,'Serafina Seaport',11,'Fan Pier Boulevard','Boston','MA','02210',1),(16,'Trillium Brewing Company',50,'Thomson PI','Boston','MA','02210',1),(17,'Trade',540,'Atlantic Ave','Boston','MA','02210',1),(18,'O Ya',9,'E Street','Boston','MA','02111',1),(19,'Baleia',264,'E Berkeley Street','Boston','MA','02118',1),(20,'Fuji at Ink Block',352,'Harrison Ave','Boston','MA','02118',1),(21,'Oishii',856,'Boylston St','Boston','MA','02199',1),(22,'311',311,'Tremont St','Boston','MA','02118',1),(23,'Frenchie',560,'Tremont St','Boston','MA','02118',1),(24,'Kaia South End',15,'Appleton St','Boston','MA','02116',1),(25,'Shore Leave',11,'Shawmut Ave','Boston','MA','02118',1),(26,'SRV',569,'Columbus Ave','Boston','MA','02118',1),(27,'Gigi',28,'Union Park','Boston','MA','02118',1),(28,'Douzo',131,'Dartmouth St','Boston','MA','02116',1),(29,'Porto',160,'Massachusetts Ave','Boston','MA','02115',1),(30,'Zuma',1,'Dalton St','Boston','MA','02115',1),(31,'Little Donkey',505,'Mass Ave','Cambridge','MA','02139',1),(32,'Pammy\'s',928,'Mass Ave','Cambridge','MA','02139',1),(33,'Catalyst',300,'Technology Sq','Cambridge','MA','02139',1),(34,'Glass House',450,'Kendall St','Cambridge','MA','02142',1),(35,'Nagomi',108,'Newbury St','Boston','MA','02116',1),(36,'Loco Fenway',70,'Brookline Ave','Boston','MA','02215',1),(37,'Hotel Commonwealth',500,'Commonwealth Ave','Boston','MA','02215',1),(38,'Deuxave',371,'Commonwealth Ave','Boston','MA','02115',1),(39,'Uni',370,'Commonwealth Ave','Boston','MA','02115',1),(40,'City Table',65,'Exeter St','Boston','MA','02116',1),(41,'Typhoon',300,'Newbury St','Boston','MA','02116',1),(42,'Saltie Girl',281,'Dartmouth St','Boston','MA','02116',1),(43,'La Voile',261,'Newbury St','Boston','MA','02116',1),(44,'Krasi',48,'Gloucester St','Boston','MA','02115',1),(45,'Rochambeau',900,'Boylston St','Boston','MA','02115',1),(46,'La Padrona',470,'Summer St','Boston','MA','02210',1),(47,'The Banks Seafood',441,'Stuart St','Boston','MA','02116',1),(48,'Davio’s Arlington',75,'Arlington St','Boston','MA','02116',1),(49,'Bistro du Midi',272,'Boylston St','Boston','MA','02116',1),(50,'Ruka',505,'Washington St','Boston','MA','02111',1),(51,'Yvonne’s',2,'Winter Pl','Boston','MA','02108',1),(52,'Mariel',10,'Post Office Sq','Boston','MA','02109',1),(53,'The Oceanaire',40,'Court St','Boston','MA','02108',1),(54,'Caveau',120,'Newbury St','Boston','MA','02116',1),(55,'Mamma Maria',3,'North Sq','Boston','MA','02113',1),(56,'Hobson’s Allston',180,'Brighton Ave','Boston','MA','02134',1),(57,'Thaiger Den',178,'Harvard Ave','Boston','MA','02134',1),(58,'Harvest',44,'Brattle St','Cambridge','MA','02138',1),(59,'Dovetail Charlestown',20,'Main St','Charlestown','MA','02129',1),(60,'Prima',5,'Austin St','Charlestown','MA','02129',1),(61,'Brewer’s Fork',171,'Medford St','Charlestown','MA','02129',1),(62,'The Block',90,'Main St','Charlestown','MA','02129',1),(63,'Row 34',383,'Congress St','Boston','MA','02210',1),(64,'Capri Italian Steakhouse',500,'Northern Ave','Boston','MA','02210',1),(65,'Ilona',579,'Tremont St','Boston','MA','02118',1),(66,'1928',7,'Eliot St','Cambridge','MA','02138',1),(67,'Essex Restaurant & Sky Lounge',20,'Essex St','Boston','MA','02111',1),(68,'Cafe Sushi',1105,'Mass Ave','Cambridge','MA','02138',1),(69,'Nine Restaurant',9,'Beach St','Boston','MA','02111',1),(70,'Wa Shin',58,'Kneeland St','Boston','MA','02111',1),(71,'Asta',47,'Massachusetts Ave','Boston','MA','02115',1);
 /*!40000 ALTER TABLE `restaurant` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -547,8 +548,8 @@ BEGIN
 			SET MESSAGE_TEXT = 'The zip code must be 5 characters.';
 	END IF;
 
-	INSERT INTO restaurant (restaurant_name, street_num, street_name, city, state, zip_code) VALUE
-		(restaurant_name_p, street_num_p, street_name_p, city_p, state_p, zip_code_p);
+	INSERT INTO restaurant (restaurant_name, street_num, street_name, city, state, zip_code, is_active) VALUE
+		(restaurant_name_p, street_num_p, street_name_p, city_p, state_p, zip_code_p, TRUE);
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1302,7 +1303,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `get_all_product_name` */;
+/*!50003 DROP PROCEDURE IF EXISTS `get_all_product_information` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -1312,9 +1313,12 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_product_name`()
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_product_information`()
 BEGIN
-	SELECT DISTINCT product_name FROM product;
+	SELECT product.product_id, product.product_name, composed_of.crop_ratio, crop.crop_name, packaging.size_type FROM product
+		JOIN composed_of ON composed_of.product_id = product.product_id
+		JOIN crop ON composed_of.crop_id = crop.crop_id
+        JOIN packaging ON product.package_id = packaging.package_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -2064,6 +2068,57 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `update_restaurant_info` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_restaurant_info`(
+	restaurant_id_p INT,
+	restaurant_name_p VARCHAR(64),
+    street_num_p INT,
+    street_name_p VARCHAR(64),
+    city_p VARCHAR(32),
+    state_p VARCHAR(2),
+    zip_code_p VARCHAR(5),
+    is_active_p BOOL
+)
+BEGIN
+	-- Validate street number
+    IF street_num_p <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Street number must be greater than 0';
+	END IF;
+    
+    -- Validate address
+    IF (street_num_p IS NULL OR street_name_p IS NULL OR city_p IS NULL OR state_p IS NULL OR zip_code_p IS NULL) THEN
+		IF NOT (street_num_p IS NULL AND street_name_p IS NULL AND city_p IS NULL AND state_p IS NULL AND zip_code_p IS NULL) THEN
+			SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'All address fields are required';
+		END IF;
+    END IF;
+	
+    UPDATE restaurant
+    SET restaurant_name = COALESCE(restaurant_name_p, restaurant_name),
+		street_num = COALESCE(street_num_p, street_num),
+        street_name = COALESCE(street_name_p, street_name),
+        city = COALESCE(city_p, city),
+        state = COALESCE(state_p, state),
+        zip_code = COALESCE(zip_code_p, zip_code),
+        is_active = COALESCE(is_active_p, is_active)
+	WHERE restaurant_id = restaurant_id_p;
+    
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Current Database: `microgreens_db`
@@ -2098,4 +2153,4 @@ USE `microgreens_db`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-25  0:51:55
+-- Dump completed on 2025-11-25 12:18:55
