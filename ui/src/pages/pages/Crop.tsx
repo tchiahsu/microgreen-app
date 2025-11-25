@@ -1,11 +1,26 @@
 import { useEffect, useState } from "react";
 import { Table } from "../../components/table";
 import { CropActions } from "../../components/cropActions";
-import type { CropInfo, CropUpdate } from "../../types/crop"
+import type { CropInfo, CropUpdate } from "../../types/crop";
+import { Button } from "../../components/ui/button";
+import { toast } from "sonner";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog";
 
 export default function Crop() {
     const [cropInfo, setCropInfo] = useState<CropInfo[]>([]);
     const [search, setSearch] = useState("");
+
+    const [cropName, setCropName] = useState<string>("");
+    const [seedType, setSeedType] = useState<string>("");
+    const [sowRate, setSowRate] = useState<number>();
+    const [overnightSoak, setOvernightSoak] = useState<boolean | null>(null);
+    const [daysDirect, setDaysDirect] = useState<number>();
+    const [daysIndirect, setDaysIndirect] = useState<number>();
+    const [rackGrow, setRackGrow] = useState<number>();
+    const [yieldTray, setYieldTray] = useState<number>();
+    const [germType, setGermType] = useState<string>("");
+    const [addOpen, setAddOpen] = useState(false);
+    const [adding, setAdding] = useState(false);
 
     async function fetchData() {
         try {
@@ -47,6 +62,94 @@ export default function Crop() {
         }
     }
 
+    async function handleAddOrder() {
+        if (!cropName) {
+            toast.error("Please select a crop name.");
+            return;
+        }
+        if (!seedType) {
+            toast.error("Please select a seed type.");
+            return;
+        }
+        if (!sowRate) {
+            toast.error("Please select a sow rate.");
+            return;
+        }
+        if (overnightSoak === null) {
+            toast.error("Please specify if overnight soak is requried.");
+            return;
+        }
+        if (daysDirect == null || daysDirect < 0) {
+            toast.error("Days under direct light cannot be negative.");
+            return;
+        }
+        if (daysIndirect == null || daysIndirect < 0) {
+            toast.error("Days under indirect light cannot be negative.");
+            return;
+        }
+        if (rackGrow == null || rackGrow < 0) {
+            toast.error("Days in grow racks cannot be negative.");
+            return;
+        }
+        if (yieldTray == null || yieldTray < 0) {
+            toast.error("The yield per tray cannot be negative.");
+            return;
+        }
+        if (germType !== "stacked" && germType !== "blackout" && germType !== "domed") {
+            toast.error("Germination type can either be blackout, stacked, domed.");
+            return;
+        }
+
+        setAdding(true);
+
+        try {
+            const body = {
+                crop_name: cropName,
+                seed_type: seedType,
+                sow_rate: sowRate,
+                overnight_soak: overnightSoak,
+                germination_type: germType,
+                days_direct_light: daysDirect,
+                days_indirect_light: daysIndirect,
+                rack_grow_days: rackGrow,
+                yield_per_tray: yieldTray,
+            };
+
+            const res = await fetch("http://127.0.0.1:8000/crops/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body),
+            });
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => null);
+                console.error("Failed to add crop", err);
+                toast.error("Failed to add crop.")
+                return;
+            }
+
+            toast.success("Crop added successfully!");
+            await fetchData();
+            setAddOpen(false);
+
+            setCropName("");
+            setSeedType("");
+            setSowRate(undefined);
+            setOvernightSoak(null);
+            setDaysDirect(undefined);
+            setDaysIndirect(undefined);
+            setRackGrow(undefined);
+            setYieldTray(undefined);
+            setGermType("");
+
+        } catch (err) {
+            console.error("Add crop error:", err);
+            toast.error("Error adding crop.")
+        } finally {
+            setAdding(false);
+        }
+    }
+
 
     const cropInformation = [
         {key: "crop_name", header_name: "Crop Name"},
@@ -81,28 +184,157 @@ export default function Crop() {
 
     return (
         <div className="text-sm font-mono">
-            <div className="flex w-full items-start justify-between gap-6 px-20">
-                <div className="p-5 bg-white/60 rounded-lg h-170 flex flex-col ">
-                    <h2 className="font-semibold text-lg mb-5 text-[#308261] shrink-0">Crop Information</h2> 
-                    <input
-                        type="text"
-                        placeholder="Search for crops"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="mb-4 p-2 border border-[#308261] rounded-lg w-full"
-                    />
-                    
-                    <div className="flex-1 overflow-y-auto">
-                        <Table 
-                            columns={cropInformation} 
-                            data={searchCrops} 
-                            underlines={true}
-                            useActions={(row) => (
-                                <CropActions item={row as CropInfo} onUpdate={handleUpdate}/>
-                            )}
-                        />
-                    </div>
+            <div className="p-5 bg-white/60 rounded-lg h-170 flex flex-col">
+                <div className="flex justify-between items-center mb-5">
+                    <h2 className="font-semibold text-lg text-[#308261]">Crop Information</h2> 
+                    <Dialog open={addOpen} onOpenChange={setAddOpen}>
+                        <DialogTrigger asChild>
+                            <Button 
+                                className="mt-2 bg-[#308261] text-white font-semibold" 
+                                size="sm"
+                            >
+                                Add Crop
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-lg">
+                            <DialogHeader>
+                                <DialogTitle>Add New Crop</DialogTitle>
+                                <DialogDescription>
+                                    Fill out these fields to add a new crop.
+                                </DialogDescription>
+                            </DialogHeader>
+
+                            <div className="flex flex-col gap-3">
+                                <div className="flex flex-col">
+                                    <label className="font-semibold">Crop Name</label>
+                                    <input
+                                        className="p-2 border rounded h-10"
+                                        type="text"
+                                        value={cropName}
+                                        onChange={(e) => setCropName(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="flex flex-col">
+                                    <label className="font-semibold">Seed Type</label>
+                                    <input
+                                        className="p-2 border rounded h-10"
+                                        type="text"
+                                        value={seedType}
+                                        onChange={(e) => setSeedType(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="flex flex-col">
+                                    <label className="font-semibold">Sow Rate</label>
+                                    <input
+                                        className="p-2 border rounded h-10"
+                                        type="number"
+                                        value={sowRate ?? ""}
+                                        onChange={(e) => setSowRate(e.target.value === "" ? undefined : Number(e.target.value))}
+                                    />
+                                </div>
+
+                                <div className="flex flex-col">
+                                    <label className="font-semibold">Overnight Soak</label>
+                                    <select 
+                                        className="p-2 border rounded h-10"
+                                        value={overnightSoak === null ? "" : overnightSoak ? "yes" : "no"}
+                                        onChange={(e) => setOvernightSoak(e.target.value === "" ? null : e.target.value === "yes")}
+                                    >
+                                        <option value="">Select</option>
+                                        <option value="yes">Yes</option>
+                                        <option value="no">No</option>
+                                    </select>
+                                </div>
+
+                                <div className="flex gap-7">
+                                    <div className="flex flex-col">
+                                        <label className="font-semibold">Days Direct Light</label>
+                                        <input
+                                            className="p-2 border rounded h-10"
+                                            type="number"
+                                            value={daysDirect ?? ""}
+                                            onChange={(e) => setDaysDirect(e.target.value === "" ? undefined : Number(e.target.value))}
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col">
+                                        <label className="font-semibold">Days Indirect Light</label>
+                                        <input
+                                            className="p-2 border rounded h-10"
+                                            type="number"
+                                            value={daysIndirect ?? ""}
+                                            onChange={(e) => setDaysIndirect(e.target.value === "" ? undefined : Number(e.target.value))}
+                                    />
+                                    </div>
+
+                                </div>
+
+                                <div className="flex flex-col">
+                                    <label className="font-semibold">Rack Grow Days</label>
+                                    <input
+                                        className="p-2 border rounded h-10"
+                                        type="number"
+                                        value={rackGrow ?? ""}
+                                        onChange={(e) => setRackGrow(e.target.value === "" ? undefined : Number(e.target.value))}
+                                    />
+                                </div>
+
+                                <div className="flex flex-col">
+                                    <label className="font-semibold">Yield Per Tray</label>
+                                    <input
+                                        className="p-2 border rounded h-10"
+                                        type="number"
+                                        value={yieldTray ?? ""}
+                                        onChange={(e) => setYieldTray(e.target.value === "" ? undefined : Number(e.target.value))}
+                                    />
+                                </div>
+
+                                <div className="flex flex-col">
+                                    <label className="font-semibold">Germination Type</label>
+                                    <select 
+                                        className="p-2 border rounded h-10"
+                                        value={germType}
+                                        onChange={(e) => setGermType(e.target.value)}
+                                    >
+                                        <option value="">Select</option>
+                                        <option value="stacked">Stacked</option>
+                                        <option value="blackout">Blackout</option>
+                                        <option value="domed">Domed</option>
+                                    </select>
+                                </div>
+
+                                <Button
+                                    className="mt-2 bg-[#308261] text-white"
+                                    onClick={handleAddOrder}
+                                    disabled={adding}
+                                >
+                                    {adding ? "Adding..." : "Add Crop"}
+                                </Button>
+                            </div>
+                        </DialogContent>
+                    </Dialog>
                 </div>
+                    
+                <input
+                    type="text"
+                    placeholder="Search for crops"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="mb-4 p-2 border border-[#308261] rounded-lg w-full"
+                />
+                    
+                <div className="flex-1 overflow-y-auto">
+                    <Table 
+                        columns={cropInformation} 
+                        data={searchCrops} 
+                        underlines={true}
+                        useActions={(row) => (
+                            <CropActions item={row as CropInfo} onUpdate={handleUpdate}/>
+                        )}
+                    />
+                </div>                    
             </div>
         </div>
         );
