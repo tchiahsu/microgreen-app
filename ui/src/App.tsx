@@ -16,8 +16,9 @@ import Employee from "./pages/pages/Employee";
 function App() {
 
   return (
+    <>
+      <Toaster position="top-right"/>
       <BackgroundGradientAnimation>
-        <Toaster position="top-right" />
         <BrowserRouter>
           {/* Application Pages */}
           <Routes>
@@ -33,6 +34,7 @@ function App() {
           </Routes>
         </BrowserRouter>
       </BackgroundGradientAnimation>
+    </>
   )
 }
 

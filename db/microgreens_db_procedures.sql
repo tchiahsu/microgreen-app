@@ -122,7 +122,6 @@ BEGIN
 END
 DELIMITER ;
 
-
 -- =========================== VIEW PROCEDURES ====================================
 
 /*
@@ -400,6 +399,19 @@ CREATE PROCEDURE get_employee_names()
 BEGIN
 	SELECT employee_id, first_name, last_name FROM employee
 		WHERE is_active = TRUE;
+END //
+DELIMITER ;
+
+/*
+PROCEDURE
+----------
+Get all the delivery dates and their status
+*/
+DROP PROCEDURE IF EXISTS get_delivery_info;
+DELIMITER //
+CREATE PROCEDURE get_delivery_info()
+BEGIN
+	SELECT delivery_date, delivery_status FROM delivery;
 END //
 DELIMITER ;
 
@@ -825,6 +837,26 @@ BEGIN
 END //
 DELIMITER ;
 
+/*
+PROCEDURE
+---------
+Add a delivery date to the system
+*/
+DROP PROCEDURE IF EXISTS add_delivery_date;
+DELIMITER //
+CREATE PROCEDURE add_delivery_date(
+	delivery_date_p DATE
+)
+BEGIN
+    -- Validate delivery date
+    IF delivery_date_p < CURDATE() THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Delivery date cannot be before today';
+	END IF;
+    
+    INSERT INTO delivery (delivery_date, delivery_status, employee_id) VALUES (delivery_date_p, "scheduled", NULL);
+END //
+DELIMITER ;
 
 -- ======================== DELETE PROCEDURES =================================
  
@@ -1405,5 +1437,36 @@ BEGIN
 			AND customer_order.order_type = s_order_type
 			AND customer_order.delivery_date >= DATE_ADD(s_delivery_date, INTERVAL delivery_day_shift DAY);
     END IF;
+END //
+DELIMITER ;
+
+/*
+PROCEDURE
+----------
+Update delivery status for an existing delivery
+*/
+DROP PROCEDURE IF EXISTS update_delivery;
+DELIMITER //
+CREATE PROCEDURE update_delivery(
+	delivery_date_p DATE,
+    delivery_status_p VARCHAR(32)
+)
+BEGIN
+	-- Validate delivery date
+    IF delivery_date_p < CURDATE() THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Delivery date cannot be before today';
+	END IF;
+    
+    -- Validate delivery status
+    IF delivery_status_p NOT IN ("scheduled", "completed", "cancelled") THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Delivery status not valid. Valid options: scheduled, completed, cancelled';
+	END IF;
+
+	UPDATE delivery
+    SET delivery_status = delivery_status_p
+    WHERE delivery_date = delivery_date_p;
+
 END //
 DELIMITER ;
