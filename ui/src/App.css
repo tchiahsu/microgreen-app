@@ -8,3 +8,11 @@ main {
   position: relative;
   z-index: 1;
 }
+
+[data-sonner-toaster] {
+  z-index: 99999 !important;
+}
+
+[data-sonner-toast] {
+  z-index: 9999 !important;
+}

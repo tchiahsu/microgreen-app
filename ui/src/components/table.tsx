@@ -11,10 +11,11 @@ export type TableProps = {
     columns: Columns[]; 
     data: any[];
     underlines?: boolean;
+    color?: string;
     useActions?: (row: any) => JSX.Element;
 }
 
-export function Table({columns, data, underlines, useActions}: TableProps){
+export function Table({columns, data, underlines, color, useActions}: TableProps){
     return (
         <table className="w-full text-left">
             <thead>
@@ -40,9 +41,10 @@ export function Table({columns, data, underlines, useActions}: TableProps){
                         <td key={column.key} 
                             className={clsx(         
                                 "px-4 py-3 align-top",
-                                underlines && "border-b-[0.9px] border-[#f6b8669c]",
+                                underlines && "border-b-[0.9px]",
                                 column.align == "center" && "text-center",
-                                column.align == "right" && "text-right"
+                                column.align == "right" && "text-right",
+                                color === "green" ? "border-[#bcd5ad]" : "border-[#f6b8669c]"
                             )}
                         >
                             {column.key === "actions" ? useActions(row) : row[column.key]}
