@@ -28,6 +28,11 @@ function isValidDate(date: Date | undefined) {
   return !isNaN(date.getTime())
 }
 
+function formatDateToToday(iso: string): Date{
+  const [year, month, day] = iso.split("-").map(Number)
+  return new Date(year, month - 1, day)
+}
+
 export function Calendar28({
     selectedDate, 
     onChange,
@@ -37,7 +42,7 @@ export function Calendar28({
 }) {
     const [open, setOpen] = React.useState(false)
 
-    const startDate = new Date(selectedDate)
+    const startDate = formatDateToToday(selectedDate)
 
     const [date, setDate] = React.useState<Date | undefined>(startDate)
     const [month, setMonth] = React.useState<Date | undefined>(startDate)
