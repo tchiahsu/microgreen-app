@@ -7,8 +7,38 @@ router = APIRouter(prefix="/clients", tags=["clients"])
 
 
 # ----------------------------------------
-# GET ALL RESTAURANT DATA
+# GET RESTAURANT NAMES
 # ----------------------------------------
+@router.get("/restaurant_names")
+async def get_restaurant_names():
+    '''
+    Get the restaurant information
+    Example: GET /clients/restaurant_names
+    '''
+    db = connect_db()
+    if db is None:
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
+
+    try:
+        cursor = db.cursor()
+        cursor.callproc("get_all_restaurant_names")
+        result = cursor.fetchall()
+
+        cursor.close()
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=400,
+                            detail="Unable to get restaurant information")
+    finally:
+        db.close()
+
+    return result
+
+
+# ------------------------------------------
+# GET ALL RESTAURANTS INFO AND CONTACT INFO
+# ------------------------------------------
 @router.get("/restaurant_information")
 async def get_restaurant_information():
     '''
@@ -22,7 +52,7 @@ async def get_restaurant_information():
 
     try:
         cursor = db.cursor()
-        cursor.callproc("get_all_restaurant_names")
+        cursor.callproc("get_all_restaurant_contact_info")
         result = cursor.fetchall()
 
         cursor.close()

@@ -184,7 +184,7 @@ export default function Crop() {
 
     return (
         <div className="text-sm font-mono">
-            <div className="p-5 bg-white/60 rounded-lg h-170 flex flex-col">
+            <div className="p-5 bg-white/60 rounded-lg h-170 flex flex-col mt-5">
                 <div className="flex justify-between items-center mb-5">
                     <h2 className="font-semibold text-lg text-[#308261]">Crop Information</h2> 
                     <Dialog open={addOpen} onOpenChange={setAddOpen}>
