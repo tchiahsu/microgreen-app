@@ -286,19 +286,20 @@ BEGIN
 END //
 DELIMITER ;
 
--- total lead time (lead_time): the sum of the direct light + indirect light + grow days 
-
 /*
 PROCEDURE
 ----------
 Used in the product page.
 Gets all the distinact names of the products.
 */
-DROP PROCEDURE IF EXISTS get_all_product_name;
+DROP PROCEDURE IF EXISTS get_all_product_information;
 DELIMITER //
-CREATE PROCEDURE get_all_product_name()
+CREATE PROCEDURE get_all_product_information()
 BEGIN
-	SELECT DISTINCT product_name FROM product;
+	SELECT product.product_id, product.product_name, composed_of.crop_ratio, crop.crop_name, packaging.size_type FROM product
+		JOIN composed_of ON composed_of.product_id = product.product_id
+		JOIN crop ON composed_of.crop_id = crop.crop_id
+        JOIN packaging ON product.package_id = packaging.package_id;
 END //
 DELIMITER ;
 
@@ -791,8 +792,8 @@ BEGIN
 			SET MESSAGE_TEXT = 'The zip code must be 5 characters.';
 	END IF;
 
-	INSERT INTO restaurant (restaurant_name, street_num, street_name, city, state, zip_code) VALUE
-		(restaurant_name_p, street_num_p, street_name_p, city_p, state_p, zip_code_p);
+	INSERT INTO restaurant (restaurant_name, street_num, street_name, city, state, zip_code, is_active) VALUE
+		(restaurant_name_p, street_num_p, street_name_p, city_p, state_p, zip_code_p, TRUE);
 END //
 DELIMITER ;
 
@@ -1470,3 +1471,50 @@ BEGIN
 
 END //
 DELIMITER ;
+
+/*
+PROCEDURE
+----------
+Update resturant information
+*/
+DROP PROCEDURE IF EXISTS update_restaurant_info;
+DELIMITER //
+CREATE PROCEDURE update_restaurant_info(
+	restaurant_id_p INT,
+	restaurant_name_p VARCHAR(64),
+    street_num_p INT,
+    street_name_p VARCHAR(64),
+    city_p VARCHAR(32),
+    state_p VARCHAR(2),
+    zip_code_p VARCHAR(5),
+    is_active_p BOOL
+)
+BEGIN
+	-- Validate street number
+    IF street_num_p <= 0 THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Street number must be greater than 0';
+	END IF;
+    
+    -- Validate address
+    IF (street_num_p IS NULL OR street_name_p IS NULL OR city_p IS NULL OR state_p IS NULL OR zip_code_p IS NULL) THEN
+		IF NOT (street_num_p IS NULL AND street_name_p IS NULL AND city_p IS NULL AND state_p IS NULL AND zip_code_p IS NULL) THEN
+			SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'All address fields are required';
+		END IF;
+    END IF;
+	
+    UPDATE restaurant
+    SET restaurant_name = COALESCE(restaurant_name_p, restaurant_name),
+		street_num = COALESCE(street_num_p, street_num),
+        street_name = COALESCE(street_name_p, street_name),
+        city = COALESCE(city_p, city),
+        state = COALESCE(state_p, state),
+        zip_code = COALESCE(zip_code_p, zip_code),
+        is_active = COALESCE(is_active_p, is_active)
+	WHERE restaurant_id = restaurant_id_p;
+    
+END //
+DELIMITER ;
+
+
