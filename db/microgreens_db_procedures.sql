@@ -380,12 +380,12 @@ DROP PROCEDURE IF EXISTS get_all_restaurant_contact_info;
 DELIMITER //
 CREATE PROCEDURE get_all_restaurant_contact_info()
 BEGIN 
-	SELECT CONCAT(contact_info.first_name, ' ', contact_info.last_name) AS contact_name, contact_info.email, contact_info.phone,
+	SELECT restaurant_name, CONCAT(contact_info.first_name, ' ', contact_info.last_name) AS contact_name, contact_info.email, contact_info.phone,
 		CONCAT(restaurant.street_num, ', ', restaurant.street_name, ', ', restaurant.city, ', ', restaurant.state, ', ', restaurant.zip_code)
 		AS contact_address
 		FROM contact_info
 		JOIN restaurant ON contact_info.restaurant_id = restaurant.restaurant_id
-		ORDER BY restaurant.restaurant_id;
+		ORDER BY restaurant.restaurant_name;
 END //
 DELIMITER ;
 
