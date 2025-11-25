@@ -156,7 +156,7 @@ DROP TABLE IF EXISTS `customer_order`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `customer_order` (
   `order_id` int NOT NULL AUTO_INCREMENT,
-  `order_type` enum('one-time','b-weekly','weekly') NOT NULL,
+  `order_type` enum('one-time','bi-weekly','weekly') NOT NULL,
   `order_status` enum('scheduled','completed','cancelled') NOT NULL,
   `employee_id` int NOT NULL,
   `delivery_date` date NOT NULL,
@@ -266,8 +266,11 @@ SET @saved_cs_client     = @@character_set_client;
  1 AS `weight_grams`,
  1 AS `quantity`,
  1 AS `restaurant_name`,
+ 1 AS `restaurant_id`,
  1 AS `order_id`,
  1 AS `order_status`,
+ 1 AS `employee_id`,
+ 1 AS `is_forced`,
  1 AS `size_type`,
  1 AS `trays_needed`,
  1 AS `planting_date`,
@@ -650,6 +653,33 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `add_delivery_date` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `add_delivery_date`(
+	delivery_date_p DATE
+)
+BEGIN
+    -- Validate delivery date
+    IF delivery_date_p < CURDATE() THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Delivery date cannot be before today';
+	END IF;
+    
+    INSERT INTO delivery (delivery_date, delivery_status, employee_id) VALUES (delivery_date_p, "scheduled", NULL);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `add_employee` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -781,7 +811,7 @@ BEGIN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'Delivery date cannot be before today';
 	END IF;
-
+    
 	-- Get the first contact information from the restaurant
 	SELECT contact_info.email INTO contact_email FROM contact_info
 		WHERE contact_info.restaurant_id = restaurant_id_p
@@ -1140,6 +1170,30 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `delete_order_product` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_order_product`(
+	order_id_p INT,
+    product_id_p INT
+)
+BEGIN
+	DELETE FROM contains
+		WHERE order_id = order_id_p
+		AND product_id = product_id_p;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `delete_product` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -1189,8 +1243,36 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_crop_information`()
 BEGIN
-	SELECT crop_name, sow_rate, overnight_soak, germination_type, days_direct_light, 
-		days_indirect_light, rack_grow_days, yield_per_tray FROM crop;
+	SELECT crop_id, crop_name, seed_type, sow_rate, overnight_soak, days_direct_light, 
+		days_indirect_light, rack_grow_days, 
+        SUM(days_direct_light + days_indirect_light + rack_grow_days) AS lead_time,
+        yield_per_tray, germination_type 
+        FROM crop
+        GROUP BY crop_name, sow_rate, overnight_soak, days_direct_light, 
+		days_indirect_light, rack_grow_days, yield_per_tray, germination_type;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_all_package_name` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_package_name`(
+	product_name_p VARCHAR(64)
+)
+BEGIN
+	SELECT DISTINCT size_type FROM packaging
+		JOIN product ON packaging.package_id = product.package_id
+        WHERE product_name = product_name_p;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1251,8 +1333,9 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_product_packages`()
 BEGIN
-	SELECT product.product_name, product.weight_grams, packaging.size_type AS packaging_type FROM product
+	SELECT product.product_id, product.product_name, product.weight_grams, packaging.package_id, packaging.size_type AS packaging_type FROM product
 		JOIN packaging ON product.package_id = packaging.package_id
+        WHERE packaging.is_active = 1
 		ORDER BY product.product_name;
 END ;;
 DELIMITER ;
@@ -1326,6 +1409,45 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_delivery_info` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_delivery_info`()
+BEGIN
+	SELECT delivery_date, delivery_status FROM delivery;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_employee_names` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_employee_names`()
+BEGIN
+	SELECT employee_id, first_name, last_name FROM employee
+		WHERE is_active = TRUE;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `get_germination_summary` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -1388,13 +1510,38 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_orders_to_fulfill`(
 	order_delivery_date_p DATE
 )
+BEGIN   
+	SELECT order_id, restaurant_name, restaurant_id, product_id, product_name, size_type AS package_type, MAX(quantity) AS quantity, order_status, employee_id, delivery_date, is_forced FROM microgreens_view
+		WHERE delivery_date = order_delivery_date_p
+        GROUP BY order_id, restaurant_name, restaurant_id, product_id, product_name, size_type, order_status, employee_id, delivery_date, is_forced
+        ORDER BY restaurant_name, order_id, product_name;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_packagings_per_product` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_packagings_per_product`(
+	order_delivery_date_p DATE
+)
 BEGIN
-	WITH t AS(
-	SELECT DISTINCT order_id, product_id, restaurant_name, product_name, size_type, quantity, order_status FROM microgreens_view
-		WHERE (delivery_date = order_delivery_date_p)
-	) SELECT restaurant_name, product_name, size_type AS package_type, SUM(quantity) AS product_quantity FROM t
-		GROUP BY restaurant_name, product_name, size_type
-		ORDER BY restaurant_name;
+	SELECT product_name, CONCAT(package_count, 'x ', package_type) AS package_info FROM (
+		SELECT product_name, size_type AS package_type, COUNT(*) AS package_count FROM (
+			SELECT DISTINCT order_id, product_id, product_name, size_type, delivery_date FROM 
+            microgreens_view) as mv
+		WHERE delivery_date = order_delivery_date_p
+		GROUP BY product_name, package_type )as t
+    ORDER BY product_name;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1544,7 +1691,7 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `update_crop`(
-	crop_id_p INT, 
+	crop_id_p INT,
     crop_name_p VARCHAR(64), 
     seed_type_p VARCHAR(64), 
     sow_rate_p DECIMAL(10, 2), 
@@ -1553,9 +1700,10 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `update_crop`(
     days_direct_light_p INT, 
     days_indirect_light_p INT, 
     rack_grow_days_p INT, 
-    yield_per_tray_p INT 
+    yield_per_tray_p DECIMAL(10, 2) 
 )
 BEGIN
+
 	DECLARE found_id INT;
     -- Check if value provided for crop_id is valid
     SELECT crop_id INTO found_id FROM crop
@@ -1579,7 +1727,7 @@ BEGIN
 	
     IF germination_type_p NOT IN ('domed', 'stacked', 'blackout') THEN
 		SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'The value provided for yield_per_tray must be either: domed, stacked, or blackout.';
+			SET MESSAGE_TEXT = 'The value provided for germination_type must be either: domed, stacked, or blackout.';
     END IF;
     
 	UPDATE crop
@@ -1593,6 +1741,43 @@ BEGIN
 		rack_grow_days = COALESCE(rack_grow_days_p, rack_grow_days),
 		yield_per_tray = COALESCE(yield_per_tray_p, yield_per_tray)
 	WHERE crop_id = crop_id_p;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `update_delivery` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_delivery`(
+	delivery_date_p DATE,
+    delivery_status_p VARCHAR(32)
+)
+BEGIN
+	-- Validate delivery date
+    IF delivery_date_p < CURDATE() THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Delivery date cannot be before today';
+	END IF;
+    
+    -- Validate delivery status
+    IF delivery_status_p NOT IN ("scheduled", "completed", "cancelled") THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Delivery status not valid. Valid options: scheduled, completed, cancelled';
+	END IF;
+
+	UPDATE delivery
+    SET delivery_status = delivery_status_p
+    WHERE delivery_date = delivery_date_p;
+
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1654,7 +1839,6 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `update_order`(
 	order_id_p INT,
-    order_type_p VARCHAR(32),
     order_status_p VARCHAR(32),
     employee_id_p INT,
     delivery_date_p DATE,
@@ -1671,12 +1855,6 @@ BEGIN
     DECLARE lead_time INT;
     DECLARE delivery_day_shift INT;
     DECLARE lead_product_id INT;
-
-	-- Validate order type
-	IF order_type_p IS NOT NULL AND order_type_p NOT IN ("one-time", "bi-weekly", "weekly") THEN
-		SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'Invalid Order Type. Valid Options: one-time, bi-weekly, weekly';
-	END IF;
 
 	-- Validate order status
     IF order_status_p IS NOT NULL AND order_status_p NOT IN ("scheduled", "completed", "cancelled") THEN
@@ -1752,8 +1930,7 @@ BEGIN
 
 		-- Update only one order
 		UPDATE customer_order
-		SET order_type = COALESCE(order_type_p, order_type),
-			order_status = COALESCE(order_status_p, order_status),
+		SET order_status = COALESCE(order_status_p, order_status),
             employee_id = COALESCE(employee_id_p, employee_id),
             delivery_date = COALESCE(delivery_date_p, delivery_date),
             is_forced = lead_time > DATEDIFF(COALESCE(delivery_date_p, delivery_date), CURDATE())
@@ -1776,8 +1953,7 @@ BEGIN
 
 		-- Update entire future series
         UPDATE customer_order
-        SET order_type = COALESCE(order_type_p, order_type),
-			order_status = COALESCE(order_status_p, order_status),
+        SET order_status = COALESCE(order_status_p, order_status),
             employee_id = COALESCE(employee_id_p, employee_id),
             delivery_date = DATE_ADD(delivery_date, INTERVAL delivery_day_shift DAY)
 			WHERE restaurant_id = s_restaurant_id
@@ -1791,7 +1967,7 @@ BEGIN
 			contains.quantity = COALESCE(quantity_p, contains.quantity)
 		WHERE customer_order.restaurant_id = s_restaurant_id
 		AND customer_order.date_created = s_date_created
-        AND customer_order.order_type = COALESCE(order_type_p, s_order_type)
+        AND customer_order.order_type = s_order_type
         AND customer_order.delivery_date >= DATE_ADD(s_delivery_date, INTERVAL delivery_day_shift DAY);
         
         -- Check for forced orders
@@ -1799,7 +1975,7 @@ BEGIN
         SET is_forced = lead_time > DATEDIFF(delivery_date, CURDATE())
 			WHERE customer_order.restaurant_id = s_restaurant_id
 			AND customer_order.date_created = s_date_created
-			AND customer_order.order_type = COALESCE(order_type_p, s_order_type)
+			AND customer_order.order_type = s_order_type
 			AND customer_order.delivery_date >= DATE_ADD(s_delivery_date, INTERVAL delivery_day_shift DAY);
     END IF;
 END ;;
@@ -1908,7 +2084,7 @@ USE `microgreens_db`;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `microgreens_view` AS select `crop`.`crop_name` AS `crop_name`,`crop`.`days_indirect_light` AS `days_indirect_light`,`crop`.`days_direct_light` AS `days_direct_light`,`crop`.`rack_grow_days` AS `rack_grow_days`,`crop`.`yield_per_tray` AS `yield_per_tray`,`delivery`.`delivery_date` AS `delivery_date`,`composed_of`.`crop_ratio` AS `crop_ratio`,`composed_of`.`crop_id` AS `crop_id`,`product`.`product_id` AS `product_id`,`product`.`product_name` AS `product_name`,`product`.`weight_grams` AS `weight_grams`,`contains`.`quantity` AS `quantity`,`restaurant`.`restaurant_name` AS `restaurant_name`,`customer_order`.`order_id` AS `order_id`,`customer_order`.`order_status` AS `order_status`,`packaging`.`size_type` AS `size_type`,ceiling(ifnull((((`composed_of`.`crop_ratio` * `product`.`weight_grams`) * `contains`.`quantity`) / `crop`.`yield_per_tray`),1)) AS `trays_needed`,(`delivery`.`delivery_date` - interval ((`crop`.`days_indirect_light` + `crop`.`days_direct_light`) + `crop`.`rack_grow_days`) day) AS `planting_date`,(`delivery`.`delivery_date` - interval `crop`.`rack_grow_days` day) AS `germination_date`,(`delivery`.`delivery_date` - interval (`crop`.`days_indirect_light` + `crop`.`rack_grow_days`) day) AS `switch_date` from (((((((`crop` join `composed_of` on((`crop`.`crop_id` = `composed_of`.`crop_id`))) join `product` on((`composed_of`.`product_id` = `product`.`product_id`))) join `contains` on((`contains`.`product_id` = `product`.`product_id`))) join `customer_order` on((`customer_order`.`order_id` = `contains`.`order_id`))) join `packaging` on((`product`.`package_id` = `packaging`.`package_id`))) join `delivery` on((`customer_order`.`delivery_date` = `delivery`.`delivery_date`))) join `restaurant` on((`customer_order`.`restaurant_id` = `restaurant`.`restaurant_id`))) order by `delivery`.`delivery_date` */;
+/*!50001 VIEW `microgreens_view` AS select `crop`.`crop_name` AS `crop_name`,`crop`.`days_indirect_light` AS `days_indirect_light`,`crop`.`days_direct_light` AS `days_direct_light`,`crop`.`rack_grow_days` AS `rack_grow_days`,`crop`.`yield_per_tray` AS `yield_per_tray`,`delivery`.`delivery_date` AS `delivery_date`,`composed_of`.`crop_ratio` AS `crop_ratio`,`composed_of`.`crop_id` AS `crop_id`,`product`.`product_id` AS `product_id`,`product`.`product_name` AS `product_name`,`product`.`weight_grams` AS `weight_grams`,`contains`.`quantity` AS `quantity`,`restaurant`.`restaurant_name` AS `restaurant_name`,`restaurant`.`restaurant_id` AS `restaurant_id`,`customer_order`.`order_id` AS `order_id`,`customer_order`.`order_status` AS `order_status`,`customer_order`.`employee_id` AS `employee_id`,`customer_order`.`is_forced` AS `is_forced`,`packaging`.`size_type` AS `size_type`,ceiling(ifnull((((`composed_of`.`crop_ratio` * `product`.`weight_grams`) * `contains`.`quantity`) / `crop`.`yield_per_tray`),1)) AS `trays_needed`,(`delivery`.`delivery_date` - interval ((`crop`.`days_indirect_light` + `crop`.`days_direct_light`) + `crop`.`rack_grow_days`) day) AS `planting_date`,(`delivery`.`delivery_date` - interval `crop`.`rack_grow_days` day) AS `germination_date`,(`delivery`.`delivery_date` - interval (`crop`.`days_indirect_light` + `crop`.`rack_grow_days`) day) AS `switch_date` from (((((((`crop` join `composed_of` on((`crop`.`crop_id` = `composed_of`.`crop_id`))) join `product` on((`composed_of`.`product_id` = `product`.`product_id`))) join `contains` on((`contains`.`product_id` = `product`.`product_id`))) join `customer_order` on((`customer_order`.`order_id` = `contains`.`order_id`))) join `packaging` on((`product`.`package_id` = `packaging`.`package_id`))) join `delivery` on((`customer_order`.`delivery_date` = `delivery`.`delivery_date`))) join `restaurant` on((`customer_order`.`restaurant_id` = `restaurant`.`restaurant_id`))) order by `delivery`.`delivery_date` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -1922,4 +2098,4 @@ USE `microgreens_db`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-22 13:31:04
+-- Dump completed on 2025-11-25  0:51:55
