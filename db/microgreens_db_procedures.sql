@@ -416,6 +416,18 @@ BEGIN
 END //
 DELIMITER ;
 
+/*
+PROCEDURE
+----------
+*/
+DROP PROCEDURE IF EXISTS get_product_names;
+DELIMITER //
+CREATE PROCEDURE get_product_names()
+BEGIN
+	SELECT DISTINCT product_name from product;
+END
+DELIMITER;
+
 -- =========================== ADD PROCEDURES ====================================
 
 /*

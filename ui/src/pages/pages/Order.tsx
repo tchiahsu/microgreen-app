@@ -65,11 +65,14 @@ export default function Order() {
 
     async function fetchProducts() {
         try {
-            const res = await fetch('http://127.0.0.1:8000/product/product_names');
+            const res = await fetch('http://127.0.0.1:8000/product/product_information');
             if (!res.ok) {
                 throw new Error("Failed to fetch product data");
             }
-            setProductData(await res.json())
+
+            const data = await res.json()
+            setProductData(data)
+
         } catch (e) {
             console.error(e)
             setProductData([]);
@@ -387,9 +390,9 @@ export default function Order() {
                                                 <SelectValue placeholder="Select Product" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {productData.map((p) => (
-                                                    <SelectItem key={p.product_name} value={p.product_name}>
-                                                        {p.product_name}
+                                                {Array.from(new Set(productData.map((p) => p.product_name))).map((name) => (
+                                                    <SelectItem key={name} value={name}>
+                                                        {name}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -600,7 +603,7 @@ export default function Order() {
                     {!orderData || Object.keys(orderData).length === 0 ? (
                         <div className="w-[100vh] font-bold text-red-600">No orders found for this date.</div>
                     ) : (
-                        <Accordion type='single' collapsible>
+                        <Accordion type="single" collapsible>
                             {Object.entries(orderData).map(([restaurantName, items]) => (
                                 <AccordionItem key={restaurantName} value={restaurantName}>
                                     <AccordionTrigger>{restaurantName} - {items.length} items</AccordionTrigger>
