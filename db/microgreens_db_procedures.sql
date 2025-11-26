@@ -380,8 +380,10 @@ DROP PROCEDURE IF EXISTS get_all_restaurant_contact_info;
 DELIMITER //
 CREATE PROCEDURE get_all_restaurant_contact_info()
 BEGIN 
-	SELECT restaurant_name, CONCAT(contact_info.first_name, ' ', contact_info.last_name) AS contact_name, contact_info.email, contact_info.phone,
-		CONCAT(restaurant.street_num, ', ', restaurant.street_name, ', ', restaurant.city, ', ', restaurant.state, ', ', restaurant.zip_code)
+	SELECT restaurant.restaurant_id, restaurant_name, contact_info.contact_id, 
+		CONCAT(contact_info.first_name, ' ', contact_info.last_name) AS contact_name, 
+		contact_info.email, contact_info.phone,
+		CONCAT(restaurant.street_num, ' ', restaurant.street_name, ', ', restaurant.city, ', ', restaurant.state, ', ', restaurant.zip_code)
 		AS contact_address
 		FROM contact_info
 		JOIN restaurant ON contact_info.restaurant_id = restaurant.restaurant_id
@@ -930,48 +932,30 @@ BEGIN
     COMMIT;
 END //
 DELIMITER ; 
- 
+  
 /*
 PROCEDURE
 ----------
-This procedure deletes the contact info of the client referenced by the email in the customer_order table.
-*/
-DROP PROCEDURE IF EXISTS delete_from_customer_order;
-DELIMITER //
-CREATE PROCEDURE delete_from_customer_order(
-	email_p VARCHAR(128) 
-)
-BEGIN
-	START TRANSACTION;
-    DELETE FROM customer_order
-		WHERE customer_order.email = email_p;
-    COMMIT;
-END //
-DELIMITER ;
- 
-/*
-PROCEDURE
-----------
-This procedure deletes a client's contact info in the contact_info table. 
-It first checks if the row with the given meail has been deleted in the parent table: customer_order.
-If it has been deleted, it proceeds to delete the row of the given email in the table. 
-It it hasn't been deleted an error gets signaled. 
+This procedure deletes a client's contact info in the contact_info table.  
 */
 DROP PROCEDURE IF EXISTS delete_contact_info;
 DELIMITER //
 CREATE PROCEDURE delete_contact_info(
-	email_p VARCHAR(128) 
+	contact_id_p INT
 )
 BEGIN
-	DECLARE count_check INT DEFAULT 0;
+    DECLARE found_id INT;
     START TRANSACTION;
-        SELECT COUNT(*) INTO count_check FROM customer_order 
-			WHERE customer_order.email = email_p;
-		IF count_check > 0 THEN ROLLBACK;
+		-- Check if value provided for contact_id is valid
+		SELECT contact_id INTO found_id FROM contact_info
+			WHERE contact_id = contact_id_p;
+			
+		IF found_id IS NULL THEN
 			SIGNAL SQLSTATE '45000'
-				SET MESSAGE_TEXT = "Can't delete this row, it is being referenced in the customer_order table.";
+					SET MESSAGE_TEXT = 'The value provided for contact_id is not valid.';
 		END IF;
-		DELETE FROM contact_info WHERE contact_info.email = email_p;
+		
+		DELETE FROM contact_info WHERE contact_info.contact_id = contact_id_p;
     COMMIT;
 END //
 DELIMITER ;
@@ -1495,14 +1479,6 @@ BEGIN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'Street number must be greater than 0';
 	END IF;
-    
-    -- Validate address
-    IF (street_num_p IS NULL OR street_name_p IS NULL OR city_p IS NULL OR state_p IS NULL OR zip_code_p IS NULL) THEN
-		IF NOT (street_num_p IS NULL AND street_name_p IS NULL AND city_p IS NULL AND state_p IS NULL AND zip_code_p IS NULL) THEN
-			SIGNAL SQLSTATE '45000'
-				SET MESSAGE_TEXT = 'All address fields are required';
-		END IF;
-    END IF;
 	
     UPDATE restaurant
     SET restaurant_name = COALESCE(restaurant_name_p, restaurant_name),

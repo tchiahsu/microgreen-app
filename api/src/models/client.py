@@ -29,4 +29,14 @@ class ContactInfoUpdate(BaseModel):
 
 
 class ContactInfoDelete(BaseModel):
-    email: str
+    contact_id: int
+
+class RestaurantInfoUpdate(BaseModel):
+    restaurant_id: int
+    restaurant_name: Optional[str] = None
+    street_num: Optional[int] = None
+    street_name: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    zip_code: Optional[str] = None
+    is_active: Optional[bool] = None
