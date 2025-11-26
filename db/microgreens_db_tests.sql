@@ -86,11 +86,10 @@ CALL delete_from_composed_of(101);
 CALL delete_product(101);
 
 -- Tests deleting the contact_info in the product table without deleting it first in customer_order table. 
-CALL delete_contact_info("adrian.s@zuma.test");
--- Tests deleting the contact_info in the customer_order table. 
-CALL delete_from_customer_order("adrian.s@zuma.test");
--- Tests deleting the contact_info again in the customer_order table after removing the row in the parent table. 
-CALL delete_contact_info("adrian.s@zuma.test");
+CALL delete_contact_info(2);
+
+-- Tests deleting a contact_info with an invalid contact id
+CALL delete_contact_info(100000);
 
 CALL delete_employee(1);
 
@@ -174,3 +173,7 @@ CALL update_order(941, NULL, NULL, '2026-03-04', NULL, NULL, TRUE);
 CALL update_order(943, NULL, NULL, '2026-04-08', NULL, NULL, TRUE);
 -- UPDATE HALF OF MARCH
 CALL update_order(944, NULL, NULL, '2025-11-25', NULL, NULL, TRUE);
+
+-- Test updaing the information of a restaurant
+CALL update_restaurant_info(77, "testUpdateProcedure", "100", "test street", null, "MA", 02134, TRUE);
+
