@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException
 from src.database import connect_db
 from src.models.crop import CropRatioUpdate
 from src.models.packaging import PackagingData
-from src.models.product import UpdateProduct
-from src.models.product import AddProduct
+from src.models.product import (
+    AddProduct, UpdateProduct, ProductSize, UpdateComposition)
 
 router = APIRouter(prefix="/product", tags=["product"])
 
@@ -333,4 +333,102 @@ async def add_packaging(data: PackagingData):
 
     finally:
         cursor.close()
+        db.close()
+
+
+# ----------------------------------------
+# ADD NEW PACKAGING SIZE FOR AN EXISTING
+# PRODUCT
+# ----------------------------------------
+@router.post("/add_product_size")
+async def add_product_size(data: ProductSize):
+    '''
+    Adds new packaging size to an existing product
+    Example POST /product/add_product_size
+    '''
+    db = connect_db()
+    if db is None:
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
+    cursor = db.cursor()
+
+    try:
+        cursor.callproc("add_product_size", (data.product_name,
+                                             data.package_id, 
+                                             data.weight_grams,
+                                             data.is_active,))
+        db.commit()
+        cursor.close()
+        return {"message": "New product size added successfully."}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        db.close()
+
+
+# ----------------------------------------
+# UPDATE EXISTING PRODUCT SIZE
+# ----------------------------------------
+@router.put("/update_product_size")
+async def update_product_size(data: ProductSize):
+    '''
+    Updates an existing product size information
+    Example: PUT /product/update_prodict_size
+    '''
+    db = connect_db()
+    if db is None:
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
+    cursor = db.cursor()
+
+    try:
+        cursor.callproc("update_product_size", (data.product_name,
+                                                data.package_id,
+                                                data.weight_grams,
+                                                data.is_active,))
+        db.commit()
+        cursor.close()
+        return {"message": "Product size updated successfully."}
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400,
+                            detail=str(e))
+
+    finally:
+        db.close()
+
+
+# ----------------------------------------
+# UPDATE CROP COMPOSITION FOR A PRODUCT
+# ----------------------------------------
+@router.put("/update_composition")
+async def update_composition(data: UpdateComposition):
+    '''
+    Update crop composition for a product
+    Example: PUT /product/update_composition
+    '''
+    db = connect_db()
+    if db is None:
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
+    cursor = db.cursor()
+
+    try:
+        for index, comp in enumerate(data.list_of_composition):
+            is_first = 1 if index == 0 else 0
+            cursor.callproc("update_product_composition", (data.product_name,
+                                                           comp.crop_id,
+                                                           comp.crop_ratio,
+                                                           is_first,))
+        db.commit()
+        cursor.close()
+        return {"message": "Composition updated successfully."}
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+
+    finally:
         db.close()
