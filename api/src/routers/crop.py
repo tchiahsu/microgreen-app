@@ -74,7 +74,7 @@ async def add_crop(data: CropData):
 
 
 # ----------------------------------------
-# EDIT CROP TO CROP DATA
+# EDIT CROP DATA
 # ----------------------------------------
 @router.put("/")
 async def edit_crop(data: CropUpdate):

@@ -720,8 +720,8 @@ BEGIN
 			SET MESSAGE_TEXT = 'Employee with this email already exists';
 	END IF;
 
-	INSERT INTO employee (ssn, first_name, last_name, email, title) VALUES
-		(ssn_p, first_name_p, last_name_p, email_p, title_p);
+	INSERT INTO employee (ssn, first_name, last_name, email, title, is_active) VALUES
+		(ssn_p, first_name_p, last_name_p, email_p, title_p, TRUE);
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1059,18 +1059,21 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_contact_info`(
-	email_p VARCHAR(128) 
+	contact_id_p INT
 )
 BEGIN
-	DECLARE count_check INT DEFAULT 0;
+    DECLARE found_id INT;
     START TRANSACTION;
-        SELECT COUNT(*) INTO count_check FROM customer_order 
-			WHERE customer_order.email = email_p;
-		IF count_check > 0 THEN ROLLBACK;
+		-- Check if value provided for contact_id is valid
+		SELECT contact_id INTO found_id FROM contact_info
+			WHERE contact_id = contact_id_p;
+			
+		IF found_id IS NULL THEN
 			SIGNAL SQLSTATE '45000'
-				SET MESSAGE_TEXT = "Can't delete this row, it is being referenced in the customer_order table.";
+					SET MESSAGE_TEXT = 'The value provided for contact_id is not valid.';
 		END IF;
-		DELETE FROM contact_info WHERE contact_info.email = email_p;
+		
+		DELETE FROM contact_info WHERE contact_info.contact_id = contact_id_p;
     COMMIT;
 END ;;
 DELIMITER ;
@@ -1140,30 +1143,6 @@ BEGIN
 	START TRANSACTION;
     DELETE FROM contains
 		WHERE contains.product_id = product_id_p;
-    COMMIT;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `delete_from_customer_order` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_from_customer_order`(
-	email_p VARCHAR(128) 
-)
-BEGIN
-	START TRANSACTION;
-    DELETE FROM customer_order
-		WHERE customer_order.email = email_p;
     COMMIT;
 END ;;
 DELIMITER ;
@@ -1257,29 +1236,6 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `get_all_package_name` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_package_name`(
-	product_name_p VARCHAR(64)
-)
-BEGIN
-	SELECT DISTINCT size_type FROM packaging
-		JOIN product ON packaging.package_id = product.package_id
-        WHERE product_name = product_name_p;
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `get_all_product_composition` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -1315,7 +1271,7 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_product_information`()
 BEGIN
-	SELECT product.product_id, product.product_name, composed_of.crop_ratio, crop.crop_name, packaging.size_type FROM product
+	SELECT product.product_id, product.product_name, product.weight_grams, product.is_active, composed_of.crop_ratio, crop.crop_name, packaging.package_id, packaging.size_type FROM product
 		JOIN composed_of ON composed_of.product_id = product.product_id
 		JOIN crop ON composed_of.crop_id = crop.crop_id
         JOIN packaging ON product.package_id = packaging.package_id;
@@ -1359,12 +1315,14 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_all_restaurant_contact_info`()
 BEGIN 
-	SELECT CONCAT(contact_info.first_name, ' ', contact_info.last_name) AS contact_name, contact_info.email, contact_info.phone,
-		CONCAT(restaurant.street_num, ', ', restaurant.street_name, ', ', restaurant.city, ', ', restaurant.state, ', ', restaurant.zip_code)
+	SELECT restaurant.restaurant_id, restaurant_name, contact_info.contact_id, 
+		CONCAT(contact_info.first_name, ' ', contact_info.last_name) AS contact_name, 
+		contact_info.email, contact_info.phone,
+		CONCAT(restaurant.street_num, ' ', restaurant.street_name, ', ', restaurant.city, ', ', restaurant.state, ', ', restaurant.zip_code)
 		AS contact_address
 		FROM contact_info
 		JOIN restaurant ON contact_info.restaurant_id = restaurant.restaurant_id
-		ORDER BY restaurant.restaurant_id;
+		ORDER BY restaurant.restaurant_name;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1444,8 +1402,7 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_employee_names`()
 BEGIN
-	SELECT employee_id, first_name, last_name FROM employee
-		WHERE is_active = TRUE;
+	SELECT * FROM employee;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1525,6 +1482,25 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_package_names` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_package_names`()
+BEGIN
+	SELECT DISTINCT package_id, size_type FROM packaging;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `get_packagings_per_product` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -1569,6 +1545,29 @@ BEGIN
 	SELECT crop_name, COUNT(trays_needed) AS trays_used FROM microgreens_view
 		WHERE planting_date = input_date_p
 		GROUP BY crop_name;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_product_package_options` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_product_package_options`(
+	product_name_p VARCHAR(64)
+)
+BEGIN
+	SELECT DISTINCT size_type FROM packaging
+		JOIN product ON packaging.package_id = product.package_id
+        WHERE product_name = product_name_p;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1942,9 +1941,9 @@ BEGIN
 		
         -- update the product and quantity of the order
         UPDATE contains
-        SET product_id = COALESCE(product_id_p, contains.product_id),
-			quantity = COALESCE(quantity_p, contains.quantity)
-		WHERE contains.order_id = order_id_p;
+        SET quantity = COALESCE(quantity_p, contains.quantity)
+		WHERE contains.order_id = order_id_p
+		AND contains.product_id = product_id_p;
 	ELSE
 		IF delivery_day_shift <> 0 THEN
 			INSERT IGNORE INTO delivery (delivery_date, delivery_status, employee_id)
@@ -1967,12 +1966,12 @@ BEGIN
 		
         -- Update product and quantity for all orders
         UPDATE contains JOIN customer_order ON contains.order_id = customer_order.order_id
-        SET contains.product_id = COALESCE(product_id_p, contains.product_id),
-			contains.quantity = COALESCE(quantity_p, contains.quantity)
+        SET contains.quantity = COALESCE(quantity_p, contains.quantity)
 		WHERE customer_order.restaurant_id = s_restaurant_id
 		AND customer_order.date_created = s_date_created
         AND customer_order.order_type = s_order_type
-        AND customer_order.delivery_date >= DATE_ADD(s_delivery_date, INTERVAL delivery_day_shift DAY);
+        AND customer_order.delivery_date >= DATE_ADD(s_delivery_date, INTERVAL delivery_day_shift DAY)
+        AND contains.product_id = product_id_p;
         
         -- Check for forced orders
         UPDATE customer_order
@@ -2094,14 +2093,6 @@ BEGIN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'Street number must be greater than 0';
 	END IF;
-    
-    -- Validate address
-    IF (street_num_p IS NULL OR street_name_p IS NULL OR city_p IS NULL OR state_p IS NULL OR zip_code_p IS NULL) THEN
-		IF NOT (street_num_p IS NULL AND street_name_p IS NULL AND city_p IS NULL AND state_p IS NULL AND zip_code_p IS NULL) THEN
-			SIGNAL SQLSTATE '45000'
-				SET MESSAGE_TEXT = 'All address fields are required';
-		END IF;
-    END IF;
 	
     UPDATE restaurant
     SET restaurant_name = COALESCE(restaurant_name_p, restaurant_name),
@@ -2153,4 +2144,4 @@ USE `microgreens_db`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-25 12:18:55
+-- Dump completed on 2025-11-27 14:00:06

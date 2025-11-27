@@ -1407,9 +1407,9 @@ BEGIN
 		
         -- update the product and quantity of the order
         UPDATE contains
-        SET product_id = COALESCE(product_id_p, contains.product_id),
-			quantity = COALESCE(quantity_p, contains.quantity)
-		WHERE contains.order_id = order_id_p;
+        SET quantity = COALESCE(quantity_p, contains.quantity)
+		WHERE contains.order_id = order_id_p
+		AND contains.product_id = product_id_p;
 	ELSE
 		IF delivery_day_shift <> 0 THEN
 			INSERT IGNORE INTO delivery (delivery_date, delivery_status, employee_id)
@@ -1432,12 +1432,12 @@ BEGIN
 		
         -- Update product and quantity for all orders
         UPDATE contains JOIN customer_order ON contains.order_id = customer_order.order_id
-        SET contains.product_id = COALESCE(product_id_p, contains.product_id),
-			contains.quantity = COALESCE(quantity_p, contains.quantity)
+        SET contains.quantity = COALESCE(quantity_p, contains.quantity)
 		WHERE customer_order.restaurant_id = s_restaurant_id
 		AND customer_order.date_created = s_date_created
         AND customer_order.order_type = s_order_type
-        AND customer_order.delivery_date >= DATE_ADD(s_delivery_date, INTERVAL delivery_day_shift DAY);
+        AND customer_order.delivery_date >= DATE_ADD(s_delivery_date, INTERVAL delivery_day_shift DAY)
+        AND contains.product_id = product_id_p;
         
         -- Check for forced orders
         UPDATE customer_order

@@ -39,7 +39,7 @@ export default function Crop() {
     async function handleUpdate(updated: CropUpdate) {
         try {
             const cleanedData = Object.fromEntries(
-                Object.entries(updated).filter(([_, value]) => value != null)
+                Object.entries(updated).filter(([value]) => value != null)
             );
 
             const res = await fetch("http://127.0.0.1:8000/crops/", {
