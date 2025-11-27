@@ -1518,4 +1518,101 @@ BEGIN
 END //
 DELIMITER ;
 
+--
+/*
+PROCEDURE
+----------
+Add a new product size to an exisitng product.
+*/
+DROP PROCEDURE IF EXISTS add_product_size;
+DELIMITER //
+CREATE PROCEDURE add_product_size(
+	product_name_p VARCHAR(64),
+    package_id_p INT,
+    weight_grams_p DECIMAL(10, 2),
+    is_active_p BOOL
+)
+BEGIN
+	DECLARE base_prod_id INT;
+    DECLARE new_product_id INT;
+    
+    SELECT product_id INTO base_prod_id FROM product
+		WHERE product_name = product_name_p
+        LIMIT 1;
+	
+    IF base_prod_id IS NULL THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Base product not found to add new product size';
+	END IF;
+    
+    INSERT INTO product (product_name, package_id, weight_grams, is_active)
+    VALUES (product_name_p, package_id_p, weight_grams_p, is_active_p);
+    
+    SET new_product_id = LAST_INSERT_ID();
+    
+    INSERT INTO composed_of (product_id, crop_id, crop_ratio)
+    SELECT new_product_id AS product_id, crop_id, crop_ratio FROM composed_of
+		WHERE product_id = base_prod_id;
+END //
+DELIMITER ;
 
+/*
+PROCEUDRE
+----------
+Update an existing size for a product
+*/
+DROP PROCEDURE IF EXISTS update_product_size;
+DELIMITER //
+CREATE PROCEDURE update_product_size(
+	product_name_p VARCHAR(64),
+    package_id_p INT,
+    weight_grams_p DECIMAL(10, 2),
+    is_active_p BOOL
+)
+BEGIN
+	DECLARE product_id_p INT;
+    
+    SELECT product_id INTO product_id_p FROM product
+    WHERE product_name = product_name_p
+    AND package_id = package_id_p
+    LIMIT 1;
+    
+    IF product_id_p IS NULL THEN
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Product not found';
+	END IF;
+    
+    UPDATE product
+    SET weight_grams = weight_grams_p,
+		is_active = is_active_p
+	WHERE product_id = product_id_p;
+    
+END //
+DELIMITER ;
+
+/*
+PROCEDURE
+----------
+Apply composition to all sizes of a product
+*/
+DROP PROCEDURE IF EXISTS update_product_composition;
+DELIMITER //
+CREATE PROCEDURE update_product_composition(
+	product_name_p VARCHAR(64),
+    crop_id_p INT,
+    crop_ratio_p DECIMAL(10, 2),
+    is_first_p BOOL
+)
+BEGIN
+	IF is_first_p THEN
+		DELETE composed_of FROM composed_of
+        JOIN product ON product.product_id = composed_of.product_id
+        WHERE product.product_name = product_name_p;
+	END IF;
+    
+    INSERT INTO composed_of (product_id, crop_id, crop_ratio)
+    SELECT product.product_id, crop_id_p, crop_ratio_p FROM product
+    WHERE product.product_name = product_name_p;
+
+END //
+DELIMITER ;
