@@ -296,7 +296,7 @@ DROP PROCEDURE IF EXISTS get_all_product_information;
 DELIMITER //
 CREATE PROCEDURE get_all_product_information()
 BEGIN
-	SELECT product.product_id, product.product_name, composed_of.crop_ratio, crop.crop_name, packaging.size_type FROM product
+	SELECT product.product_id, product.product_name, product.weight_grams, product.is_active, composed_of.crop_ratio, crop.crop_name, packaging.package_id, packaging.size_type FROM product
 		JOIN composed_of ON composed_of.product_id = product.product_id
 		JOIN crop ON composed_of.crop_id = crop.crop_id
         JOIN packaging ON product.package_id = packaging.package_id;
@@ -309,9 +309,9 @@ PROCEDURE
 Used in the order page.
 It gets all the packaging type names
 */
-DROP PROCEDURE IF EXISTS get_all_package_name;
+DROP PROCEDURE IF EXISTS get_product_package_options;
 DELIMITER //
-CREATE PROCEDURE get_all_package_name(
+CREATE PROCEDURE get_product_package_options(
 	product_name_p VARCHAR(64)
 )
 BEGIN
@@ -398,8 +398,7 @@ DROP PROCEDURE IF EXISTS get_employee_names;
 DELIMITER //
 CREATE PROCEDURE get_employee_names()
 BEGIN
-	SELECT employee_id, first_name, last_name FROM employee
-		WHERE is_active = TRUE;
+	SELECT * FROM employee;
 END //
 DELIMITER ;
 
@@ -419,6 +418,7 @@ DELIMITER ;
 /*
 PROCEDURE
 ----------
+Get the names for all products in the system
 */
 DROP PROCEDURE IF EXISTS get_product_names;
 DELIMITER //
@@ -426,7 +426,20 @@ CREATE PROCEDURE get_product_names()
 BEGIN
 	SELECT DISTINCT product_name from product;
 END
-DELIMITER;
+DELIMITER ;
+
+/*
+PROCEDURE
+----------
+Get the name of all packaging type in the system
+*/
+DROP PROCEDURE IF EXISTS get_package_names;
+DELIMITER //
+CREATE PROCEDURE get_package_names()
+BEGIN
+	SELECT DISTINCT package_id, size_type FROM packaging;
+END //
+DELIMITER ;
 
 -- =========================== ADD PROCEDURES ====================================
 
@@ -845,8 +858,8 @@ BEGIN
 			SET MESSAGE_TEXT = 'Employee with this email already exists';
 	END IF;
 
-	INSERT INTO employee (ssn, first_name, last_name, email, title) VALUES
-		(ssn_p, first_name_p, last_name_p, email_p, title_p);
+	INSERT INTO employee (ssn, first_name, last_name, email, title, is_active) VALUES
+		(ssn_p, first_name_p, last_name_p, email_p, title_p, TRUE);
 END //
 DELIMITER ;
 

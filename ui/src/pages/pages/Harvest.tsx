@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { DailyOrderItem,} from "../../types/orders"
+import type { DailyOrderItem } from "../../types/order"
 import type { GermItem } from "../../types/crop"
 import { Table } from "../../components/table";
 import { Calendar28 } from "../../components/date";

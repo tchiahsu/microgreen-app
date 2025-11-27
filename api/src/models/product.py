@@ -1,9 +1,10 @@
 from pydantic import BaseModel
 from typing import Optional, List
 
+
 class SingleComposition(BaseModel):
     crop_id: int
-    crop_ratio:float
+    crop_ratio: float
 
 
 class AddProduct(BaseModel):

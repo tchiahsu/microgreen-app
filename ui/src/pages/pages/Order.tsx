@@ -356,7 +356,7 @@ export default function Order() {
                                     <DialogHeader>
                                         <DialogTitle>Add New Order</DialogTitle>
                                         <DialogDescription>
-                                            Please add all the information requested below to add a new product.
+                                            Please add all the information requested below to add a new order.
                                         </DialogDescription>
                                     </DialogHeader>
                                     <div className="flex flex-col gap-2">

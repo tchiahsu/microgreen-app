@@ -1,4 +1,4 @@
 export type DeliveryItem = {
-    deliveryDate: string
-    deliveryStatus: string
+    deliveryDate: string;
+    deliveryStatus: string;
 }
