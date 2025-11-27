@@ -1,4 +1,5 @@
 import { CgProfile } from "react-icons/cg";
+import { NavLink } from "react-router-dom";
 
 
 const navItems = [
@@ -17,18 +18,25 @@ export default function Header() {
             <div className="flex w-full items-center justify-between h-full">
 
                 {/* Green Track Logo */}
-                <a href="/" className="flex items-center">
+                <NavLink to="/" className="flex items-center">
                     <img src="/public/logo.png" alt="Logo" className="h-25 w-25" />
-                </a>
+                </NavLink>
 
                 {/* Navigation Bar */}
                 <nav>
                     <ul className="flex flex-row gap-14 text-lg font-semibold text-[#163039]">
                         {navItems.map((item) => (
                             <li key={item.href}>
-                                <a href={item.href} className="cursor-pointer hover:text-[#2b5766] hover:underline underline-offset-4 decoration-2 transition_colors">
+                                <NavLink
+                                    to={item.href}
+                                    className={({ isActive }) =>
+                                        ["cursor-pointer transition_colors hover:text-[#2b5766]",
+                                         isActive ? "text-[#2b5766] underline underline-offset-4 decoration-2"
+                                                  : "text-[#163039]"
+                                        ].join(" ")}
+                                >
                                     {item.label}
-                                </a>
+                                </NavLink>
                             </li>
                         ))}
                     </ul>
