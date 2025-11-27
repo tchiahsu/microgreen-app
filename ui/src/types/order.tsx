@@ -17,3 +17,8 @@ export type RestaurantOption = {
     restaurant_id: number;
     restaurant_name: string;
 }
+
+export type DailyOrderItem = {
+    product_name: string;
+    package_info: string;
+};

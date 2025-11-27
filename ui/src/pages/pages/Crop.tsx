@@ -53,8 +53,6 @@ export default function Crop() {
                 return;
             }
 
-            const result = await res.json();
-
             await fetchData();
         } catch (err) {
             console.error("Update error:", err)
@@ -141,7 +139,6 @@ export default function Crop() {
             setRackGrow(undefined);
             setYieldTray(undefined);
             setGermType("");
-
         } catch (err) {
             console.error("Add crop error:", err);
             toast.error("Error adding crop.")
@@ -149,7 +146,6 @@ export default function Crop() {
             setAdding(false);
         }
     }
-
 
     const cropInformation = [
         {key: "crop_name", header_name: "Crop Name"},
@@ -337,5 +333,5 @@ export default function Crop() {
                 </div>                    
             </div>
         </div>
-        );
-    }
+    );
+}

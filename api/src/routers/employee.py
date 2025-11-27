@@ -74,10 +74,10 @@ async def update_employee(employee_id: int, data: EmployeeData):
 
 
 # ----------------------------------------
-# VIEW ALL ACTIVE EMPLOYEES
+# VIEW ALL EMPLOYEES
 # ----------------------------------------
 @router.get("/")
-async def get_active_employees():
+async def get_all_employees():
     '''
     Retrieve the name of all active employees
     '''

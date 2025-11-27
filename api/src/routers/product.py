@@ -40,103 +40,6 @@ async def update_crop_ratio(product_id: int, crop_id: int,
 
 
 # ----------------------------------------
-# GET PACKAGING OPTION FOR A PRODUCT
-# ----------------------------------------
-@router.get("/{product_name}/packaging_options")
-async def get_packaging(product_name: str):
-    '''
-    Gets all the packaging options available for the specified product
-    Example: GET /Amaranth/packaging_options
-    '''
-    db = connect_db()
-    if db is None:
-        raise HTTPException(status_code=500,
-                            detail="Connection to database failed.")
-
-    try:
-        cursor = db.cursor()
-        cursor.callproc("get_all_package_name", (product_name,))
-        result = cursor.fetchall()
-        cursor.close()
-    except Exception:
-        db.rollback()
-        raise HTTPException(status_code=400,
-                            detail="Unable to access procedure")
-    finally:
-        db.close()
-
-    return result
-
-
-# ----------------------------------------
-# UPDATE PACKAGING INFORMATION FOR A
-# PRODUCT
-# ----------------------------------------
-@router.put("/update_packaging/{package_name}")
-async def update_packaging(package_name: str, data: PackagingData):
-    '''
-    Update packaging type given the packaging id.
-    Example: PUT /product/update_packaging/4
-    '''
-    db = connect_db()
-    if db is None:
-        raise HTTPException(status_code=500,
-                            detail="Connection to database failed.")
-    cursor = db.cursor()
-
-    try:
-        # Get the package ID
-        cursor.execute("SELECT get_package_id(%s) AS id", (package_name,))
-        result = cursor.fetchone()
-        if result is None or result["id"] is None:
-            raise HTTPException(status_code=500,
-                                detail=f"{package_name} does not exist")
-        package_id = result["id"]
-
-        cursor.callproc("update_packaging", (package_id, data.size_type))
-        db.commit()
-        return {"message": "Package type updated succesfully."}
-
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=400, detail=str(e))
-
-    finally:
-        cursor.close()
-        db.close()
-
-
-# ----------------------------------------
-# ADD PACKAGING INFORMATION TO A
-# PRODUCT
-# ----------------------------------------
-@router.post("/add_packaging")
-async def add_packaging(data: PackagingData):
-    '''
-    Add new packaging type.
-    Example: POST /product/add_packaging
-    '''
-    db = connect_db()
-    if db is None:
-        raise HTTPException(status_code=500,
-                            detail="Connection to database failed.")
-    cursor = db.cursor()
-
-    try:
-        cursor.callproc("add_packaging", (data.size_type,))
-        db.commit()
-        return {"message": "New package type added succesfully."}
-
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=400, detail=str(e))
-
-    finally:
-        cursor.close()
-        db.close()
-
-
-# ----------------------------------------
 # UPDATE PRODUCT INFORMATION
 # ----------------------------------------
 @router.put("/update_product/{product_name}/{package_name}")
@@ -279,13 +182,13 @@ async def delete_product(product_id: int):
 
 
 # ----------------------------------------
-# DELETE A PRODUCT FROM THE SYSTEM
+# GET PRODUCT FROM THE SYSTEM
 # ----------------------------------------
-@router.get("/product_names")
-async def get_product_names():
+@router.get("/product_information")
+async def get_products():
     '''
     Get the names of all products
-    Example: GET /products/product_names
+    Example: GET /products/product_information
     '''
     db = connect_db()
     if db is None:
@@ -294,7 +197,7 @@ async def get_product_names():
 
     try:
         cursor = db.cursor()
-        cursor.callproc("get_all_product_name")
+        cursor.callproc("get_all_product_information")
         result = cursor.fetchall()
         cursor.close()
     except Exception:
@@ -306,3 +209,128 @@ async def get_product_names():
 
     return result
 
+
+# ----------------------------------------
+# GET ALL PACKAGING OPTIONS
+# ----------------------------------------
+@router.get("/packaging_options")
+async def get_all_package_sizes():
+    '''
+    Gets all the packaging options available for the specified product
+    Example: GET /packaging_options
+    '''
+    db = connect_db()
+    if db is None:
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
+
+    try:
+        cursor = db.cursor()
+        cursor.callproc("get_package_names")
+        result = cursor.fetchall()
+        cursor.close()
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=400,
+                            detail="Unable to access procedure")
+    finally:
+        db.close()
+
+    return result
+
+
+# ----------------------------------------
+# GET PACKAGING OPTION FOR A PRODUCT
+# ----------------------------------------
+@router.get("/{product_name}/packaging_options")
+async def get_packaging(product_name: str):
+    '''
+    Gets all the packaging options available for the specified product
+    Example: GET /Amaranth/packaging_options
+    '''
+    db = connect_db()
+    if db is None:
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
+
+    try:
+        cursor = db.cursor()
+        cursor.callproc("get_product_package_options", (product_name,))
+        result = cursor.fetchall()
+        cursor.close()
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=400,
+                            detail="Unable to access procedure")
+    finally:
+        db.close()
+
+    return result
+
+
+# ----------------------------------------
+# UPDATE PACKAGING INFORMATION FOR A
+# PRODUCT
+# ----------------------------------------
+@router.put("/update_packaging/{package_name}")
+async def update_packaging(package_name: str, data: PackagingData):
+    '''
+    Update packaging type given the packaging id.
+    Example: PUT /product/update_packaging/4
+    '''
+    db = connect_db()
+    if db is None:
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
+    cursor = db.cursor()
+
+    try:
+        # Get the package ID
+        cursor.execute("SELECT get_package_id(%s) AS id", (package_name,))
+        result = cursor.fetchone()
+        if result is None or result["id"] is None:
+            raise HTTPException(status_code=500,
+                                detail=f"{package_name} does not exist")
+        package_id = result["id"]
+
+        cursor.callproc("update_packaging", (package_id, data.size_type))
+        db.commit()
+        return {"message": "Package type updated succesfully."}
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+
+    finally:
+        cursor.close()
+        db.close()
+
+
+# ----------------------------------------
+# ADD PACKAGING INFORMATION TO A
+# PRODUCT
+# ----------------------------------------
+@router.post("/add_packaging")
+async def add_packaging(data: PackagingData):
+    '''
+    Add new packaging type.
+    Example: POST /product/add_packaging
+    '''
+    db = connect_db()
+    if db is None:
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
+    cursor = db.cursor()
+
+    try:
+        cursor.callproc("add_packaging", (data.size_type,))
+        db.commit()
+        return {"message": "New package type added succesfully."}
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+
+    finally:
+        cursor.close()
+        db.close()
