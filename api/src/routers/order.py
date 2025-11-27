@@ -132,8 +132,9 @@ async def add_order(employee_id: int, data: OrderData):
 # ----------------------------------------
 # UPDATE A PRODUCT FROM AN ORDER
 # ----------------------------------------
-@router.put("/update_product/{order_id}")
-async def update_order_product(order_id: int, data: UpdateOrderProduct):
+@router.put("/{order_id}/update_product/{product_id}")
+async def update_order_product(order_id: int, product_id: int,
+                               data: UpdateOrderProduct):
     '''
     Updates a product inside an order
     Example: PUT /update_product/111
@@ -149,7 +150,7 @@ async def update_order_product(order_id: int, data: UpdateOrderProduct):
                                          data.order_status,
                                          data.employee_id,
                                          data.delivery_date,
-                                         data.product_id,
+                                         product_id,
                                          data.quantity,
                                          data.apply_to_future,))
         db.commit()

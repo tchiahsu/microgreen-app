@@ -8,7 +8,7 @@ import { Label } from "../../components/ui/label";
 import { Calendar28 } from "../../components/date";
 import { Actions } from "../../components/actions";
 import { Button } from "../../components/ui/button";
-import { Table } from "../../components/table"; 
+import { Table } from "../../components/table";
 import { toast } from "sonner";
 
 import type { Restaurant, RestaurantOption } from "../../types/order";
@@ -276,9 +276,9 @@ export default function Order() {
         }
     }
 
-    async function handleUpdate(orderId: number, body: unknown) {
+    async function handleUpdate(orderId: number, productId: number, body: unknown) {
         try {
-            const res = await fetch(`http://127.0.0.1:8000/orders/update_product/${orderId}`, {
+            const res = await fetch(`http://127.0.0.1:8000/orders/${orderId}/update_product/${productId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)

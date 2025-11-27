@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Popover, PopoverTrigger, PopoverContent } from "./ui/popover";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
 import { Select, SelectTrigger, SelectContent, SelectValue, SelectItem } from "./ui/select";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -49,16 +49,19 @@ export function CropActions({item, onUpdate}: CropActionsProps){
 
     return (
         <div className="flex justify-center">
-            <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>
                     <button className="hover:text-blue-600">
                         <FiEdit size={16} />
                     </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-80 max-h-[80vh] overflow-y-auto">
-                    <h3 className="font-semibold text-lg text-[#308261] sticky top-0 pb-2">
-                        Edit {item.crop_name}
-                    </h3>
+                </DialogTrigger>
+                <DialogContent className="w-[60%] max-h-[80vh] overflow-y-auto">
+                    <DialogHeader className="font-semibold text-lg text-[#308261] sticky top-0 pb-2">
+                        <DialogTitle>Edit {item.crop_name} Information</DialogTitle>
+                        <DialogDescription>
+                            Edit any information that is necessary. Not all fields must be filled.
+                        </DialogDescription>
+                    </DialogHeader>
 
                     <div className="flex flex-col gap-1">
                         <Label>Crop Name</Label>
@@ -95,23 +98,23 @@ export function CropActions({item, onUpdate}: CropActionsProps){
                             onChange={(e) => setOvernightSoak(e.target.checked)}
                         />
                     </div>
-
-                    <div className="flex flex-col gap-1">
-                        <Label>Days Direct Light</Label>
-                        <Input
-                            type="number"
-                            value={daysDirect}
-                            onChange={(e) => setDaysDirect(Number(e.target.value))}
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-1">
-                        <Label>Days Indirect Light</Label>
-                        <Input
-                            type="number"
-                            value={daysIndirect}
-                            onChange={(e) => setDaysIndirect(Number(e.target.value))}
-                        />
+                        <div className="flex flex-row gap-4">
+                        <div className="flex flex-col gap-1">
+                            <Label>Days Direct Light</Label>
+                            <Input
+                                type="number"
+                                value={daysDirect}
+                                onChange={(e) => setDaysDirect(Number(e.target.value))}
+                            />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                            <Label>Days Indirect Light</Label>
+                            <Input
+                                type="number"
+                                value={daysIndirect}
+                                onChange={(e) => setDaysIndirect(Number(e.target.value))}
+                            />
+                        </div>
                     </div>
 
                     <div className="flex flex-col gap-1">
@@ -123,35 +126,37 @@ export function CropActions({item, onUpdate}: CropActionsProps){
                         />
                     </div>
 
-                    <div className="flex flex-col gap-1">
-                        <Label>Yield Per Tray</Label>
-                        <Input
-                            type="number"
-                            value={yieldTray}
-                            onChange={(e) => setYieldTray(Number(e.target.value))}
-                        />
-                    </div>
+                    <div className="flex flex-row gap-4">
+                        <div className="flex flex-col gap-1">
+                            <Label>Yield Per Tray</Label>
+                            <Input
+                                type="number"
+                                value={yieldTray}
+                                onChange={(e) => setYieldTray(Number(e.target.value))}
+                            />
+                        </div>
 
-                    <div className="flex flex-col gap-1">
-                        <Label>Germination Type</Label>
-                        <Select
-                            value={germType}
-                            onValueChange={setGermType}
-                        >
-                            <SelectTrigger><SelectValue placeholder="Select Germination Type" /></SelectTrigger>
-                            <SelectContent>
-                                <SelectItem key={"domed"} value={"domed"}>Domed</SelectItem>
-                                <SelectItem key={"stacked"} value={"stacked"}>Stacked</SelectItem>
-                                <SelectItem key={"blackout"} value={"blackout"}>Blackout</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <div className="flex flex-col gap-1">
+                            <Label>Germination Type</Label>
+                            <Select
+                                value={germType}
+                                onValueChange={setGermType}
+                            >
+                                <SelectTrigger><SelectValue placeholder="Select Germination Type" /></SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem key={"domed"} value={"domed"}>Domed</SelectItem>
+                                    <SelectItem key={"stacked"} value={"stacked"}>Stacked</SelectItem>
+                                    <SelectItem key={"blackout"} value={"blackout"}>Blackout</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </div>
 
                     <Button onClick={handleConfirm} className="w-full sticky">
                         Save Changes
                     </Button>
-                </PopoverContent>
-            </Popover>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }

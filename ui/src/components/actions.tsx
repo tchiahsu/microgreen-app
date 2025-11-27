@@ -19,7 +19,7 @@ type ActionsProp = {
         order_status: string;
         employee_id: number | null;
     };
-    onUpdate: (orderId: number, body: unknown) => Promise<void>;
+    onUpdate: (orderId: number, productId: number, body: unknown) => Promise<void>;
     onDelete: (orderId: number, productId: number) => Promise<void>;
 }
 
@@ -58,7 +58,7 @@ export function Actions({ item, onUpdate, onDelete }: ActionsProp) {
 
         setSubmitting(true);
         
-        await onUpdate(item.order_id, {
+        await onUpdate(item.order_id, item.product_id, {
             quantity,
             delivery_date: deliveryDate,
             apply_to_future: applyToFuture,
