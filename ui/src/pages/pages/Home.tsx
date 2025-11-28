@@ -53,30 +53,45 @@ export default function Home() {
 
 
     return (
-        <div className="text-sm font-mono">
-            <div className="flex items-center gap-5 mb-5 px-20">
-                <Calendar28
-                    selectedDate={selectedDate}
-                    onChange={(value) => setSelectedDate(value)}
-                />
-            </div>
-            <div className="flex w-full items-start justify-between gap-6 px-20">
-                <div className="p-5 bg-white/60 rounded-lg h-160 flex flex-col w-[380px]">
-                    <h2 className="font-semibold text-lg mb-5 text-[#308261] shrink-0">Planting Summary</h2>
-                    <div className="flex-1 overflow-y-auto">
-                        <Table columns={plantingColumns} data={plantingInfo}/>
-                    </div>
+        <div className="flex justify-center text-sm font-mono px-4 sm:px-6 lg:px-10 pb-10">
+            <div className="flex flex-col w-full max-w-6xl">
+                <div className="flex items-start justify-start gap-5 mb-5">
+                    <Calendar28
+                        selectedDate={selectedDate}
+                        onChange={(value) => setSelectedDate(value)}
+                    />
                 </div>
-                <div className="p-5 bg-white/60 rounded-lg h-160 flex flex-col w-[460px]">
-                    <h2 className="font-semibold text-lg mb-5 text-[#308261]">Germination Summary</h2>
-                    <div className="flex-1 overflow-y-auto">
-                        <Table columns={germinationColumns} data={outGerm}/>
-                    </div>
-                </div>
-                <div className="p-5 bg-white/60 rounded-lg h-160 flex flex-col w-[460px]">
-                    <h2 className="font-semibold text-lg mb-5 text-[#308261]">Switch Summary</h2>
-                     <div className="flex-1 overflow-y-auto">
-                        <Table columns={switchColumns} data={switchGerm}/>
+
+                <div className="flex w-full items-start">
+                    <div className="flex flex-col gap-6 lg:flex-row lg:items-stretch">
+
+                        <div className="w-full lg:w-1/3">
+                            <div className="p-5 bg-white/60 rounded-lg flex flex-col max-h-[420px]">
+                                <h2 className="font-semibold text-lg mb-5 text-[#308261] shrink-0">Planting Summary</h2>
+                                <div className="flex-1 overflow-y-auto overflow-x-auto">
+                                    <Table columns={plantingColumns} data={plantingInfo}/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="w-full lg:w-1/3">
+                            <div className="p-5 bg-white/60 rounded-lg flex flex-col max-h-[420px]">
+                                <h2 className="font-semibold text-lg mb-5 text-[#308261]">Germination Summary</h2>
+                                <div className="flex-1 overflow-y-auto overflow-x-auto">
+                                    <Table columns={germinationColumns} data={outGerm}/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="w-full lg:w-1/3">
+                            <div className="p-5 bg-white/60 rounded-lg flex flex-col max-h-[420px]">
+                                <h2 className="font-semibold text-lg mb-5 text-[#308261]">Switch Summary</h2>
+                                <div className="flex-1 overflow-y-auto overflow-x-auto">
+                                    <Table columns={switchColumns} data={switchGerm}/>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
