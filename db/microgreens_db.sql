@@ -2,6 +2,12 @@ CREATE DATABASE IF NOT EXISTS microgreens_db;
 
 USE microgreens_db;
 
+CREATE TABLE users(
+	user_id INT AUTO_INCREMENT PRIMARY KEY, 
+    email VARCHAR(64) NOT NULL UNIQUE, 
+    password_hash TEXT NOT NULL
+);
+
 CREATE TABLE employee(
 	employee_id INT AUTO_INCREMENT PRIMARY KEY, 
     ssn VARCHAR(12) UNIQUE, 
@@ -9,7 +15,10 @@ CREATE TABLE employee(
     last_name VARCHAR(64) NOT NULL, 
     email VARCHAR(64) UNIQUE NOT NULL, 
     title VARCHAR(64) NOT NULL,
-    is_active BOOLEAN NOT NULL
+    is_active BOOLEAN NOT NULL, 
+    user_id INT UNIQUE, 
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+		ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 CREATE TABLE delivery(
@@ -122,3 +131,9 @@ CREATE TABLE composed_of(
 	FOREIGN KEY (crop_id) REFERENCES crop(crop_id)
 		ON UPDATE CASCADE ON DELETE RESTRICT
 );
+
+
+
+
+
+

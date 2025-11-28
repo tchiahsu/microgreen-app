@@ -76,6 +76,8 @@ CALL add_employee('123-43-2093', 'Tony', 'Hsu', 'tony@gmail.com', 'janitor'); --
 CALL add_employee('123-43-2093', 'Tony', 'Hsu', 'tony2@gmail.com', 'janitor'); -- SSN fails
 CALL add_employee('123-43-2092', 'Tony', 'Hsu', 'tony@gmail.com', 'janitor'); -- Email fails
 
+CALL link_employee_user(1, 1);
+
 -- Tests deleting a product in the product table without deleting it first in contains and composed_of. 
 CALL delete_product(101);
 -- Tests deleting a product in the contains table. 

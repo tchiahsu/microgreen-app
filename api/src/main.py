@@ -9,6 +9,7 @@ from src.routers.crop import router as crop_router
 from src.routers.client import router as client_router
 from src.routers.employee import router as employee_router
 from src.routers.delivery import router as delivery_router
+from src.auth import router as auth_router
 
 app = FastAPI()
 
@@ -33,3 +34,4 @@ app.include_router(crop_router)
 app.include_router(client_router)
 app.include_router(employee_router)
 app.include_router(delivery_router)
+app.include_router(auth_router)

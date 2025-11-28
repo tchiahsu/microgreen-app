@@ -11,6 +11,7 @@ import Order from "./pages/pages/Order";
 import Product from "./pages/pages/Product";
 import Client from "./pages/pages/Client";
 import Employee from "./pages/pages/Employee";
+import Landing from "./pages/pages/Landing";
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
               <Route path="/product" element={<Product />} />
               <Route path="/client" element={<Client />} />
               <Route path="/employee" element={<Employee />} />
+              <Route path="/landing" element={<Landing />} />
             </Route>
           </Routes>
         </BrowserRouter>
