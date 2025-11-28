@@ -108,7 +108,7 @@ async def link_employee_user(data: LinkEmployeeToUser):
                             detail="Connection to database failed.")
     try:
         cursor = db.cursor()
-        cursor.callproc=("link_employee_user", (data.employee_id,
+        cursor.callproc("link_employee_user", (data.employee_id,
                                                 data.user_id,))
         db.commit()
         cursor.close()
