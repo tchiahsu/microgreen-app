@@ -443,6 +443,39 @@ BEGIN
 END //
 DELIMITER ;
 
+/*
+PROCEDURE
+----------
+Get the information of the user by using their email.
+*/
+DROP PROCEDURE IF EXISTS get_user_by_email;
+DELIMITER //
+CREATE PROCEDURE get_user_by_email(
+	email_p VARCHAR(64)
+)
+BEGIN
+	SELECT user_id, email, password_hash FROM users 
+		WHERE email = email_p;
+END //
+DELIMITER ;
+
+/*
+PROCEDURE
+----------
+Get the user's profile information.
+*/
+DROP PROCEDURE IF EXISTS get_user_profile_info;
+DELIMITER //
+CREATE PROCEDURE get_user_profile_info(
+	user_id_p INT
+)
+BEGIN 
+	SELECT user.email, employee.first_name, employee.last_name FROM users
+		LEFT JOIN employee ON users.user_id = employee.user_id
+        WHERE users.user_id = user_id_p;
+END //
+DELIMITER ;
+
 -- =========================== ADD PROCEDURES ====================================
 
 /*
@@ -883,6 +916,56 @@ BEGIN
 	END IF;
     
     INSERT INTO delivery (delivery_date, delivery_status, employee_id) VALUES (delivery_date_p, "scheduled", NULL);
+END //
+DELIMITER ;
+
+/*
+PROCEDURE
+---------
+Register a new user and insert their info in the users table.
+*/
+DROP PROCEDURE IF EXISTS register_user;
+DELIMITER //
+CREATE PROCEDURE register_user(
+	email_p VARCHAR(256),
+    password_hash_p TEXT
+)
+BEGIN
+	IF EXISTS (SELECT 1 FROM users WHERE email = email_p) THEN 
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Email already registered';
+	END IF;
+    
+    INSERT INTO users (email, password_hash)
+    VALUES (email_p, password_hash_p);
+END //
+DELIMITER ;
+
+/*
+PROCEDURE
+----------
+Assign an user to an employee
+*/
+DROP PROCEDURE IF EXISTS link_employee_user;
+DELIMITER //
+CREATE PROCEDURE link_employee_user(
+	employee_id_p INT,
+	user_id_p INT
+)
+BEGIN
+	IF NOT EXISTS (SELECT 1 FROM users WHERE user_id = user_id_p) THEN 
+ 		SIGNAL SQLSTATE '45000'
+ 			SET MESSAGE_TEXT = "User Id doesn't exist";
+ 	END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM employee WHERE employee_id = employee_id_p) THEN 
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = "Employee Id doesn't exist";
+	END IF;
+
+	UPDATE employee
+	SET user_id = user_id_p
+	WHERE employee_id = employee_id_p;
 END //
 DELIMITER ;
 
