@@ -3,7 +3,7 @@ import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
 import { da } from "date-fns/locale";
 import { useState } from "react";
-import { CgProfile } from "react-icons/cg";
+import { FaUser } from "react-icons/fa6";
 import { HiX, HiOutlineMenu } from "react-icons/hi";
 import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -64,7 +64,7 @@ export default function Header() {
             <div className="flex w-full h-full mx-auto max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
                 <NavLink to="/" className="flex items-center">
-                    <img src="/public/logo.png" alt="Logo" className="h-22 w-auto sm:h-25" />
+                    <img src="/public/logo.png" alt="Logo" className="h-18 w-auto sm:h-20" />
                 </NavLink>
 
                 <nav className="hidden md:block">
@@ -86,10 +86,58 @@ export default function Header() {
                     </ul>
                 </nav>
 
-                <div className="flex items-center gap-2 text-[#0b2f33]">
-                    <button className="p-1 sm:p-2 rounded-full hover:scale-105 hover:text-[#9a6b2c9c] active:scale-95 cursor-pointer">
-                        <CgProfile size={40} className="sm:size-10" />
+                <div className="flex items-center text-[#0b2f33]">
+                    <button 
+                        onClick={loadProfile}
+                        className="p-2 rounded-md hover:scale-105 hover:bg-gray-200 active:scale-95 cursor-pointer"
+                    >
+                        <FaUser size={22} />
                     </button>
+
+                    <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
+                        <DialogContent className="max-w-lg">
+                            <DialogHeader>
+                                <DialogTitle>User Profile</DialogTitle>
+                                <DialogDescription>Employee ID: [add employee id]</DialogDescription>
+                            </DialogHeader>
+                            <div className="flex flex-col gap-2">
+                                <Label>First Name</Label>
+                                <Input
+                                    type="text"
+                                    value={newFirstName}
+                                    onChange={(i) => setNewFirstName(i.target.value)}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <Label>Last Name</Label>
+                                <Input
+                                    type="text"
+                                    value={newLastName}
+                                    onChange={(i) => setNewLastName(i.target.value)}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <Label>Email Address</Label>
+                                <Input
+                                    type="text"
+                                    value={newEmail}
+                                    onChange={(i) => setNewEmail(i.target.value)}
+                                />
+                            </div>
+                            <div className="flex flex-row w-full gap-2 border-b space-y-3 border-[#afafaf53]">
+                                <Button className="flex flex-1 bg-green-800 cursor-pointer">
+                                    Save Changes
+                                </Button>
+                                <Button className="flex flex-1 bg-red-600 cursor-pointer">
+                                    Exit
+                                </Button>
+                            </div>
+
+                            <Button className="cursor-pointer">
+                                Log Out / Sign In
+                            </Button>
+                        </DialogContent>
+                    </Dialog>
 
                     <button
                         className="ml-1 inline-flex items-center justify-cetner rounded-md p-2 md:hidden hover:bg-gray-200"
@@ -99,69 +147,6 @@ export default function Header() {
                         {isOpen ? <HiX size={26} /> : <HiOutlineMenu size={26} />}
                     </button>
                 </div>
-                {/* Top Right Side Buttons */}
-                <button 
-                    onClick={loadProfile}
-                    className="p-2 rounded-full hover:scale-105 hover:text-[#9a6b2c9c] active:scale-95 cursor-pointer"
-                >
-                    <CgProfile size={40} />
-                </button>
-
-                <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
-                    <DialogContent className="max-w-lg">
-                        <DialogHeader>
-                            <DialogTitle>User Profile</DialogTitle>
-                            <DialogDescription>Employee ID: [add employee id]</DialogDescription>
-                        </DialogHeader>
-                        <div className="flex flex-col gap-2">
-                            <Label>First Name</Label>
-                            <Input
-                                type="text"
-                                value={newFirstName}
-                                onChange={(i) => setNewFirstName(i.target.value)}
-                            />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <Label>Last Name</Label>
-                            <Input
-                                type="text"
-                                value={newLastName}
-                                onChange={(i) => setNewLastName(i.target.value)}
-                            />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <Label>Email Address</Label>
-                            <Input
-                                type="text"
-                                value={newEmail}
-                                onChange={(i) => setNewEmail(i.target.value)}
-                            />
-                        </div>
-                        <div className="flex flex-row w-full gap-2 border-b space-y-3 border-[#afafaf53]">
-                            <Button className="flex flex-1 bg-green-800">
-                                Save Changes
-                            </Button>
-                            <Button className="flex flex-1 bg-red-600">
-                                Exit
-                            </Button>
-                        </div>
-
-                        <Button>
-                            Log Out / Sign In
-                        </Button>
-                        {/* <div className="flex flex-col gap-3">
-                            {!loading && <p>Loading...</p>}
-                            {error && <p className="text-red-600">{error}</p>}
-                            {loading && profile && (
-                                <>
-                                    <p><strong>Email:</strong>{profile.email}</p>
-                                    <p><strong>First Name:</strong>{profile.first_name}</p>
-                                    <p><strong>Last Name:</strong>{profile.last_name}</p>
-                                </>
-                            )}
-                        </div> */}
-                    </DialogContent>
-                </Dialog>
             </div>
 
             {isOpen && (
