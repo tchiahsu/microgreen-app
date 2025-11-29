@@ -36,6 +36,7 @@ export default function Product() {
     const [productData, setProductData] = useState<ProductItem[]>([]);
     const [packagingName, setPackagingName] = useState<PackageType[]>([])
     const [cropData, setCropData] = useState<CropInfo[]>([]);
+    const [search, setSearch] = useState("");
 
     const [newProductName, setNewProductName] = useState<string>("");
     const [newWeight, setNewWeight] = useState<number | null>(null);
@@ -387,6 +388,12 @@ export default function Product() {
     );
     const addIsliveTray = isLiveTraySize(selectedAddPackage?.size_type);
 
+    function normalize(str: string) {
+        return str.normalize("NFKC").trim().replace(/[^\w\s]+/g, "").replace(/\s+/g, " ").toLowerCase();
+    }
+
+    const filteredProductKeys = Object.keys(productMap).sort().filter((name) => normalize(productMap[name].displayName).includes(normalize(search)))
+
     useEffect(() => {
         fetchProducts();
         fetchPackaging();
@@ -394,9 +401,9 @@ export default function Product() {
     }, []);
 
     return (
-        <div className="flex text-sm font-mono justify-center items-center mt-5">
-            <div className="flex flex-col p-5 bg-white/60 rounded-lg w-[60%]">
-                <div className="flex justify-between items-center mb-5">
+        <div className="flex text-sm font-mono justify-center items-start mt-5 px-4 sm:px-6 lg:px-10">
+            <div className="flex flex-col p-4 bg-white/60 rounded-lg max-w-5xl w-full sm:p-4">
+                <div className="flex flex-col gap-3 mb-5 sm:flex-row sm:justify-between sm:items-center">
                     <h2 className="font-semibold text-lg text-[#308261]">Product Offerings</h2>
                     <Dialog
                         open={addOpen}
@@ -547,7 +554,13 @@ export default function Product() {
                         </DialogContent>
                     </Dialog>
                 </div>
-
+                <input
+                    type="text"
+                    placeholder="Search products..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="w-full px-3 py-2 border border-[#4b734e]/60 rounded-md text-xs focus:outline-none foucs:ring-1 focus:ring-[#4b734e] sm:text-sm"
+                />
                 <Dialog open={!!sizeDialog} onOpenChange={(open) => !open && setSizeDialog(null)}>
                     <DialogContent>
                         <DialogHeader>
@@ -737,7 +750,11 @@ export default function Product() {
 
                 <div className="flex justify-center items-center">
                     <Accordion type="single" collapsible>
-                        {Object.keys(productMap).sort().map((name) => (
+                        {filteredProductKeys.length === 0 ? (
+                            <div className="text-center text-gray-500 py-4">
+                                No products match your search.
+                            </div>
+                        ) : (filteredProductKeys.map((name) => (
                             <AccordionItem key={name} value={name}>
                                 <AccordionTrigger>{productMap[name].displayName}</AccordionTrigger>
                                 <AccordionContent>
@@ -822,7 +839,7 @@ export default function Product() {
                                     </div>
                                 </AccordionContent>
                             </AccordionItem>
-                        ))}
+                        )))}
                     </Accordion>
                 </div>
             </div>
