@@ -62,37 +62,29 @@ export default function Home() {
                     />
                 </div>
 
-                <div className="flex w-full items-start">
-                    <div className="flex flex-col gap-6 lg:flex-row lg:items-stretch">
+                <div className="grid gap-4 lg:gap-6 w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-[3fr_4fr_4fr]">
 
-                        <div className="w-full lg:w-1/3">
-                            <div className="p-5 bg-white/60 rounded-lg flex flex-col max-h-[420px]">
-                                <h2 className="font-semibold text-lg mb-5 text-[#308261] shrink-0">Planting Summary</h2>
-                                <div className="flex-1 overflow-y-auto overflow-x-auto">
-                                    <Table columns={plantingColumns} data={plantingInfo}/>
-                                </div>
-                            </div>
+                    <div className="p-4 sm:p-5 bg-white/60 rounded-lg flex flex-col min-h-[260px] max-h-[700px]">
+                        <h2 className="font-semibold text-base sm:text-lg mb-3 sm:mb-4 text-[#308261] shrink-0">Planting Summary</h2>
+                        <div className="flex-1 overflow-y-auto overflow-x-auto">
+                            <Table columns={plantingColumns} data={plantingInfo}/>
                         </div>
-
-                        <div className="w-full lg:w-1/3">
-                            <div className="p-5 bg-white/60 rounded-lg flex flex-col max-h-[420px]">
-                                <h2 className="font-semibold text-lg mb-5 text-[#308261]">Germination Summary</h2>
-                                <div className="flex-1 overflow-y-auto overflow-x-auto">
-                                    <Table columns={germinationColumns} data={outGerm}/>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="w-full lg:w-1/3">
-                            <div className="p-5 bg-white/60 rounded-lg flex flex-col max-h-[420px]">
-                                <h2 className="font-semibold text-lg mb-5 text-[#308261]">Switch Summary</h2>
-                                <div className="flex-1 overflow-y-auto overflow-x-auto">
-                                    <Table columns={switchColumns} data={switchGerm}/>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
+
+                    <div className="p-4 sm:p-5 bg-white/60 rounded-lg flex flex-col min-h-[260px] max-h-[700px]">
+                        <h2 className="font-semibold text-base sm:text-lg mb-3 sm:mb-4 text-[#308261]">Germination Summary</h2>
+                        <div className="flex-1 overflow-y-auto overflow-x-auto">
+                            <Table columns={germinationColumns} data={outGerm}/>
+                        </div>
+                    </div>
+
+                    <div className="p-4 sm:p-5 bg-white/60 rounded-lg flex flex-col min-h-[260px] max-h-[700px]">
+                        <h2 className="font-semibold text-base sm:text-lg mb-3 sm:mb-4 text-[#308261]">Switch Summary</h2>
+                        <div className="flex-1 overflow-y-auto overflow-x-auto">
+                            <Table columns={switchColumns} data={switchGerm}/>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

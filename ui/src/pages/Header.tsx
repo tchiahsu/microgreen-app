@@ -133,6 +133,7 @@ export default function Header() {
                             <li key={item.href}>
                                 <NavLink
                                     to={item.href}
+                                    end={item.href === "/app"}
                                     className={({ isActive }) =>
                                         ["cursor-pointer transition_colors hover:text-[#2b5766]",
                                          isActive ? "text-[#2b5766] underline underline-offset-4 decoration-2"
@@ -206,9 +207,9 @@ export default function Header() {
                             </div>
                             
                             <div className="flex flex-row items-center">
-                                <hr className="flex-grow border-gray-300"></hr>
+                                <hr className="grow border-gray-300"></hr>
                                 <span className="px-4 text-gray-500"><BsThreeDots /></span>
-                                <hr className="flex-grow border-gray-300"></hr>
+                                <hr className="grow border-gray-300"></hr>
                             </div>
 
                             <Button

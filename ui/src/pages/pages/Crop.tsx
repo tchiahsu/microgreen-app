@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Table } from "../../components/table";
 import { CropActions } from "../../components/cropActions";
 import type { CropInfo, CropUpdate } from "../../types/crop";
+import type { Columns } from "../../components/table";
 import { Button } from "../../components/ui/button";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog";
@@ -151,7 +152,7 @@ export default function Crop() {
         }
     }
 
-    const cropInformation = [
+    const cropInformation: Columns[] = [
         {key: "crop_name", header_name: "Crop Name"},
         {key: "seed_type", header_name: "Seed Type"},
         {key: "sow_rate", header_name: "Sow Rate", align: "center"},
@@ -183,158 +184,163 @@ export default function Crop() {
     }, [])
 
     return (
-        <div className="text-sm font-mono">
-            <div className="p-5 bg-white/60 rounded-lg h-170 flex flex-col mt-5">
-                <div className="flex justify-between items-center mb-5">
-                    <h2 className="font-semibold text-lg text-[#308261]">Crop Information</h2> 
-                    <Dialog open={addOpen} onOpenChange={setAddOpen}>
-                        <DialogTrigger asChild>
-                            <Button 
-                                className="mt-2 bg-[#308261] text-white font-semibold" 
-                                size="sm"
-                            >
-                                Add Crop
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-lg">
-                            <DialogHeader>
-                                <DialogTitle>Add New Crop</DialogTitle>
-                                <DialogDescription>
-                                    Fill out these fields to add a new crop.
-                                </DialogDescription>
-                            </DialogHeader>
+        <div className="text-sm font-mono px-3 sm:px-4 lg:px-10 pb-10 flex justify-center">
+            <div className="w-full max-w-6xl">
+                <div className="p-4 sm:p-5 flex flex-col bg-white/60 rounded-lg min-h-80 mt-5">
 
-                            <div className="flex flex-col gap-3">
-                                <div className="flex flex-col">
-                                    <label className="font-semibold">Crop Name</label>
-                                    <input
-                                        className="p-2 border rounded h-10"
-                                        type="text"
-                                        value={cropName}
-                                        onChange={(e) => setCropName(e.target.value)}
-                                    />
-                                </div>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                        <h2 className="font-semibold text-lg text-[#308261]">Crop Information</h2> 
+                        <Dialog open={addOpen} onOpenChange={setAddOpen}>
+                            <DialogTrigger asChild>
+                                <Button 
+                                    className="bg-[#308261] text-white font-semibold" 
+                                    size="sm"
+                                >
+                                    Add Crop
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-lg">
+                                <DialogHeader>
+                                    <DialogTitle>Add New Crop</DialogTitle>
+                                    <DialogDescription>
+                                        Fill out these fields to add a new crop.
+                                    </DialogDescription>
+                                </DialogHeader>
 
-                                <div className="flex flex-col">
-                                    <label className="font-semibold">Seed Type</label>
-                                    <input
-                                        className="p-2 border rounded h-10"
-                                        type="text"
-                                        value={seedType}
-                                        onChange={(e) => setSeedType(e.target.value)}
-                                    />
-                                </div>
-
-                                <div className="flex flex-col">
-                                    <label className="font-semibold">Sow Rate</label>
-                                    <input
-                                        className="p-2 border rounded h-10"
-                                        type="number"
-                                        value={sowRate ?? ""}
-                                        onChange={(e) => setSowRate(e.target.value === "" ? undefined : Number(e.target.value))}
-                                    />
-                                </div>
-
-                                <div className="flex flex-col">
-                                    <label className="font-semibold">Overnight Soak</label>
-                                    <select 
-                                        className="p-2 border rounded h-10"
-                                        value={overnightSoak === null ? "" : overnightSoak ? "yes" : "no"}
-                                        onChange={(e) => setOvernightSoak(e.target.value === "" ? null : e.target.value === "yes")}
-                                    >
-                                        <option value="">Select</option>
-                                        <option value="yes">Yes</option>
-                                        <option value="no">No</option>
-                                    </select>
-                                </div>
-
-                                <div className="flex gap-7">
+                                <div className="flex flex-col gap-3">
                                     <div className="flex flex-col">
-                                        <label className="font-semibold">Days Direct Light</label>
+                                        <label className="font-semibold">Crop Name</label>
                                         <input
                                             className="p-2 border rounded h-10"
-                                            type="number"
-                                            value={daysDirect ?? ""}
-                                            onChange={(e) => setDaysDirect(e.target.value === "" ? undefined : Number(e.target.value))}
+                                            type="text"
+                                            value={cropName}
+                                            onChange={(e) => setCropName(e.target.value)}
                                         />
                                     </div>
 
                                     <div className="flex flex-col">
-                                        <label className="font-semibold">Days Indirect Light</label>
+                                        <label className="font-semibold">Seed Type</label>
+                                        <input
+                                            className="p-2 border rounded h-10"
+                                            type="text"
+                                            value={seedType}
+                                            onChange={(e) => setSeedType(e.target.value)}
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col">
+                                        <label className="font-semibold">Sow Rate</label>
                                         <input
                                             className="p-2 border rounded h-10"
                                             type="number"
-                                            value={daysIndirect ?? ""}
-                                            onChange={(e) => setDaysIndirect(e.target.value === "" ? undefined : Number(e.target.value))}
-                                    />
+                                            value={sowRate ?? ""}
+                                            onChange={(e) => setSowRate(e.target.value === "" ? undefined : Number(e.target.value))}
+                                        />
                                     </div>
 
-                                </div>
+                                    <div className="flex flex-col">
+                                        <label className="font-semibold">Overnight Soak</label>
+                                        <select 
+                                            className="p-2 border rounded h-10"
+                                            value={overnightSoak === null ? "" : overnightSoak ? "yes" : "no"}
+                                            onChange={(e) => setOvernightSoak(e.target.value === "" ? null : e.target.value === "yes")}
+                                        >
+                                            <option value="">Select</option>
+                                            <option value="yes">Yes</option>
+                                            <option value="no">No</option>
+                                        </select>
+                                    </div>
 
-                                <div className="flex flex-col">
-                                    <label className="font-semibold">Rack Grow Days</label>
-                                    <input
-                                        className="p-2 border rounded h-10"
-                                        type="number"
-                                        value={rackGrow ?? ""}
-                                        onChange={(e) => setRackGrow(e.target.value === "" ? undefined : Number(e.target.value))}
-                                    />
-                                </div>
+                                    <div className="flex flex-col sm:flex-row gap-3">
+                                        <div className="flex flex-col flex-1">
+                                            <label className="font-semibold">Days Direct Light</label>
+                                            <input
+                                                className="p-2 border rounded h-10"
+                                                type="number"
+                                                value={daysDirect ?? ""}
+                                                onChange={(e) => setDaysDirect(e.target.value === "" ? undefined : Number(e.target.value))}
+                                            />
+                                        </div>
 
-                                <div className="flex flex-col">
-                                    <label className="font-semibold">Yield Per Tray</label>
-                                    <input
-                                        className="p-2 border rounded h-10"
-                                        type="number"
-                                        value={yieldTray ?? ""}
-                                        onChange={(e) => setYieldTray(e.target.value === "" ? undefined : Number(e.target.value))}
-                                    />
-                                </div>
+                                        <div className="flex flex-col flex-1">
+                                            <label className="font-semibold">Days Indirect Light</label>
+                                            <input
+                                                className="p-2 border rounded h-10"
+                                                type="number"
+                                                value={daysIndirect ?? ""}
+                                                onChange={(e) => setDaysIndirect(e.target.value === "" ? undefined : Number(e.target.value))}
+                                        />
+                                        </div>
 
-                                <div className="flex flex-col">
-                                    <label className="font-semibold">Germination Type</label>
-                                    <select 
-                                        className="p-2 border rounded h-10"
-                                        value={germType}
-                                        onChange={(e) => setGermType(e.target.value)}
+                                    </div>
+
+                                    <div className="flex flex-col">
+                                        <label className="font-semibold">Rack Grow Days</label>
+                                        <input
+                                            className="p-2 border rounded h-10"
+                                            type="number"
+                                            value={rackGrow ?? ""}
+                                            onChange={(e) => setRackGrow(e.target.value === "" ? undefined : Number(e.target.value))}
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col">
+                                        <label className="font-semibold">Yield Per Tray</label>
+                                        <input
+                                            className="p-2 border rounded h-10"
+                                            type="number"
+                                            value={yieldTray ?? ""}
+                                            onChange={(e) => setYieldTray(e.target.value === "" ? undefined : Number(e.target.value))}
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col">
+                                        <label className="font-semibold">Germination Type</label>
+                                        <select 
+                                            className="p-2 border rounded h-10"
+                                            value={germType}
+                                            onChange={(e) => setGermType(e.target.value)}
+                                        >
+                                            <option value="">Select</option>
+                                            <option value="stacked">Stacked</option>
+                                            <option value="blackout">Blackout</option>
+                                            <option value="domed">Domed</option>
+                                        </select>
+                                    </div>
+
+                                    <Button
+                                        className="mt-2 bg-[#308261] text-white"
+                                        onClick={handleAddCrop}
+                                        disabled={adding}
                                     >
-                                        <option value="">Select</option>
-                                        <option value="stacked">Stacked</option>
-                                        <option value="blackout">Blackout</option>
-                                        <option value="domed">Domed</option>
-                                    </select>
+                                        {adding ? "Adding..." : "Add Crop"}
+                                    </Button>
                                 </div>
-
-                                <Button
-                                    className="mt-2 bg-[#308261] text-white"
-                                    onClick={handleAddCrop}
-                                    disabled={adding}
-                                >
-                                    {adding ? "Adding..." : "Add Crop"}
-                                </Button>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
-                </div>
-                    
-                <input
-                    type="text"
-                    placeholder="Search for crops"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="mb-4 p-2 border border-[#308261] rounded-lg w-full"
-                />
-                    
-                <div className="flex-1 overflow-y-auto">
-                    <Table 
-                        columns={cropInformation} 
-                        data={searchCrops} 
-                        underlines={true}
-                        useActions={(row) => (
-                            <CropActions item={row as CropInfo} onUpdate={handleUpdate}/>
-                        )}
+                            </DialogContent>
+                        </Dialog>
+                    </div>
+                        
+                    <input
+                        type="text"
+                        placeholder="Search for crops"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="mb-4 p-2 border border-[#308261] rounded-lg w-full"
                     />
-                </div>                    
+                        
+                    <div className="flex-1 overflow-y-auto">
+                        <div className="overflow-x-auto max-h-[60vh]">
+                            <Table 
+                                columns={cropInformation} 
+                                data={searchCrops} 
+                                underlines={true}
+                                useActions={(row) => (
+                                    <CropActions item={row as CropInfo} onUpdate={handleUpdate}/>
+                                )}
+                            />
+                        </div>
+                    </div>                    
+                </div>
             </div>
         </div>
     );
