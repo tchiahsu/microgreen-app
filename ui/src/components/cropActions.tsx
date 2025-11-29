@@ -38,6 +38,44 @@ export function CropActions({item, onUpdate}: CropActionsProps){
             rack_grow_days: rackGrow,
             yield_per_tray: yieldTray,
         };
+
+        if (!cropName) {
+            toast.error("Please select a crop name.");
+            return;
+        }
+        if (!seedType) {
+            toast.error("Please select a seed type.");
+            return;
+        }
+        if (sowRate == null || sowRate <= 0) {
+            toast.error("Sow rate cannot be empty, negative or 0.");
+            return;
+        }
+        if (overnightSoak === null) {
+            toast.error("Please specify if overnight soak is requried.");
+            return;
+        }
+        if (daysDirect == null || daysDirect < 0) {
+            toast.error("Days under direct light cannot be empty or negative.");
+            return;
+        }
+        if (daysIndirect == null || daysIndirect < 0) {
+            toast.error("Days under indirect light cannot be empty or negative.");
+            return;
+        }
+        if (rackGrow == null || rackGrow < 0) {
+            toast.error("Days in grow racks cannot be empty or negative.");
+            return;
+        }
+        if (yieldTray == null || yieldTray <= 0) {
+            toast.error("The yield per tray cannot be empty, negative, or 0.");
+            return;
+        }
+        if (daysDirect + daysIndirect + rackGrow === 0){
+            toast.error("The sum of days direct, days indirect, and rack grow days has to be greater than 0.");
+            return;
+        }
+
         try {
             await onUpdate(updatedCrop);
             toast.success("Crop has been updated succesfully!")
