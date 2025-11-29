@@ -76,14 +76,16 @@ async def get_harvest(input_date: date | None = Query(default=None)):
     finally:
         db.close()
 
+
 # ----------------------------------------
-# GET SUMMARY OF ORDERS TO DELIVER BASED 
+# GET SUMMARY OF ORDERS TO DELIVER BASED
 # ON THE HARVESTS DONE THAT DAY
 # ----------------------------------------
 @router.get("/get_orders_to_deliver/{delivery_date}")
 async def get_orders_to_deliver(delivery_date: date):
     '''
-    Get the summary of the orders to deliver for a given date (defaulted to today's date)
+    Get the summary of the orders to deliver for a given date (defaulted to
+    today's date)
     Example: GET /home/get_orders_to_deliver/2026-01-01
     '''
     db = connect_db()
@@ -111,7 +113,8 @@ async def get_orders_to_deliver(delivery_date: date):
 @router.get("/get_crops_to_harvest/{delivery_date}")
 async def get_crops_to_harvest(delivery_date: date):
     '''
-    Get the summary of the crops to harvest for a given date (defaulted to today's date)
+    Get the summary of the crops to harvest for a given date (defaulted to
+    today's date)
     Example: GET /home/get_crops_to_harvest/2026-01-01
     '''
     db = connect_db()

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from src.database import connect_db
-from src.models.client import ClientAdd, ContactInfoAdd, ContactInfoUpdate, RestaurantInfoUpdate, ContactInfoDelete
+from src.models.client import (ClientAdd, ContactInfoAdd, ContactInfoUpdate,
+                               RestaurantInfoUpdate, ContactInfoDelete)
 
 router = APIRouter(prefix="/clients", tags=["clients"])
 
@@ -89,15 +90,16 @@ async def add_new_restaurant(data: ClientAdd):
                                        data.zip_code,))
         db.commit()
 
-        cursor.execute("SELECT get_restaurant_id(%s) AS id", (data.restaurant_name,))
+        cursor.execute("SELECT get_restaurant_id(%s) AS id",
+                       (data.restaurant_name,))
         result = cursor.fetchone()
 
         if not result or result["id"] is None:
-            raise HTTPException(status_code=400, 
+            raise HTTPException(status_code=400,
                                 detail="Unable to retrieve restaurant id.")
 
         cursor.close()
-        return {"message": "Client added successfully!", 
+        return {"message": "Client added successfully!",
                 "restaurant_id": result["id"]}
     except Exception as e:
         db.rollback()
@@ -222,13 +224,13 @@ async def edit_restaurant_info(data: RestaurantInfoUpdate):
     try:
         cursor = db.cursor()
         cursor.callproc("update_restaurant_info", (data.restaurant_id,
-                                                data.restaurant_name,
-                                                data.street_num,
-                                                data.street_name,
-                                                data.city,
-                                                data.state,
-                                                data.zip_code,
-                                                data.is_active))
+                                                   data.restaurant_name,
+                                                   data.street_num,
+                                                   data.street_name,
+                                                   data.city,
+                                                   data.state,
+                                                   data.zip_code,
+                                                   data.is_active))
         db.commit()
         cursor.close()
         return {"message": "Restaurant information was updated successfully!"}
