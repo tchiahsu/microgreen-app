@@ -127,6 +127,10 @@ export default function Client() {
             toast.error("Please add a phone number.");
             return;
         }
+        if (phone.length > 15) {
+            toast.error("Phone number is too long.");
+            return;
+        }
 
         setAdding(true);
 
@@ -326,6 +330,11 @@ export default function Client() {
 
         if (!editContactInfoRestaurantId){
             toast.error("The restaurant ID is missing.");
+            return;
+        }
+
+        if (editPhone.length > 15) {
+            toast.error("Phone number is too long.");
             return;
         }
 
@@ -622,7 +631,7 @@ export default function Client() {
                                                     </div>
                                                 ))}
                                             </div>
-                                            <div className="flex justify-left mt-10">
+                                            <div className="flex justify-left mt-5">
                                                 <Button
                                                     size="sm"
                                                     className="bg-[#308261] text-white mr-2"
