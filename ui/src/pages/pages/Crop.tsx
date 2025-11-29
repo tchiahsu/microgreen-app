@@ -60,7 +60,7 @@ export default function Crop() {
         }
     }
 
-    async function handleAddOrder() {
+    async function handleAddCrop() {
         if (!cropName) {
             toast.error("Please select a crop name.");
             return;
@@ -69,8 +69,8 @@ export default function Crop() {
             toast.error("Please select a seed type.");
             return;
         }
-        if (!sowRate) {
-            toast.error("Please select a sow rate.");
+        if (sowRate == null || sowRate <= 0) {
+            toast.error("Sow rate cannot be empty, negative or 0.");
             return;
         }
         if (overnightSoak === null) {
@@ -78,23 +78,27 @@ export default function Crop() {
             return;
         }
         if (daysDirect == null || daysDirect < 0) {
-            toast.error("Days under direct light cannot be negative.");
+            toast.error("Days under direct light cannot be empty or negative.");
             return;
         }
         if (daysIndirect == null || daysIndirect < 0) {
-            toast.error("Days under indirect light cannot be negative.");
+            toast.error("Days under indirect light cannot be empty or negative.");
             return;
         }
         if (rackGrow == null || rackGrow < 0) {
-            toast.error("Days in grow racks cannot be negative.");
+            toast.error("Days in grow racks cannot be empty or negative.");
             return;
         }
-        if (yieldTray == null || yieldTray < 0) {
-            toast.error("The yield per tray cannot be negative.");
+        if (yieldTray == null || yieldTray <= 0) {
+            toast.error("The yield per tray cannot be empty, negative or 0.");
             return;
         }
         if (germType !== "stacked" && germType !== "blackout" && germType !== "domed") {
             toast.error("Germination type can either be blackout, stacked, domed.");
+            return;
+        }
+        if (daysDirect + daysIndirect + rackGrow === 0){
+            toast.error("The sum of days direct, days indirect, and rack grow days has to be greater than 0.");
             return;
         }
 
@@ -303,7 +307,7 @@ export default function Crop() {
 
                                 <Button
                                     className="mt-2 bg-[#308261] text-white"
-                                    onClick={handleAddOrder}
+                                    onClick={handleAddCrop}
                                     disabled={adding}
                                 >
                                     {adding ? "Adding..." : "Add Crop"}
