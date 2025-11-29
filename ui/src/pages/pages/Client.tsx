@@ -5,9 +5,11 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../components/ui/accordion";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 
+import type { ClientRow } from "../../types/client";
+
 
 export default function Client() {
-    const [clientInfo, setClientInfo] = useState<Record<string, any[]>>({});
+    const [clientInfo, setClientInfo] = useState<Record<string, ClientRow[]>>({});
     const [search, setSearch] = useState("");
     
     // To add a new restaurant 
@@ -61,7 +63,7 @@ export default function Client() {
                 throw new Error("Failed to fetch client data");
             }
 
-            const result = await response.json();
+            const result: ClientRow[] = await response.json();
 
             const groupedByClient = result.reduce((acc, row) => {
                 if (!acc[row.restaurant_name]){
@@ -69,7 +71,7 @@ export default function Client() {
                 }
                 acc[row.restaurant_name].push(row);
                 return acc;
-            }, {} as Record<string, any[]>);
+            }, {} as Record<string, ClientRow[]>);
 
 
             setClientInfo(groupedByClient);
@@ -370,7 +372,7 @@ export default function Client() {
         }
     }
 
-    async function handleDeleteContactInfo(contact_id: string){
+    async function handleDeleteContactInfo(contact_id: number){
         const confirmDelete = window.confirm("Are you sure you want do delete this contact info?")
         if(!confirmDelete) return;
 
@@ -424,10 +426,10 @@ export default function Client() {
         setAddContactOpen(true);
     }
 
-    function openEditRestaurantModal(info: any){
+    function openEditRestaurantModal(info: ClientRow){
         setEditRestaurantId(info.restaurant_id);
         setEditRestaurantName(info.restaurant_name);
-        setEditStreetNum(info.street_num);
+        setEditStreetNum(info.street_num ?? undefined);
         setEditStreetName(info.street_name);
         setEditCity(info.city);
         setEditState(info.state);
@@ -436,7 +438,7 @@ export default function Client() {
         setEditRestaurantOpen(true);
     }
 
-    function openEditContactInfoModal(info: any){
+    function openEditContactInfoModal(info: ClientRow){
         console.log("Editing contact:", info);
         setEditContactId(info.contact_id);
         setEditContactInfoRestaurantId(info.restaurant_id);
@@ -452,11 +454,11 @@ export default function Client() {
     }, [])
     
     return (
-        <div className="text-sm font-mono">
-            <div className="flex w-full items-start justify-center">
-                <div className="p-5 bg-white/60 rounded-lg h-170 flex flex-col w-[65%] mt-5 mx-auto">
-                    <div className="flex justify-between items-center">
-                        <h2 className="font-semibold text-lg mb-5 text-[#308261]">Client Information</h2>
+        <div className="text-sm font-mono px-4 pb-10 sm:px-6 lg:px-10">
+            <div className="flex w-full justify-center">
+                <div className="flex flex-col p-4 bg-white/60 rounded-lg w-full max-w-5xl mt-5 sm:p-5">
+                    <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center sm:justify-between">
+                        <h2 className="font-semibold text-lg text-[#308261]">Client Information</h2>
                         <Dialog open={addOpen} onOpenChange={setAddOpen}>
                             <DialogTrigger asChild>
                                 <Button 
@@ -515,8 +517,8 @@ export default function Client() {
                                         />
                                     </div>
 
-                                     <div className="flex gap-7">
-                                        <div className="flex flex-col">
+                                     <div className="flex flex-col gap-3 sm:flex-row sm:gap-7">
+                                        <div className="flex flex-col flex-1">
                                             <label className="font-semibold">State</label>
                                             <input
                                                 className="p-2 border rounded h-10"
@@ -526,7 +528,7 @@ export default function Client() {
                                             />
                                         </div>
 
-                                        <div className="flex flex-col">
+                                        <div className="flex flex-col flex-1">
                                             <label className="font-semibold">Zip Code</label>
                                             <input
                                                 className="p-2 border rounded h-10"
@@ -548,8 +550,8 @@ export default function Client() {
                                         />
                                     </div>
 
-                                    <div className="flex gap-7">
-                                        <div className="flex flex-col">
+                                    <div className="flex flex-col gap-3 sm:flex-row sm:gap-7">
+                                        <div className="flex flex-col flex-1">
                                             <label className="font-semibold">First Name</label>
                                             <input
                                                 className="p-2 border rounded h-10"
@@ -559,7 +561,7 @@ export default function Client() {
                                             />
                                         </div>
 
-                                        <div className="flex flex-col">
+                                        <div className="flex flex-col flex-1">
                                             <label className="font-semibold">Last Name</label>
                                             <input
                                                 className="p-2 border rounded h-10"
@@ -596,9 +598,9 @@ export default function Client() {
                         placeholder="Search clients"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="mb-4 p-2 border border-[#308261] rounded-lg w-full"
+                        className="mb-4 p-2 border border-[#308261] rounded-lg w-full text-xs sm:text-sm"
                     />
-                    <div className="flex-1 overflow-y-auto">
+                    <div className="flex-1 overflow-y-auto max-h-[60vh]">
                         <Accordion type='single' collapsible className="w-full">
                             {searchRestaurants.map((restaurant) => (
                                 <AccordionItem className="w-full" key={restaurant} value={restaurant}>
@@ -609,32 +611,33 @@ export default function Client() {
                                                 {clientInfo[restaurant].map((info, i) => (
                                                     <div
                                                         key={i}
-                                                        className="border-b pb-3 last:border-none last:pb-0"
+                                                        className="flex justify-between items-start border-b pb-3 last:border-none last:pb-0"
                                                     >
-                                                        <div className="flex justify-between items-center">
+                                                        <div className="flex flex-col gap-2 justify-start">
                                                             <div><span className="font-semibold">Contact Name:</span> {info.contact_name}</div>
-                                                            <div className="flex justify-center">
-                                                                <FiEdit
-                                                                    size={18}
-                                                                    className="cursor-pointer hover:text-blue-600 mr-3"
-                                                                    onClick={() => openEditContactInfoModal(info)}                                                    
-                                                                />
-                                                                <FiTrash2
-                                                                    size={18}
-                                                                    className="cursor-pointer hover:text-blue-600 mr-7"
-                                                                    onClick={() => handleDeleteContactInfo(info.contact_id)}                                                    
-                                                                />
-                                                            </div>
+                                                            <div><span className="font-semibold">Email:</span> {info.email}</div>
+                                                            <div><span className="font-semibold">Phone:</span> {info.phone}</div>
                                                         </div>
-                                                        <div><span className="font-semibold">Email:</span> {info.email}</div>
-                                                        <div><span className="font-semibold">Phone:</span> {info.phone}</div>
+                                                        <div className="flex flex-row justify-start text-xs pr-2 gap-2 sm:pr-4 sm:gap-4 sm:text-md">
+                                                            <FiEdit
+                                                                size={18}
+                                                                className="cursor-pointer hover:text-blue-600"
+                                                                onClick={() => openEditContactInfoModal(info)}                                                    
+                                                            />
+                                                            <FiTrash2
+                                                                size={18}
+                                                                className="cursor-pointer hover:text-blue-600"
+                                                                onClick={() => handleDeleteContactInfo(info.contact_id)}                                                    
+                                                            />
+                                                        </div>
                                                     </div>
                                                 ))}
                                             </div>
-                                            <div className="flex justify-left mt-5">
+                                            <hr className="border-t border-gray-300 my-3" />
+                                            <div className="flex flex-col gap-2 mt-5 sm:flex-row">
                                                 <Button
                                                     size="sm"
-                                                    className="bg-[#308261] text-white mr-2"
+                                                    className="bg-[#308261] text-white sm:mr-2"
                                                     onClick={() => openAddNewContactModal(clientInfo[restaurant][0].restaurant_id)}                                                    
                                                 >
                                                     Add Contact
@@ -643,7 +646,7 @@ export default function Client() {
                                                 <Button
                                                     size="sm"
                                                     variant="outline"
-                                                    className="bg-[#308261] text-white mr-2"
+                                                    className="bg-[#308261] text-white sm:mr-2"
                                                     onClick={() => openEditRestaurantModal(clientInfo[restaurant][0])}                                                    
                                                 >
                                                     Edit Restaurant
@@ -672,7 +675,7 @@ export default function Client() {
                                     />
                                 </div>
 
-                                <div className="flex gap-7">
+                                <div className="flex flex-col gap-3 sm:flex-row sm:gap-7">
                                     <div className="flex flex-col">
                                         <label className="font-semibold">First Name</label>
                                         <input
@@ -783,7 +786,7 @@ export default function Client() {
 
                                 <div className="flex flex-col">
                                     <label className="font-semibold">Is Active?</label>
-                                    <div className="flex items-center gap-6">
+                                    <div className="flex flex-wrap items-center gap-4">
                                         <label className="flex items-center">
                                             <input
                                                 type="checkbox"

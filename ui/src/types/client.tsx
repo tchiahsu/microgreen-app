@@ -8,8 +8,10 @@ export type ClientRow = {
     zip_code: string;
     is_active: boolean;
     contact_id: number;
-    contact_name: string;
     email: string;
+    first_name: string;
+    last_name: string;
     phone: string;
+    contact_name: string;
     contact_address: string;
 }
