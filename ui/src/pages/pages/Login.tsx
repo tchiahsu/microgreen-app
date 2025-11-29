@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 
 
-
 export default function Login() {
     const [userEmail, setUserEmail] = useState("");
     const [userPassword, setUserPassword] = useState("");

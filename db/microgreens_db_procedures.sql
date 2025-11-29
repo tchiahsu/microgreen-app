@@ -469,9 +469,9 @@ DELIMITER //
 CREATE PROCEDURE get_user_profile_info(
 	user_id_p INT
 )
-BEGIN 
-	SELECT user.email, employee.first_name, employee.last_name FROM users
-		LEFT JOIN employee ON users.user_id = employee.user_id
+BEGIN
+	SELECT users.user_id, users.email, employee.employee_id, employee.first_name, employee.last_name FROM users
+		JOIN employee ON users.user_id = employee.user_id
         WHERE users.user_id = user_id_p;
 END //
 DELIMITER ;

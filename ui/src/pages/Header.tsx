@@ -5,7 +5,9 @@ import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { FaUser } from "react-icons/fa6";
+import { BsThreeDots } from "react-icons/bs";
 import { HiX, HiOutlineMenu } from "react-icons/hi";
+import { toast } from "sonner";
 
 import type { UserProfile } from "../types/profile";
 
@@ -23,7 +25,7 @@ const navItems = [
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
-    const [profile, setProfile] = useState<any>(null);
+    const [profile, setProfile] = useState<UserProfile | null>(null);
     const [newFirstName, setNewFirstName] = useState("");
     const [newLastName, setNewLastName] = useState("");
     const [newEmail, setNewEmail] = useState("");
@@ -75,6 +77,48 @@ export default function Header() {
         navigate("/");
     }
 
+    async function handleUpdate(profile: UserProfile) {
+        if (!profile || profile.employee_id == null) {
+            toast.error("No profile loaded.")
+            return;
+        }
+
+        try {
+            setLoading(true);
+
+            const res = await fetch(`http://127.0.0.1:8000/employees/update_employee/${profile.employee_id}`,
+                {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        ssn: null,
+                        first_name: newFirstName,
+                        last_name: newLastName,
+                        email: newEmail,
+                        title: null,
+                        is_active: null,
+                    }),
+                }
+            );
+
+            if (!res.ok) {
+                console.error("Failed to update information");
+                toast.error("Failed to update information.");
+                return;
+            }
+
+            toast.success("User information has been update successfully.");
+            setProfileOpen(false);
+            window.location.reload();
+        } catch (e) {
+            console.error("Update error:", e)
+            toast.error("Unexpected error updating user information.")
+            return;
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
         <header className="sticky top-0 z-50 h-[10vh] min-h-16">
             <div className="flex w-full h-full mx-auto max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -114,7 +158,10 @@ export default function Header() {
                         <DialogContent className="max-w-lg">
                             <DialogHeader>
                                 <DialogTitle>User Profile</DialogTitle>
-                                <DialogDescription>Employee ID:</DialogDescription>
+                                <DialogDescription>
+                                    <div>User ID: {profile?.user_id ?? "N/A"}</div>
+                                    <div>Employee ID: {profile?.employee_id ?? "N/A"}</div>
+                                </DialogDescription>
                             </DialogHeader>
 
                             {loading && (
@@ -149,10 +196,19 @@ export default function Header() {
                                     onChange={(i) => setNewEmail(i.target.value)}
                                 />
                             </div>
-                            <div className="flex flex-row w-full gap-2 border-b space-y-3 border-[#afafaf53]">
-                                <Button className="flex flex-1 bg-green-800 cursor-pointer" disabled={loading}>
+                            <div className="flex w-full border-b mt-3 border-[#afafaf53]">
+                                <Button
+                                    className="flex flex-1 bg-green-800 cursor-pointer"
+                                    onClick={() => profile && handleUpdate(profile)}
+                                    disabled={loading}>
                                     {loading ? "Saving..." : "Save Changes"}
                                 </Button>
+                            </div>
+                            
+                            <div className="flex flex-row items-center">
+                                <hr className="flex-grow border-gray-300"></hr>
+                                <span className="px-4 text-gray-500"><BsThreeDots /></span>
+                                <hr className="flex-grow border-gray-300"></hr>
                             </div>
 
                             <Button

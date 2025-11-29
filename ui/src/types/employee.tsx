@@ -1,9 +1,9 @@
 export type EmployeeItem = {
     employee_id: number;
     ssn: string;
-    first_name: string;
+    first_name: string ;
     last_name: string;
     email: string;
-    title: string
+    title: string;
     is_active: boolean;
 };

@@ -6,8 +6,9 @@ export type Profile = {
 }
 
 export type UserProfile = {
+    user_id: number;
+    email: string;
     employee_id: number;
     first_name: string;
     last_name: string;
-    email: string;
 };

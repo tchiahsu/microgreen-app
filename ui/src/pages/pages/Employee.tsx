@@ -8,10 +8,8 @@ import { toast } from "sonner";
 
 import type { EmployeeItem } from "../../types/employee";
 
-
 export default function Employee() {
     const [employeeData, setEmployeeData] = useState<EmployeeItem[]>([]);
-
     const [editingId, setEditingId] = useState<number | null>(null);
 
     const [ssn, setSSN] = useState("")
@@ -36,7 +34,8 @@ export default function Employee() {
                 throw new Error("Failed to fetch employee data");
             }
 
-            setEmployeeData(await res.json())
+            const data = await res.json();
+            setEmployeeData(data)
         } catch (e) {
             console.error("Error getting employee information", e);
             toast.error("Error getting employee information");
