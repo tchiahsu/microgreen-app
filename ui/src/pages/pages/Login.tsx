@@ -44,6 +44,7 @@ export default function Login() {
 
         if (!userPassword) {
             toast.error("Please enter your password.")
+            return;
         }
 
         e.preventDefault();
@@ -53,8 +54,8 @@ export default function Login() {
     return (
         <div className="flex items-center justify-center min-h-screen px-4 sm:px-0">
             <div className="flex flex-col w-full max-w-md gap-6 bg-white/90 px-6 py-8 rounded-lg shadow-md">
-                <div>
-                    <div className="text-2xl font-semibold text-[#163039]">Mishell es hermosa</div>
+                <div className="flex flex-col gap-2">
+                    <div className="text-2xl font-semibold text-[#163039]">Account Login</div>
                     <div className="text-sm text-gray-500">Enter credentials below to log into the system.</div>                           
                 </div>
 

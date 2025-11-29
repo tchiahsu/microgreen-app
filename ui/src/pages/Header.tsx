@@ -153,12 +153,6 @@ export default function Header() {
                                 <Button className="flex flex-1 bg-green-800 cursor-pointer" disabled={loading}>
                                     {loading ? "Saving..." : "Save Changes"}
                                 </Button>
-                                <Button
-                                    className="flex flex-1 bg-red-600 active:scale-95 cursor-pointer"
-                                    onClick={() => setProfileOpen(false)}
-                                >
-                                    Exit
-                                </Button>
                             </div>
 
                             <Button
