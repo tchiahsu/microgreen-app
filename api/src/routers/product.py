@@ -354,7 +354,7 @@ async def add_product_size(data: ProductSize):
 
     try:
         cursor.callproc("add_product_size", (data.product_name,
-                                             data.package_id, 
+                                             data.package_id,
                                              data.weight_grams,
                                              data.is_active,))
         db.commit()

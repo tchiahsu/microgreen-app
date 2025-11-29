@@ -34,7 +34,6 @@ function App() {
                 <Route path="/app/product" element={<Product />} />
                 <Route path="/app/client" element={<Client />} />
                 <Route path="/app/employee" element={<Employee />} />
-                <Route path="/app/landing" element={<Login />} />
               </Route>
             </Route>
             <Route path="*" element={<Login />}/>
