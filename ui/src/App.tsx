@@ -11,7 +11,8 @@ import Order from "./pages/pages/Order";
 import Product from "./pages/pages/Product";
 import Client from "./pages/pages/Client";
 import Employee from "./pages/pages/Employee";
-import Landing from "./pages/pages/Landing";
+import Login from "./pages/pages/Login";
+import RequireAuth from "./components/requireAuth";
 
 
 function App() {
@@ -23,16 +24,20 @@ function App() {
         <BrowserRouter>
           {/* Application Pages */}
           <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Home />} />
-              <Route path="/crop" element={<Crop />} />
-              <Route path="/harvest" element={<Harvest />} />
-              <Route path="/order" element={<Order />} />
-              <Route path="/product" element={<Product />} />
-              <Route path="/client" element={<Client />} />
-              <Route path="/employee" element={<Employee />} />
-              <Route path="/landing" element={<Landing />} />
+            <Route path="/" element={<Login />} />
+            <Route element={<RequireAuth />}>
+              <Route path="/app" element={<Layout />}>
+                <Route index element={<Home />} />
+                <Route path="/app/crop" element={<Crop />} />
+                <Route path="/app/harvest" element={<Harvest />} />
+                <Route path="/app/order" element={<Order />} />
+                <Route path="/app/product" element={<Product />} />
+                <Route path="/app/client" element={<Client />} />
+                <Route path="/app/employee" element={<Employee />} />
+                <Route path="/app/landing" element={<Login />} />
+              </Route>
             </Route>
+            <Route path="*" element={<Login />}/>
           </Routes>
         </BrowserRouter>
       </BackgroundGradientAnimation>

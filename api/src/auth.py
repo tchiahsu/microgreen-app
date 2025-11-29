@@ -19,11 +19,14 @@ JWT_ACCESS_TOKEN_EXPIRE_MINUTES = 180
 pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2 = OAuth2PasswordBearer(tokenUrl="/login")
 
+
 def hash_password(pw):
     return pwd.hash(pw)
 
+
 def verify_password(pw, hashed):
     return pwd.verify(pw, hashed)
+
 
 def create_token(uid):
     payload = {
@@ -31,6 +34,7 @@ def create_token(uid):
         "exp": datetime.now(timezone.utc) + timedelta(minutes=JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
     }
     return jwt.encode(payload, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
+
 
 def decode_token(token):
     return jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
@@ -50,13 +54,13 @@ async def register(data: RegisterUser):
         cursor.callproc("register_user", (data.email, hashed))
         db.commit()
         cursor.close()
-    except Exception as e:
+    except Exception:
         db.rollback()
         raise HTTPException(status_code=400,
                             detail="Error registering user.")
     finally:
         db.close()
-    
+
     return {"ok": True}
 
 
@@ -97,6 +101,7 @@ async def login(data: LoginUser):
 
     return {"access_token": token}
 
+
 # ----------------------------------------
 # ASSIGN A USER ID TO AN EMPLOYEE ID
 # ----------------------------------------
@@ -109,10 +114,10 @@ async def link_employee_user(data: LinkEmployeeToUser):
     try:
         cursor = db.cursor()
         cursor.callproc("link_employee_user", (data.employee_id,
-                                                data.user_id,))
+                                               data.user_id,))
         db.commit()
         cursor.close()
-        return { "message": "User assigned to employee successfully."}
+        return {"message": "User assigned to employee successfully."}
     except Exception:
         db.rollback()
         raise HTTPException(status_code=400,
@@ -121,6 +126,9 @@ async def link_employee_user(data: LinkEmployeeToUser):
         db.close()
 
 
+# ----------------------------------------
+# ASSIGN A USER ID TO AN EMPLOYEE ID
+# ----------------------------------------
 @router.get("/profile")
 async def profile(token: str = Depends(oauth2)):
     try:
@@ -128,7 +136,7 @@ async def profile(token: str = Depends(oauth2)):
         uid = payload["sub"]
     except JWTError:
         raise HTTPException(401, "Invalid token")
-    
+
     db = connect_db()
     if db is None:
         raise HTTPException(status_code=500,

@@ -9,13 +9,13 @@ import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
-    { href: "/", label: "Home" },
-    { href: "/crop", label: "Crop" },
-    { href: "/harvest", label: "Harvest" },
-    { href: "/order", label: "Order" },
-    { href: "/product", label: "Product" },
-    { href: "/client", label: "Client" },
-    { href: "/employee", label: "Employee"}
+    { href: "/app", label: "Home" },
+    { href: "/app/crop", label: "Crop" },
+    { href: "/app/harvest", label: "Harvest" },
+    { href: "/app/order", label: "Order" },
+    { href: "/app/product", label: "Product" },
+    { href: "/app/client", label: "Client" },
+    { href: "/app/employee", label: "Employee"}
 ];
 
 
@@ -63,7 +63,7 @@ export default function Header() {
         <header className="sticky top-0 z-50 h-[10vh] min-h-16">
             <div className="flex w-full h-full mx-auto max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
-                <NavLink to="/" className="flex items-center">
+                <NavLink to="/app" className="flex items-center">
                     <img src="/public/logo.png" alt="Logo" className="h-18 w-auto sm:h-20" />
                 </NavLink>
 

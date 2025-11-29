@@ -228,9 +228,12 @@ CREATE TABLE `employee` (
   `email` varchar(64) NOT NULL,
   `title` varchar(64) NOT NULL,
   `is_active` tinyint(1) NOT NULL,
+  `user_id` int DEFAULT NULL,
   PRIMARY KEY (`employee_id`),
   UNIQUE KEY `email` (`email`),
-  UNIQUE KEY `ssn` (`ssn`)
+  UNIQUE KEY `ssn` (`ssn`),
+  UNIQUE KEY `user_id` (`user_id`),
+  CONSTRAINT `employee_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -240,7 +243,7 @@ CREATE TABLE `employee` (
 
 LOCK TABLES `employee` WRITE;
 /*!40000 ALTER TABLE `employee` DISABLE KEYS */;
-INSERT INTO `employee` VALUES (1,'512-83-4091','Ava','Reynolds','ava.reynolds@microgreens.boston','CEO',1),(2,'239-51-7180','Liam','Carter','liam.carter@microgreens.boston','Farm Manager',1),(3,'684-16-9335','Maya','Thompson','maya.thompson@microgreens.boston','Operations Manager',1),(4,'401-72-5829','Ethan','Morales','ethan.morales@microgreens.boston','Plant Scientist',1),(5,'159-63-0442','Sofia','Bennett','sofia.bennett@microgreens.boston','Crop Associate',1),(6,'773-25-9014','Noah','Patel','noah.patel@microgreens.boston','Crop Associate',1),(7,'328-90-5573','Julian','Brook','julian.brook@microgreens.boston','Delivery Driver',1),(8,'546-12-7820','Chloe','Kim','chloe.kim@microgreens.boston','Sanitaion Associate',1),(9,'817-45-9123','Jason','Gonzalez','jason.gonzalez@microgreens.boston','Sales Associate',1),(10,'917-65-9810','Michael','Aaronson','michael.aaronson@microgreens.boston','Sales Associate',1);
+INSERT INTO `employee` VALUES (1,'512-83-4091','Ava','Reynolds','ava.reynolds@microgreens.boston','CEO',1,1),(2,'239-51-7180','Liam','Carter','liam.carter@microgreens.boston','Farm Manager',1,NULL),(3,'684-16-9335','Maya','Thompson','maya.thompson@microgreens.boston','Operations Manager',1,NULL),(4,'401-72-5829','Ethan','Morales','ethan.morales@microgreens.boston','Plant Scientist',1,NULL),(5,'159-63-0442','Sofia','Bennett','sofia.bennett@microgreens.boston','Crop Associate',1,NULL),(6,'773-25-9014','Noah','Patel','noah.patel@microgreens.boston','Crop Associate',1,NULL),(7,'328-90-5573','Julian','Brook','julian.brook@microgreens.boston','Delivery Driver',1,NULL),(8,'546-12-7820','Chloe','Kim','chloe.kim@microgreens.boston','Sanitaion Associate',1,NULL),(9,'817-45-9123','Jason','Gonzalez','jason.gonzalez@microgreens.boston','Sales Associate',1,NULL),(10,'917-65-9810','Michael','Aaronson','michael.aaronson@microgreens.boston','Sales Associate',1,NULL);
 /*!40000 ALTER TABLE `employee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -390,6 +393,32 @@ LOCK TABLES `restaurant` WRITE;
 /*!40000 ALTER TABLE `restaurant` DISABLE KEYS */;
 INSERT INTO `restaurant` VALUES (1,'Capo',443,'W Broadway','Boston','MA','02127',1),(2,'Hunters (Hunter’s Kitchen & Bar)',110,'Dorchester St','Boston','MA','02127',1),(3,'Fat Baby',118,'Dorchester St','Boston','MA','02127',1),(4,'Loco (Loco Taqueria & Oyster Bar)',412,'W Broadway','Boston','MA','02127',1),(5,'224 Boston',224,'Boston St','Dorchester','MA','02125',1),(6,'Petula’s',81,'L St','Boston','MA','02127',1),(7,'TA',21,'Drydock Ave','Boston','MA','02210',1),(8,'Coquette',450,'Summer St','Boston','MA','02210',1),(9,'Mr. H',225,'Northern Ave','Boston','MA','02210',1),(10,'Ocean Prime',140,'Seaport Blvd','Boston','MA','02210',1),(11,'Nautilus',300,'Pier 4 Boulevard','Boston','MA','02210',1),(12,'Woods Hill Pier 4',300,'Pier 4 Boulevard','Boston','MA','02210',1),(13,'Hook & Line',10,'Fan Pier Boulevard','Boston','MA','02210',1),(14,'Davio’s Seaport',26,'Fan Pier Boulevard','Boston','MA','02210',1),(15,'Serafina Seaport',11,'Fan Pier Boulevard','Boston','MA','02210',1),(16,'Trillium Brewing Company',50,'Thomson PI','Boston','MA','02210',1),(17,'Trade',540,'Atlantic Ave','Boston','MA','02210',1),(18,'O Ya',9,'E Street','Boston','MA','02111',1),(19,'Baleia',264,'E Berkeley Street','Boston','MA','02118',1),(20,'Fuji at Ink Block',352,'Harrison Ave','Boston','MA','02118',1),(21,'Oishii',856,'Boylston St','Boston','MA','02199',1),(22,'311',311,'Tremont St','Boston','MA','02118',1),(23,'Frenchie',560,'Tremont St','Boston','MA','02118',1),(24,'Kaia South End',15,'Appleton St','Boston','MA','02116',1),(25,'Shore Leave',11,'Shawmut Ave','Boston','MA','02118',1),(26,'SRV',569,'Columbus Ave','Boston','MA','02118',1),(27,'Gigi',28,'Union Park','Boston','MA','02118',1),(28,'Douzo',131,'Dartmouth St','Boston','MA','02116',1),(29,'Porto',160,'Massachusetts Ave','Boston','MA','02115',1),(30,'Zuma',1,'Dalton St','Boston','MA','02115',1),(31,'Little Donkey',505,'Mass Ave','Cambridge','MA','02139',1),(32,'Pammy\'s',928,'Mass Ave','Cambridge','MA','02139',1),(33,'Catalyst',300,'Technology Sq','Cambridge','MA','02139',1),(34,'Glass House',450,'Kendall St','Cambridge','MA','02142',1),(35,'Nagomi',108,'Newbury St','Boston','MA','02116',1),(36,'Loco Fenway',70,'Brookline Ave','Boston','MA','02215',1),(37,'Hotel Commonwealth',500,'Commonwealth Ave','Boston','MA','02215',1),(38,'Deuxave',371,'Commonwealth Ave','Boston','MA','02115',1),(39,'Uni',370,'Commonwealth Ave','Boston','MA','02115',1),(40,'City Table',65,'Exeter St','Boston','MA','02116',1),(41,'Typhoon',300,'Newbury St','Boston','MA','02116',1),(42,'Saltie Girl',281,'Dartmouth St','Boston','MA','02116',1),(43,'La Voile',261,'Newbury St','Boston','MA','02116',1),(44,'Krasi',48,'Gloucester St','Boston','MA','02115',1),(45,'Rochambeau',900,'Boylston St','Boston','MA','02115',1),(46,'La Padrona',470,'Summer St','Boston','MA','02210',1),(47,'The Banks Seafood',441,'Stuart St','Boston','MA','02116',1),(48,'Davio’s Arlington',75,'Arlington St','Boston','MA','02116',1),(49,'Bistro du Midi',272,'Boylston St','Boston','MA','02116',1),(50,'Ruka',505,'Washington St','Boston','MA','02111',1),(51,'Yvonne’s',2,'Winter Pl','Boston','MA','02108',1),(52,'Mariel',10,'Post Office Sq','Boston','MA','02109',1),(53,'The Oceanaire',40,'Court St','Boston','MA','02108',1),(54,'Caveau',120,'Newbury St','Boston','MA','02116',1),(55,'Mamma Maria',3,'North Sq','Boston','MA','02113',1),(56,'Hobson’s Allston',180,'Brighton Ave','Boston','MA','02134',1),(57,'Thaiger Den',178,'Harvard Ave','Boston','MA','02134',1),(58,'Harvest',44,'Brattle St','Cambridge','MA','02138',1),(59,'Dovetail Charlestown',20,'Main St','Charlestown','MA','02129',1),(60,'Prima',5,'Austin St','Charlestown','MA','02129',1),(61,'Brewer’s Fork',171,'Medford St','Charlestown','MA','02129',1),(62,'The Block',90,'Main St','Charlestown','MA','02129',1),(63,'Row 34',383,'Congress St','Boston','MA','02210',1),(64,'Capri Italian Steakhouse',500,'Northern Ave','Boston','MA','02210',1),(65,'Ilona',579,'Tremont St','Boston','MA','02118',1),(66,'1928',7,'Eliot St','Cambridge','MA','02138',1),(67,'Essex Restaurant & Sky Lounge',20,'Essex St','Boston','MA','02111',1),(68,'Cafe Sushi',1105,'Mass Ave','Cambridge','MA','02138',1),(69,'Nine Restaurant',9,'Beach St','Boston','MA','02111',1),(70,'Wa Shin',58,'Kneeland St','Boston','MA','02111',1),(71,'Asta',47,'Massachusetts Ave','Boston','MA','02115',1);
 /*!40000 ALTER TABLE `restaurant` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `users` (
+  `user_id` int NOT NULL AUTO_INCREMENT,
+  `email` varchar(64) NOT NULL,
+  `password_hash` text NOT NULL,
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'admin@microgreens.boston','$2b$12$ZciKRPGS08U8S7s0JbJVjupvNZR.AzPvrdcBax9hMKHHPo3K9zKvq');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1640,6 +1669,113 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_user_by_email` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_user_by_email`(
+	email_p VARCHAR(64)
+)
+BEGIN
+	SELECT user_id, email, password_hash FROM users 
+		WHERE email = email_p;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_user_profile_info` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_user_profile_info`(
+	user_id_p INT
+)
+BEGIN 
+	SELECT user.email, employee.first_name, employee.last_name FROM users
+		LEFT JOIN employee ON users.user_id = employee.user_id
+        WHERE users.user_id = user_id_p;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `link_employee_user` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `link_employee_user`(
+	employee_id_p INT,
+	user_id_p INT
+)
+BEGIN
+	IF NOT EXISTS (SELECT 1 FROM users WHERE user_id = user_id_p) THEN 
+ 		SIGNAL SQLSTATE '45000'
+ 			SET MESSAGE_TEXT = "User Id doesn't exist";
+ 	END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM employee WHERE employee_id = employee_id_p) THEN 
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = "Employee Id doesn't exist";
+	END IF;
+
+	UPDATE employee
+	SET user_id = user_id_p
+	WHERE employee_id = employee_id_p;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `register_user` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `register_user`(
+	email_p VARCHAR(256),
+    password_hash_p TEXT
+)
+BEGIN
+	IF EXISTS (SELECT 1 FROM users WHERE email = email_p) THEN 
+		SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Email already registered';
+	END IF;
+    
+    INSERT INTO users (email, password_hash)
+    VALUES (email_p, password_hash_p);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `update_composed_of` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -2260,4 +2396,4 @@ USE `microgreens_db`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-27 15:54:07
+-- Dump completed on 2025-11-28 20:09:01
