@@ -243,7 +243,7 @@ CREATE TABLE `employee` (
 
 LOCK TABLES `employee` WRITE;
 /*!40000 ALTER TABLE `employee` DISABLE KEYS */;
-INSERT INTO `employee` VALUES (1,'512-83-4091','Ava','Reynolds','ava.reynolds@microgreens.boston','CEO',1,1),(2,'239-51-7180','Liam','Carter','liam.carter@microgreens.boston','Farm Manager',1,NULL),(3,'684-16-9335','Maya','Thompson','maya.thompson@microgreens.boston','Operations Manager',1,NULL),(4,'401-72-5829','Ethan','Morales','ethan.morales@microgreens.boston','Plant Scientist',1,NULL),(5,'159-63-0442','Sofia','Bennett','sofia.bennett@microgreens.boston','Crop Associate',1,NULL),(6,'773-25-9014','Noah','Patel','noah.patel@microgreens.boston','Crop Associate',1,NULL),(7,'328-90-5573','Julian','Brook','julian.brook@microgreens.boston','Delivery Driver',1,NULL),(8,'546-12-7820','Chloe','Kim','chloe.kim@microgreens.boston','Sanitaion Associate',1,NULL),(9,'817-45-9123','Jason','Gonzalez','jason.gonzalez@microgreens.boston','Sales Associate',1,NULL),(10,'917-65-9810','Michael','Aaronson','michael.aaronson@microgreens.boston','Sales Associate',1,NULL);
+INSERT INTO `employee` VALUES (1,'512-83-4091','Mishell','Cardenas','mishell@microgreens.boston','CEO',1,1),(2,'239-51-7180','Liam','Carter','liam.carter@microgreens.boston','Farm Manager',1,NULL),(3,'684-16-9335','Maya','Thompson','maya.thompson@microgreens.boston','Operations Manager',1,NULL),(4,'401-72-5829','Ethan','Morales','ethan.morales@microgreens.boston','Plant Scientist',1,NULL),(5,'159-63-0442','Sofia','Bennett','sofia.bennett@microgreens.boston','Crop Associate',1,NULL),(6,'773-25-9014','Noah','Patel','noah.patel@microgreens.boston','Crop Associate',1,NULL),(7,'328-90-5573','Julian','Brook','julian.brook@microgreens.boston','Delivery Driver',1,NULL),(8,'546-12-7820','Chloe','Kim','chloe.kim@microgreens.boston','Sanitaion Associate',1,NULL),(9,'817-45-9123','Jason','Gonzalez','jason.gonzalez@microgreens.boston','Sales Associate',1,NULL),(10,'917-65-9810','Michael','Aaronson','michael.aaronson@microgreens.boston','Sales Associate',1,NULL);
 /*!40000 ALTER TABLE `employee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -417,7 +417,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'admin@microgreens.boston','$2b$12$ZciKRPGS08U8S7s0JbJVjupvNZR.AzPvrdcBax9hMKHHPo3K9zKvq');
+INSERT INTO `users` VALUES (1,'admin@abc.com','$2b$12$ZciKRPGS08U8S7s0JbJVjupvNZR.AzPvrdcBax9hMKHHPo3K9zKvq');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2396,4 +2396,4 @@ USE `microgreens_db`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-28 20:09:01
+-- Dump completed on 2025-11-28 21:43:41
