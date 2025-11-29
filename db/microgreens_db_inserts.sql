@@ -149,17 +149,20 @@ INSERT INTO contact_info (restaurant_id, email, first_name, last_name, phone) VA
     (70, 'rika@washin.test', 'Rika', 'Sato', '(617) 555-7402'),
     (71, 'tobias.grant@asta.test', 'Tobias', 'Grant', '(617) 555-4127');
 
-INSERT INTO employee (ssn, first_name, last_name, email, title, is_active) VALUES
-	('512-83-4091', 'Ava', 'Reynolds', 'ava.reynolds@microgreens.boston', 'CEO', TRUE),
-	('239-51-7180', 'Liam', 'Carter', 'liam.carter@microgreens.boston', 'Farm Manager', TRUE),
-	('684-16-9335', 'Maya', 'Thompson', 'maya.thompson@microgreens.boston', 'Operations Manager', TRUE),
-	('401-72-5829', 'Ethan', 'Morales', 'ethan.morales@microgreens.boston', 'Plant Scientist', TRUE),
-	('159-63-0442', 'Sofia', 'Bennett', 'sofia.bennett@microgreens.boston', 'Crop Associate', TRUE),
-	('773-25-9014', 'Noah', 'Patel', 'noah.patel@microgreens.boston', 'Crop Associate', TRUE),
-	('328-90-5573', 'Julian', 'Brook', 'julian.brook@microgreens.boston', 'Delivery Driver', TRUE),
-	('546-12-7820', 'Chloe', 'Kim', 'chloe.kim@microgreens.boston', 'Sanitaion Associate', TRUE),
-	('817-45-9123', 'Jason', 'Gonzalez', 'jason.gonzalez@microgreens.boston', 'Sales Associate', TRUE),
-	('917-65-9810', 'Michael', 'Aaronson', 'michael.aaronson@microgreens.boston', 'Sales Associate', TRUE);
+INSERT INTO users (user_id, email, password_hash) VALUES
+	(1, "admin@microgreens.boston", "$2b$12$ZciKRPGS08U8S7s0JbJVjupvNZR.AzPvrdcBax9hMKHHPo3K9zKvq");
+
+INSERT INTO employee (ssn, first_name, last_name, email, title, is_active, user_id) VALUES
+	('512-83-4091', 'Ava', 'Reynolds', 'ava.reynolds@microgreens.boston', 'CEO', TRUE, 1),
+	('239-51-7180', 'Liam', 'Carter', 'liam.carter@microgreens.boston', 'Farm Manager', TRUE, NULL),
+	('684-16-9335', 'Maya', 'Thompson', 'maya.thompson@microgreens.boston', 'Operations Manager', TRUE, NULL),
+	('401-72-5829', 'Ethan', 'Morales', 'ethan.morales@microgreens.boston', 'Plant Scientist', TRUE, NULL),
+	('159-63-0442', 'Sofia', 'Bennett', 'sofia.bennett@microgreens.boston', 'Crop Associate', TRUE, NULL),
+	('773-25-9014', 'Noah', 'Patel', 'noah.patel@microgreens.boston', 'Crop Associate', TRUE, NULL),
+	('328-90-5573', 'Julian', 'Brook', 'julian.brook@microgreens.boston', 'Delivery Driver', TRUE, NULL),
+	('546-12-7820', 'Chloe', 'Kim', 'chloe.kim@microgreens.boston', 'Sanitaion Associate', TRUE, NULL),
+	('817-45-9123', 'Jason', 'Gonzalez', 'jason.gonzalez@microgreens.boston', 'Sales Associate', TRUE, NULL),
+	('917-65-9810', 'Michael', 'Aaronson', 'michael.aaronson@microgreens.boston', 'Sales Associate', TRUE, NULL);
 
 INSERT INTO delivery (delivery_date, delivery_status, employee_id) VALUES
 	('2025-12-02', 'scheduled', 7),

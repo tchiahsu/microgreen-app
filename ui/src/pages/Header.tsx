@@ -1,21 +1,22 @@
+import { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription } from "../components/ui/dialog";
 import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
-import { da } from "date-fns/locale";
-import { useState } from "react";
+import { Button } from "../components/ui/button";
 import { FaUser } from "react-icons/fa6";
 import { HiX, HiOutlineMenu } from "react-icons/hi";
-import { NavLink } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+
+import type { UserProfile } from "../types/profile";
 
 const navItems = [
-    { href: "/", label: "Home" },
-    { href: "/crop", label: "Crop" },
-    { href: "/harvest", label: "Harvest" },
-    { href: "/order", label: "Order" },
-    { href: "/product", label: "Product" },
-    { href: "/client", label: "Client" },
-    { href: "/employee", label: "Employee"}
+    { href: "/app", label: "Home" },
+    { href: "/app/crop", label: "Crop" },
+    { href: "/app/harvest", label: "Harvest" },
+    { href: "/app/order", label: "Order" },
+    { href: "/app/product", label: "Product" },
+    { href: "/app/client", label: "Client" },
+    { href: "/app/employee", label: "Employee"}
 ];
 
 
@@ -28,42 +29,57 @@ export default function Header() {
     const [newEmail, setNewEmail] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    
+    const navigate = useNavigate();
 
-
-    async function loadProfile(){
+    async function loadProfile() {
         setProfileOpen(true);
         setLoading(true);
         setError(null);
 
-        try{
+        try {
             const token = localStorage.getItem("token");
 
-            const response = await fetch("http://localhost:8000/profile", {
+            if (!token) {
+                throw new Error("Not logged in.");
+            }
+
+            const res = await fetch("http://127.0.0.1:8000/profile", {
                 headers: {
-                    Authorization: token ? `Bearer ${token}` : "",
+                    Authorization: `Bearer ${token}`
                 },
             });
 
-            if (!response.ok) {
+            if (!res.ok) {
                 throw new Error("Unable to load profile.");
             }
 
-            const data = await response.json();
+            const data: UserProfile = await res.json();
             setProfile(data);
+
+            setNewFirstName(data.first_name ?? "");
+            setNewLastName(data.last_name ?? "");
+            setNewEmail(data.email ?? "");
         } catch {
             setError("Not logged in or session expired");
             setProfile(null);
-        }finally{
+        } finally {
             setLoading(false);
-        }    
+        }
     }
 
+    function handleLogout() {
+        localStorage.removeItem("token");
+        setProfile(null);
+        setProfileOpen(false);
+        navigate("/");
+    }
 
     return (
         <header className="sticky top-0 z-50 h-[10vh] min-h-16">
             <div className="flex w-full h-full mx-auto max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
-                <NavLink to="/" className="flex items-center">
+                <NavLink to="/app" className="flex items-center">
                     <img src="/public/logo.png" alt="Logo" className="h-18 w-auto sm:h-20" />
                 </NavLink>
 
@@ -98,8 +114,17 @@ export default function Header() {
                         <DialogContent className="max-w-lg">
                             <DialogHeader>
                                 <DialogTitle>User Profile</DialogTitle>
-                                <DialogDescription>Employee ID: [add employee id]</DialogDescription>
+                                <DialogDescription>Employee ID:</DialogDescription>
                             </DialogHeader>
+
+                            {loading && (
+                                <p className="text-center text-gray-500 py-2">Loading profile...</p>
+                            )}
+
+                            {error && (
+                                <p className="text-center text-red-600 py-2">{error}</p>
+                            )}
+
                             <div className="flex flex-col gap-2">
                                 <Label>First Name</Label>
                                 <Input
@@ -125,16 +150,22 @@ export default function Header() {
                                 />
                             </div>
                             <div className="flex flex-row w-full gap-2 border-b space-y-3 border-[#afafaf53]">
-                                <Button className="flex flex-1 bg-green-800 cursor-pointer">
-                                    Save Changes
+                                <Button className="flex flex-1 bg-green-800 cursor-pointer" disabled={loading}>
+                                    {loading ? "Saving..." : "Save Changes"}
                                 </Button>
-                                <Button className="flex flex-1 bg-red-600 cursor-pointer">
+                                <Button
+                                    className="flex flex-1 bg-red-600 active:scale-95 cursor-pointer"
+                                    onClick={() => setProfileOpen(false)}
+                                >
                                     Exit
                                 </Button>
                             </div>
 
-                            <Button className="cursor-pointer">
-                                Log Out / Sign In
+                            <Button
+                                className="cursor-pointer"
+                                onClick={handleLogout}
+                            >
+                                Log Out
                             </Button>
                         </DialogContent>
                     </Dialog>
