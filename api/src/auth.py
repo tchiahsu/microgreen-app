@@ -1,7 +1,7 @@
 import os
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
-from src.models.user import RegisterUser, LoginUser, LinkEmployeeToUser
+from src.models.user import RegisterUser, LoginUser
 from src.database import connect_db
 from passlib.context import CryptContext
 from jose import jwt, JWTError
@@ -110,30 +110,6 @@ async def login(data: LoginUser):
         db.close()
 
     return {"access_token": token}
-
-
-# ----------------------------------------
-# ASSIGN A USER ID TO AN EMPLOYEE ID
-# ----------------------------------------
-@router.post("/link_employee_user")
-async def link_employee_user(data: LinkEmployeeToUser):
-    db = connect_db()
-    if db is None:
-        raise HTTPException(status_code=500,
-                            detail="Connection to database failed.")
-    try:
-        cursor = db.cursor()
-        cursor.callproc("link_employee_user", (data.employee_id,
-                                               data.user_id,))
-        db.commit()
-        cursor.close()
-        return {"message": "User assigned to employee successfully."}
-    except Exception:
-        db.rollback()
-        raise HTTPException(status_code=400,
-                            detail="Unable to link Employee to User")
-    finally:
-        db.close()
 
 
 # ----------------------------------------
