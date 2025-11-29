@@ -3,6 +3,7 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
 import { FiEdit } from "react-icons/fi";
 import { toast } from "sonner";
 
@@ -27,6 +28,11 @@ export default function Employee() {
     const [newLastName, setNewLastName] = useState("");
     const [newEmail, setNewEmail] = useState("");
     const [newTitle, setNewTitle] = useState("");
+
+    const [addRegistration, setAddRegistration] = useState(false);
+    const [registerEmail, setRegisterEmail] = useState("");
+    const [registerPassword, setRegisterPassword] = useState("");
+    const [selectedEmployee, setSelectedEmployee] = useState<EmployeeItem | null>(null);
 
 
     async function fetchEmployees() {
@@ -134,86 +140,185 @@ export default function Employee() {
         }
     }
 
+    async function handleRegisterEmployee() {
+        if (!selectedEmployee) {
+            toast.error("Please select an employee to register them.")
+            return;
+        }
+
+        if (!registerPassword) {
+            toast.error("A password if required to register an employee.")
+            return;
+        }
+
+        try {
+            const body = {
+                email: registerEmail,
+                password: registerPassword
+            };
+
+            const res = await fetch("http://127.0.0.1:8000/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body),
+            });
+
+            if (!res.ok) {
+                console.error("Failed to register employee.");
+                toast.error("Failed to register new employee.");
+                return;
+            }
+
+            toast.success("Employee registered successfully.");
+
+            setRegisterEmail("");
+            setRegisterPassword("");
+
+            setAddRegistration(false);
+            await fetchEmployees();
+        } catch {
+            console.error("Error registering employee.");
+            toast.error("Unexpected error registering employee.");
+        }
+    }
+
     useEffect(() => {
         fetchEmployees()
     }, [])
+
+    const activeEmployees = employeeData.filter(e => e.is_active);
 
     return (
         <div className="flex justify-center items-center text-sm font-mono mt-5">
             <div className="p-5 bg-white/60 rounded-lg h-170 w-[80%] flex flex-col">
                 <div className="flex justify-between items-center mb-5">
                     <h2 className="font-semibold text-lg text-[#308261] mt-2">Employee Information</h2>
-                    <Dialog open={addOpen} onOpenChange={setAddOpen}>
-                        <DialogTrigger asChild>
-                            <Button
-                                className="bg-[#308261] text-white font-semibold"
-                                size="sm"
-                            >
-                                + Add Employee
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Add New Employee</DialogTitle>
-                                <DialogDescription>
-                                    Provide the employee details and save to add them to the system.
-                                </DialogDescription>
-                            </DialogHeader>
-
-                            <div className="flex flex-col gap-3 mt-2">
-                                <div className="flex flex-col gap-1">
-                                    <Label>SSN</Label>
-                                    <Input
-                                        type="text"
-                                        value={newSSN}
-                                        onChange={(e) => setNewSSN(e.target.value)}
-                                    />
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                    <Label>First Name</Label>
-                                    <Input
-                                        type="text"
-                                        value={newFirstName}
-                                        onChange={(e) => setNewFirstName(e.target.value)}
-                                    />
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                    <Label>Last Name</Label>
-                                    <Input
-                                        type="text"
-                                        value={newLastName}
-                                        onChange={(e) => setNewLastName(e.target.value)}
-                                    />
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                    <Label>Email</Label>
-                                    <Input
-                                        type="text"
-                                        value={newEmail}
-                                        onChange={(e) => setNewEmail(e.target.value)}
-                                    />
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                    <Label>Title</Label>
-                                    <Input
-                                        type="text"
-                                        value={newTitle}
-                                        onChange={(e) => setNewTitle(e.target.value)}
-                                    />
-                                </div>
-
+                    <div className="flex gap-3">
+                        <Dialog open={addRegistration} onOpenChange={setAddRegistration}>
+                            <DialogTrigger asChild>
                                 <Button
-                                    onClick={handleAddEmployee}
-                                    className="w-full mt-3"
+                                    className="bg-[#308261] text-white font-semibold"
+                                    size="sm"
                                 >
-                                    Save Employee
+                                    + Register User
                                 </Button>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Register Employee User</DialogTitle>
+                                </DialogHeader>
+                                <div className="flex flex-col gap-3 mt-2">
+                                    <div className="flex flex-col gap-1">
+                                        <Label>Select Employee Email</Label>
+                                        <Select
+                                            value={selectedEmployee?.employee_id?.toString() || ""}
+                                            onValueChange={(value) => {
+                                                const emp = employeeData.find(e => e.employee_id === Number(value)) || null;
+                                                setSelectedEmployee(emp);
+                                                setRegisterEmail(emp?.email || "");
+                                            }}
+                                        >
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Pick an email"/>
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {activeEmployees.map(emp => (
+                                                    <SelectItem key={emp.employee_id} value={emp.employee_id.toString()}>
+                                                        {emp.first_name} {emp.last_name} - {emp.email}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
 
+                                    <div className="flex flex-col gap-1">
+                                        <Label>Password</Label>
+                                        <Input
+                                            type="text"
+                                            value={registerPassword}
+                                            onChange={(e) => setRegisterPassword(e.target.value)}
+                                        />
+                                    </div>
+
+                                    <Button
+                                        onClick={handleRegisterEmployee}
+                                        className="w-full"
+                                    >
+                                        Create Registration
+                                    </Button>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+                        <Dialog open={addOpen} onOpenChange={setAddOpen}>
+                            <DialogTrigger asChild>
+                                <Button
+                                    className="bg-[#308261] text-white font-semibold"
+                                    size="sm"
+                                >
+                                    + Add Employee
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Add New Employee</DialogTitle>
+                                    <DialogDescription>
+                                        Provide the employee details and save to add them to the system.
+                                    </DialogDescription>
+                                </DialogHeader>
+
+                                <div className="flex flex-col gap-3 mt-2">
+                                    <div className="flex flex-col gap-1">
+                                        <Label>SSN</Label>
+                                        <Input
+                                            type="text"
+                                            value={newSSN}
+                                            onChange={(e) => setNewSSN(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <Label>First Name</Label>
+                                        <Input
+                                            type="text"
+                                            value={newFirstName}
+                                            onChange={(e) => setNewFirstName(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <Label>Last Name</Label>
+                                        <Input
+                                            type="text"
+                                            value={newLastName}
+                                            onChange={(e) => setNewLastName(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <Label>Email</Label>
+                                        <Input
+                                            type="text"
+                                            value={newEmail}
+                                            onChange={(e) => setNewEmail(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <Label>Title</Label>
+                                        <Input
+                                            type="text"
+                                            value={newTitle}
+                                            onChange={(e) => setNewTitle(e.target.value)}
+                                        />
+                                    </div>
+
+                                    <Button
+                                        onClick={handleAddEmployee}
+                                        className="w-full mt-3"
+                                    >
+                                        Save Employee
+                                    </Button>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
                 </div>
-
                 <div className="flex justify-center overflow-y-auto">
                     <table>
                         <thead>
