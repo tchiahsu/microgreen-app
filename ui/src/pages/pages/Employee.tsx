@@ -188,11 +188,11 @@ export default function Employee() {
     const activeEmployees = employeeData.filter(e => e.is_active);
 
     return (
-        <div className="flex justify-center items-center text-sm font-mono mt-5">
-            <div className="p-5 bg-white/60 rounded-lg h-170 w-[80%] flex flex-col">
-                <div className="flex justify-between items-center mb-5">
+        <div className="text-sm font-mono mt-5 px-4 sm:px-5 lg:px-10">
+            <div className="flex flex-col mx-auto bg-white/60 rounded-lg max-w-7xl w-full p-4 sm:p-5">
+                <div className="flex flex-col gap-3 mb-5 sm:flex-row sm:justify-between sm:items-center">
                     <h2 className="font-semibold text-lg text-[#308261] mt-2">Employee Information</h2>
-                    <div className="flex gap-3">
+                    <div className="flex flex-wrap gap-3">
                         <Dialog open={addRegistration} onOpenChange={setAddRegistration}>
                             <DialogTrigger asChild>
                                 <Button
@@ -318,46 +318,46 @@ export default function Employee() {
                         </Dialog>
                     </div>
                 </div>
-                <div className="flex justify-center overflow-y-auto">
-                    <table>
+                <div className="flex-1 w-full overflow-x-auto">
+                    <table className="min-w-full table-auto">
                         <thead>
                             <tr>
-                                <th className="px-4 py-3 font-semibold text-left">Employee ID</th>
-                                <th className="px-4 py-3 font-semibold text-left">SSN</th>
-                                <th className="px-4 py-3 font-semibold text-left">First Name</th>
-                                <th className="px-4 py-3 font-semibold text-left">Last Name</th>
-                                <th className="px-4 py-3 font-semibold text-left">Email</th>
-                                <th className="px-4 py-3 font-semibold text-left">Title</th>
-                                <th className="px-4 py-3 font-semibold text-left">Status</th>
-                                <th className="px-4 py-3 font-semibold text-left"></th>
+                                <th className="px-3 py-2 font-semibold text-left sm:px-4 sm:py-3">Employee ID</th>
+                                <th className="px-3 py-2 font-semibold text-left sm:px-4 sm:py-3">SSN</th>
+                                <th className="px-3 py-2 font-semibold text-left sm:px-4 sm:py-3">First Name</th>
+                                <th className="px-3 py-2 font-semibold text-left sm:px-4 sm:py-3">Last Name</th>
+                                <th className="px-3 py-2 font-semibold text-left sm:px-4 sm:py-3">Email</th>
+                                <th className="px-3 py-2 font-semibold text-left sm:px-4 sm:py-3">Title</th>
+                                <th className="px-3 py-2 font-semibold text-left sm:px-4 sm:py-3">Status</th>
+                                <th className="px-3 py-2 font-semibold text-left sm:px-4 sm:py-3"></th>
                             </tr>
                         </thead>
 
                         <tbody>
                             {employeeData.map((e) => (
                                 <tr key={e.employee_id}>
-                                    <td className="px-4 py-3 align-top border-b-[0.9px] border-[#f6b8669c] text-center">
+                                    <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] text-center sm:px-4 sm:py-3">
                                         {e.employee_id}
                                     </td>
-                                    <td className="px-4 pt-3 align-top border-b-[0.9px] border-[#f6b8669c]">
+                                    <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
                                         {e.ssn}
                                     </td>
-                                    <td className="px-4 pt-3 align-top border-b-[0.9px] border-[#f6b8669c]">
+                                    <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
                                         {e.first_name}
                                     </td>
-                                    <td className="px-4 pt-3 align-top border-b-[0.9px] border-[#f6b8669c]">
+                                    <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
                                         {e.last_name}
                                     </td>
-                                    <td className="px-4 pt-3 align-top border-b-[0.9px] border-[#f6b8669c]">
+                                    <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
                                         {e.email}
                                     </td>
-                                    <td className="px-4 pt-3 align-top border-b-[0.9px] border-[#f6b8669c]">
+                                    <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
                                         {e.title}
                                     </td>
-                                    <td className="px-4 pt-3 align-top border-b-[0.9px] border-[#f6b8669c]">
+                                    <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
                                         {e.is_active ? "Active" : "Inactive"}
                                     </td>
-                                    <td className="px-4 pt-3 align-top border-b-[0.9px] border-[#f6b8669c]">
+                                    <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
                                         <Dialog
                                             open={editingId === e.employee_id}
                                             onOpenChange={(open) => {

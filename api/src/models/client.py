@@ -31,6 +31,7 @@ class ContactInfoUpdate(BaseModel):
 class ContactInfoDelete(BaseModel):
     contact_id: int
 
+
 class RestaurantInfoUpdate(BaseModel):
     restaurant_id: int
     restaurant_name: Optional[str] = None
