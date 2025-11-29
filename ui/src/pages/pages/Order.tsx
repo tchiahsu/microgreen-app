@@ -331,22 +331,22 @@ export default function Order() {
     }, [])
 
     return (
-        <div className="flex justify-center">
-            <div className="flex flex-col p-6 text-sm font-mono">
-                <div className="flex justify-start items-center gap-5 mb-5">
+        <div className="flex justify-center text-sm font-mono px-3 sm:px-4 lg:px-10 pb-1">
+            <div className="flex flex-col w-full max-w-4xl">
+                <div className="flex items-start justify-start gap-3 mb-5 sm:gap-5">
                     <Calendar28
                         selectedDate={selectedDate}
                         onChange={(value) => setSelectedDate(value)}
                     />
                 </div>
-                <div className="flex flex-col justify-center p-5 bg-white/60 rounded-lg">
-                    <div className="flex justify-between items-center">
-                        <div className="font-semibold text-lg mb-5 text-[#308261]">Order Summary</div>
-                        <div className="flex flex-row gap-4">
+                <div className="flex flex-col p-4 bg-white/60 rounded-lg sm:p-5">
+                    <div className="flex flex-col justify-between items-start gap-3 mb-4 sm:flex-row sm:items-center sm:gap-4">
+                        <div className="font-semibold text-lg text-[#308261]">Order Summary</div>
+                        <div className="flex flex-col w-full gap-3 sm:flex-row sm:w-auto sm:gap-4">
                             <Dialog open={addOpen} onOpenChange={setAddOpen}>
                                 <DialogTrigger asChild>
                                     <Button
-                                        className="bg-[#308261] text-white font-semibold p-4 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100"
+                                        className="bg-[#308261] text-white font-semibold px-4 py-2 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100 sm:gap-4"
                                         variant="outline"
                                     >
                                         Add Order
@@ -499,7 +499,7 @@ export default function Order() {
                                         <Table columns={deliveryColumns} data={deliveryData} underlines={true} color={"green"} />
                                     </div>
                                     
-                                    <div className="flex flex-row w-full gap-4 justify-center items-center mt-3">
+                                    <div className="flex flex-row w-full gap-3 justify-center items-stretch mt-3 sm:flex-row sm:gap-4">
                                         <Popover
                                             open={addDeliveryOpen}
                                             onOpenChange={(open) => {
@@ -601,27 +601,33 @@ export default function Order() {
                         </div>
                     </div>
                     {!orderData || Object.keys(orderData).length === 0 ? (
-                        <div className="w-[100vh] font-bold text-red-600">No orders found for this date.</div>
+                        <div className="w-full flex justify-center items-center py-10">
+                            <div className="p-6 bg-white/80 rounded-lg shadow-md w-full max-w-md text-center font-bold text-red-600">
+                                No orders found for this date.
+                            </div>
+                        </div>
                     ) : (
-                        <Accordion type="single" collapsible>
-                            {Object.entries(orderData).map(([restaurantName, items]) => (
-                                <AccordionItem key={restaurantName} value={restaurantName}>
-                                    <AccordionTrigger>{restaurantName} - {items.length} items</AccordionTrigger>
-                                    <AccordionContent>
-                                        <div className="grid grid-cols-[1fr_2fr_2fr_1fr] auto-rows-min gap-4 mx-10">
-                                            {items.map((item) => (
-                                                <Actions 
-                                                    key={`${item.order_id}-${item.product_id}`}
-                                                    item={item}
-                                                    onUpdate={handleUpdate}
-                                                    onDelete={handleDelete}
-                                                />
-                                            ))}
-                                        </div>
-                                    </AccordionContent>
-                                </AccordionItem>
-                            ))}
-                        </Accordion>
+                        <div className="w-full flex justify-center items-center py-10">
+                            <Accordion type="single" collapsible>
+                                {Object.entries(orderData).map(([restaurantName, items]) => (
+                                    <AccordionItem key={restaurantName} value={restaurantName}>
+                                        <AccordionTrigger>{restaurantName} - {items.length} items</AccordionTrigger>
+                                        <AccordionContent>
+                                            <div className="grid gap-4 mx-1 grid-cols-1 sm:mx-4 lg:grid-cols-4">
+                                                {items.map((item) => (
+                                                    <Actions
+                                                        key={`${item.order_id}-${item.product_id}`}
+                                                        item={item}
+                                                        onUpdate={handleUpdate}
+                                                        onDelete={handleDelete}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </AccordionContent>
+                                    </AccordionItem>
+                                ))}
+                            </Accordion>
+                        </div>
                     )}
                 </div>
             </div>

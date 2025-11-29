@@ -79,71 +79,76 @@ export function Actions({ item, onUpdate, onDelete }: ActionsProp) {
     }
 
     return (
-        <>
-            <span>OrderId: {item.order_id}</span>
-            <span>{item.product_name}</span>
-            <span>Size: {item.package_type} x{item.quantity}</span>
+        <div className="flex flex-col justify-between gap-2 p-3 rounded-lg border bg-white/80 shadow-sm text-xs sm:text-sm">
+            <div className="flex justify-between items-start gap-2">
+                <div className="flex flex-col gap-1">
+                    <span className="text-xs text-gray-600">OrderId: {item.order_id}</span>
+                    <span className="font-semibold">{item.product_name}</span>
+                    <span className="text-xs font-semibold text-gray-600">{item.package_type} x{item.quantity}</span>
+                    <span className="text-xs text-gray-600 capitalize">Status: {status}</span>
 
-            <span className="flex justify-end gap-3 mr-5">
-                <Popover open={open} onOpenChange={setOpen}>
-                    <PopoverTrigger asChild>
-                        <button className="hover:text-blue-600">
-                            <FiEdit size={16} />
+                    <div className="flex flex-row items-end gap-2 mt-2">
+                        <Popover open={open} onOpenChange={setOpen}>
+                            <PopoverTrigger asChild>
+                                <button className="hover:text-blue-600">
+                                    <FiEdit size={16} />
+                                </button>
+                            </PopoverTrigger>
+
+                            <PopoverContent className="w-72 space-y-3">
+                                <div className="flex flex-col gap-2">
+                                    <Label>Update Quantity</Label>
+                                    <Input 
+                                        type="number"
+                                        min="1"
+                                        value={quantity}
+                                        onChange={(e) => setQuantity(Number(e.target.value))}
+                                    />
+                                </div>
+
+                                <div className="flex flex-col gap-2">
+                                    <Label>New Delivery Date</Label>
+                                    <Input
+                                        type="date"
+                                        value={deliveryDate}
+                                        onChange={(e) => setDeliveryDate(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="flex flex-col gap-2">
+                                    <Label>Order Status</Label>
+                                    <Select value={status} onValueChange={setStatus}>
+                                        <SelectTrigger><SelectValue placeholder="Select Status"/></SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="scheduled">Scheduled</SelectItem>
+                                            <SelectItem value="completed">Completed</SelectItem>
+                                            <SelectItem value="cancelled">Cancelled</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        checked={applyToFuture}
+                                        onChange={(e) => setApplyToFuture(e.target.checked)}
+                                    />
+                                    <Label className="text-xs">Apply to all future orders</Label>
+                                </div>
+
+                                <Button onClick={handleConfirm} size="sm" disabled={submitting}>
+                                    {submitting ? "Saving..." : "Confirm"}
+                                </Button>
+                            </PopoverContent>
+                        </Popover>
+
+                        <button className="hover:text-red-500" onClick={() => onDelete(item.order_id, item.product_id)}>
+                            <FiTrash2 size={16} />
                         </button>
-                    </PopoverTrigger>
-
-                    <PopoverContent className="w-72 space-y-3">
-                        <div className="flex flex-col gap-2">
-                            <Label>Update Quantity</Label>
-                            <Input 
-                                type="number"
-                                min="1"
-                                value={quantity}
-                                onChange={(e) => setQuantity(Number(e.target.value))}
-                            />
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                            <Label>New Delivery Date</Label>
-                            <Input
-                                type="date"
-                                value={deliveryDate}
-                                onChange={(e) => setDeliveryDate(e.target.value)}
-                            />
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                            <Label>Order Status</Label>
-                            <Select value={status} onValueChange={setStatus}>
-                                <SelectTrigger><SelectValue placeholder="Select Status"/></SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="scheduled">Scheduled</SelectItem>
-                                    <SelectItem value="completed">Completed</SelectItem>
-                                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <input
-                                type="checkbox"
-                                checked={applyToFuture}
-                                onChange={(e) => setApplyToFuture(e.target.checked)}
-                            />
-                            <Label className="text-xs">Apply to all future orders</Label>
-                        </div>
-
-                        <Button onClick={handleConfirm} size="sm">
-                            {submitting ? "Saving..." : "Confirm"}
-                        </Button>
-                    </PopoverContent>
-                </Popover>
-
-                <button className="hover:text-red-500" onClick={() => onDelete(item.order_id, item.product_id)}>
-                    <FiTrash2 size={16} />
-                </button>
-            </span>
-        </>
+                    </div>
+                </div>
+            </div>
+        </div>
     )
 }
 
