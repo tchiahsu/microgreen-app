@@ -7,14 +7,15 @@ from passlib.context import CryptContext
 from jose import jwt, JWTError
 from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
+from typing import Final
 
 load_dotenv()
 
 router = APIRouter()
 
-JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
-JWT_ALGORITHM = "HS256"
-JWT_ACCESS_TOKEN_EXPIRE_MINUTES = 180
+JWT_SECRET_KEY: Final[str] = os.environ["JWT_SECRET_KEY"]
+JWT_ALGORITHM: Final[str] = "HS256"
+JWT_ACCESS_TOKEN_EXPIRE_MINUTES: Final[int] = 180
 
 pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2 = OAuth2PasswordBearer(tokenUrl="/login")
@@ -31,7 +32,8 @@ def verify_password(pw, hashed):
 def create_token(uid):
     payload = {
         "sub": str(uid),
-        "exp": datetime.now(timezone.utc) + timedelta(minutes=JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
+        "exp": datetime.now(timezone.utc) +
+        timedelta(minutes=JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
     }
     return jwt.encode(payload, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
 
