@@ -150,7 +150,7 @@ INSERT INTO contact_info (restaurant_id, email, first_name, last_name, phone) VA
     (71, 'tobias.grant@asta.test', 'Tobias', 'Grant', '(617) 555-4127');
 
 INSERT INTO users (user_id, email, password_hash) VALUES
-	(1, "admin@abc.com", "$2b$12$ZciKRPGS08U8S7s0JbJVjupvNZR.AzPvrdcBax9hMKHHPo3K9zKvq");
+	(1, "admin@microgreen.boston", "$2b$12$ZciKRPGS08U8S7s0JbJVjupvNZR.AzPvrdcBax9hMKHHPo3K9zKvq");
 
 INSERT INTO employee (ssn, first_name, last_name, email, title, is_active, user_id) VALUES
 	('512-83-4091', 'Mishell', 'Cardenas', 'mishell@microgreens.boston', 'CEO', TRUE, 1),

@@ -54,6 +54,14 @@ async def register(data: RegisterUser):
     try:
         cursor = db.cursor()
         cursor.callproc("register_user", (data.email, hashed))
+        cursor.callproc("get_last_registered_user_id")
+        row = cursor.fetchone()
+        if not row:
+            raise HTTPException(status_code=500,
+                                detail="Unable to fetch new user id.")
+        new_user_id = row["user_id"]
+
+        cursor.callproc("link_employee_user", (data.employee_id, new_user_id))
         db.commit()
         cursor.close()
     except Exception:
@@ -63,7 +71,7 @@ async def register(data: RegisterUser):
     finally:
         db.close()
 
-    return {"ok": True}
+    return {"message": "User Registered successfully."}
 
 
 # ----------------------------------------
