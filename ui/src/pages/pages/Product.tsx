@@ -402,7 +402,7 @@ export default function Product() {
 
     return (
         <div className="flex text-sm font-mono justify-center items-start mt-5 px-4 sm:px-6 lg:px-10">
-            <div className="flex flex-col p-4 bg-white/60 rounded-lg max-w-5xl w-full sm:p-4">
+            <div className="flex flex-col p-4 bg-white/60 rounded-lg max-w-4xl w-full sm:p-4">
                 <div className="flex flex-col gap-3 mb-5 sm:flex-row sm:justify-between sm:items-center">
                     <h2 className="font-semibold text-lg text-[#308261]">Product Offerings</h2>
                     <Dialog
