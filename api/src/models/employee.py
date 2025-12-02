@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
+from datetime import date
+
 
 
 class EmployeeData(BaseModel):
@@ -10,3 +12,12 @@ class EmployeeData(BaseModel):
     title: Optional[str] = None
     is_active: Optional[bool] = None
     password: Optional[str] = None
+
+
+class AssignPlanting(BaseModel):
+    employee_id: int
+    crop_id: int
+
+class AssignDelivery(BaseModel):
+    employee_id: int
+    delivery_date: date

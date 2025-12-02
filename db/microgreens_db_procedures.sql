@@ -413,7 +413,8 @@ DROP PROCEDURE IF EXISTS get_delivery_info;
 DELIMITER //
 CREATE PROCEDURE get_delivery_info()
 BEGIN
-	SELECT delivery_date, delivery_status FROM delivery;
+	SELECT delivery_date, delivery_status, employee.employee_id, employee.first_name, employee.last_name FROM delivery
+		LEFT JOIN employee ON delivery.employee_id = employee.employee_id;
 END //
 DELIMITER ;
 
@@ -1406,6 +1407,53 @@ BEGIN
 	
 	INSERT INTO plants (employee_id, crop_id)
 	VALUES (employee_id_p, crop_id_p);
+END //
+DELIMITER ;
+
+
+/*
+PROCEDURE
+----------
+This procedure assigns an employee to a delivery
+*/
+DROP PROCEDURE IF EXISTS assign_employee_to_delivery;
+DELIMITER //
+CREATE PROCEDURE assign_employee_to_delivery(
+	employee_id_p INT,
+    delivery_date_p DATE
+)
+BEGIN
+	DECLARE found_id INT;
+    DECLARE found_delivery INT;
+    DECLARE curr_status ENUM("scheduled", "completed", "cancelled");
+	-- Check if value provided for product_id is valid
+	SELECT employee_id INTO found_id FROM employee
+		WHERE employee_id = employee_id_p;
+		
+	IF found_id IS NULL THEN 
+		SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'The value provided for employee_id is not valid.';
+	END IF;
+	
+	SELECT COUNT(*) INTO found_delivery FROM delivery
+        WHERE delivery_date = delivery_date_p;
+	
+	IF found_delivery = 0 THEN 
+		SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'The delivery date provided is not valid.';
+	END IF;
+
+	SELECT delivery_status INTO curr_status FROM delivery
+        WHERE delivery_date = delivery_date_p;
+
+    IF curr_status <> 'scheduled' THEN 
+		SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'Cannot assign employee to a cancelled or completed delivery.';
+	END IF;
+	
+	UPDATE delivery
+	SET employee_id = employee_id_p
+	WHERE delivery_date = delivery_date_p;
 END //
 DELIMITER ;
 
