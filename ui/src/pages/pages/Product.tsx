@@ -6,25 +6,14 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
+import { FaSave } from "react-icons/fa";
+import { MdCancel } from "react-icons/md";
 import { toast } from "sonner";
 
 import type { ProductItem, PackageType, CompositionRow } from "../../types/product";
+import type { SizeDialogState, CompDialogState, PackagingEditState } from "../../types/packaging";
 import type { CropInfo } from "../../types/crop";
 
-type SizeDialogState = {
-    mode: "add" | "edit";
-    productName: string;
-    sizeType: string;
-    weight: number | null;
-    isActive: boolean;
-} | null
-
-type CompDialogState = {
-    productName: string;
-    rows: CompositionRow[];
-} | null;
-
-const normalizeProductName = (name: string) => name.trim().replace(/\s+/g, " ").toLowerCase();
 
 const isLiveTraySize = (sizeType: string | undefined | null) => {
     if (!sizeType) return false;
@@ -48,6 +37,9 @@ export default function Product() {
     const [sizeDialog, setSizeDialog] = useState<SizeDialogState>(null);
     const [compDialog, setCompDialog] = useState<CompDialogState>(null);
 
+    const [packagingEdit, setPackagingEdit] = useState<PackagingEditState | null>(null);
+    const [newPackagingName, setNewPackagingName] = useState("");
+
     const [compositionRow, setCompositionRow] = useState<CompositionRow[]>([
         { crop_id: null, crop_ratio: null },
     ]);
@@ -58,8 +50,11 @@ export default function Product() {
         sizes: { size_type: string; weight_grams: number | null; is_active: number}[];
     }> = {};
 
+    const normalizeStr = (str: string) =>
+        str.normalize("NFKC").trim().replace(/[^\w\s]+/g, "").replace(/\s+/g, " ").toLowerCase();
+
     for (const p of productData) {
-        const product = normalizeProductName(p.product_name)
+        const product = normalizeStr(p.product_name)
 
         if (!productMap[product]) {
             productMap[product] = {
@@ -138,7 +133,7 @@ export default function Product() {
             return;
         }
 
-        const newKey = normalizeProductName(trimName);
+        const newKey = normalizeStr(trimName);
         if (productMap[newKey]) {
             toast.error("A product with this name already exists.");
             return;
@@ -263,7 +258,7 @@ export default function Product() {
             return;
         }
 
-        if (!liveTray && (!weight || weight < 0)) {
+        if (!liveTray && (!weight || weight <= 0)) {
             toast.error("Please provide a valid weight.");
             return;
         }
@@ -383,16 +378,86 @@ export default function Product() {
         }
     }
 
+    async function handleAddPackaging() {
+        const trimmed = newPackagingName.trim();
+
+        if (!trimmed) {
+            toast.error("Packaging name cannot be empty");
+            return;
+        }
+
+        if (packagingName.some((p) => p.size_type.toLowerCase() === trimmed.toLowerCase())) {
+            toast.error("A packaging option with this name already exists.");
+            return;
+        }
+
+        try {
+            const res = await fetch("http://127.0.0.1:8000/product/add_packaging", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ size_type: trimmed })
+            });
+
+            if (!res.ok) {
+                console.error("Failed to add packaging option.");
+                toast.error("Failed to add packaging option.");
+                return;
+            }
+
+            toast.success("Packaging type added.");
+            await fetchPackaging();
+            setNewPackagingName("");
+        } catch (e) {
+            console.error(e);
+            toast.error("Unexpected error while adding packaging.")
+        }
+    }
+
+    async function handleUpdatePackaging() {
+        if (!packagingEdit) {
+            toast.error("No packaging selected for editing")
+            return;
+        }
+
+        const trimmed = packagingEdit.sizeType.trim();
+
+        if (!trimmed) {
+            toast.error("Packaging name cannot be empty.");
+            return;
+        }
+
+        if (!packagingEdit.originalName) {
+            toast.error("Invalid packaging edit request.");
+            return;
+        }
+
+        try {
+            const res = await fetch(`http://127.0.0.1:8000/product/update_packaging/${packagingEdit.originalName}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ size_type: trimmed }),
+            });
+
+            if (!res.ok) {
+                toast.error("Failed to update packaging option.");
+                return;
+            }
+
+            toast.success("Packaging type updated.");
+            await fetchPackaging();
+            setPackagingEdit(null);
+        } catch (e) {
+            console.error(e);
+            toast.error("Unexpected error while updating packaging.");
+        }
+    }
+
     const selectedAddPackage = packagingName.find(
         (p) => p.size_type === newPackageType
     );
     const addIsliveTray = isLiveTraySize(selectedAddPackage?.size_type);
 
-    function normalize(str: string) {
-        return str.normalize("NFKC").trim().replace(/[^\w\s]+/g, "").replace(/\s+/g, " ").toLowerCase();
-    }
-
-    const filteredProductKeys = Object.keys(productMap).sort().filter((name) => normalize(productMap[name].displayName).includes(normalize(search)))
+    const filteredProductKeys = Object.keys(productMap).sort().filter((name) => normalizeStr(productMap[name].displayName).includes(normalizeStr(search)))
 
     useEffect(() => {
         fetchProducts();
@@ -405,154 +470,237 @@ export default function Product() {
             <div className="flex flex-col p-4 bg-white/60 rounded-lg max-w-4xl w-full sm:p-4">
                 <div className="flex flex-col gap-3 mb-5 sm:flex-row sm:justify-between sm:items-center">
                     <h2 className="font-semibold text-lg text-[#308261]">Product Offerings</h2>
-                    <Dialog
-                        open={addOpen}
-                        onOpenChange={(open) => {
-                            setAddOpen(open);
-                            if (!open) {
-                                setNewProductName("");
-                                setNewWeight(null);
-                                setIsActive(true);
-                                setNewPackageType("");
-                                setCompositionRow([{ crop_id: null, crop_ratio: null }])
-                            }
-                        }}
-                    >
-                        <DialogTrigger asChild>
-                            <Button className="bg-[#4b734e] font-semibold scale-95 active:scale-85">Add Product Offering</Button>                                                        
-                        </DialogTrigger>
-                        <DialogContent>
-                            <DialogHeader>
-                                <DialogTitle>Add Product Offering</DialogTitle>
-                                <DialogDescription>
-                                    Please fill all the fields below to add a new product offering.
-                                </DialogDescription>
-                            </DialogHeader>
-                            <div className="flex flex-col gap-2">
-                                <Label>Product Name</Label>
-                                <Input
-                                    type="text"
-                                    value={newProductName}
-                                    onChange={(n) => setNewProductName(n.target.value)}
-                                />
-                            </div>
-
-                            <div className="flex flex-col gap-2">
-                                <Label>Package Type</Label>
-                                <Select
-                                    value={newPackageType}
-                                    onValueChange={(v) => {
-                                        setNewPackageType(v);
-                                        const pkg = packagingName.find(
-                                            (p) => p.size_type === v
-                                        );
-                                        if (isLiveTraySize(pkg?.size_type)) {
-                                            setNewWeight(null);
-                                        }
-                                    }}
-                                >
-                                    <SelectTrigger><SelectValue placeholder="Select Package Type" /></SelectTrigger>
-                                    <SelectContent>
-                                        {packagingName.map((p) => (
-                                            <SelectItem key={p.size_type} value={p.size_type}>
-                                                {p.size_type}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            <div className="flex flex-col gap-2">
-                                <Label>Weight in grams</Label>
-                                <Input
-                                    type="number"
-                                    min="1"
-                                    disabled={addIsliveTray}
-                                    placeholder={addIsliveTray ? "N/A for live tray" : "Enter weight"}
-                                    value={addIsliveTray ? "" : newWeight ?? ""}
-                                    onChange={(w) => setNewWeight(Number(w.target.value))}
-                                />
-                            </div>
-
-                            <div className="flex flex-row gap-2 items-center">
-                                <Label>Is Active?</Label>
-                                <input
-                                    type="checkbox"
-                                    checked={isActive}
-                                    onChange={(a) => setIsActive(a.target.checked)}
-                                />
-                            </div>
-
-                            <div className="flex flex-col gap-2">
-                                <Label>Crop Composition (%)</Label>
-                                <div className="space-y-2">
-                                    {compositionRow.map((row, index) => (
-                                        <div key={index} className="flex gap-2 items-center">
-                                            <Select
-                                                value={row.crop_id !== null ? String(row.crop_id) : ""}
-                                                onValueChange={(value) => {
-                                                    const cropId = Number(value);
-                                                    setCompositionRow((prev) => {
-                                                        const copy = [...prev];
-                                                        copy[index] = { ...copy[index], crop_id: cropId };
-                                                        return copy;
-                                                    });
-                                                }}
-                                            >
-                                                <SelectTrigger className="flex-1"><SelectValue placeholder="Select Crop" /></SelectTrigger>
-                                                <SelectContent>
-                                                    {cropData.map((c) => (
-                                                        <SelectItem key={c.crop_id} value={String(c.crop_id)}>
-                                                            {c.crop_name}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            <Input
-                                                className="w-24"
-                                                placeholder="%"
-                                                type="number"
-                                                min={0}
-                                                max={100}
-                                                value={row.crop_ratio ?? ""}
-                                                onChange={(e) => {
-                                                    const value = e.target.value === "" ? null : Number(e.target.value);
-                                                    setCompositionRow((prev) => {
-                                                        const copy = [...prev];
-                                                        copy[index] = { ...copy[index], crop_ratio: value };
-                                                        return copy;
-                                                    });
-                                                }}
-                                            />
-
-                                            {compositionRow.length > 1 && (
-                                                <Button
-                                                    className="px-3 py-1 bg-transparent hover:bg-transparent hover:text-blue-600 hover:scale-105 active:scale-95 text-gray-500 cursor-pointer"
-                                                    onClick={() =>
-                                                        setCompositionRow((prev) => prev.filter((_, i) => i !== index))
-                                                    }
-                                                >
-                                                    <FiTrash2 size={16} />
-                                                </Button>
-                                            )}
-                                        </div>
-                                    ))}
+                    <div className="flex flex-col gap-1 sm:flex-row">
+                        <Dialog
+                            open={addOpen}
+                            onOpenChange={(open) => {
+                                setAddOpen(open);
+                                if (!open) {
+                                    setNewProductName("");
+                                    setNewWeight(null);
+                                    setIsActive(true);
+                                    setNewPackageType("");
+                                    setCompositionRow([{ crop_id: null, crop_ratio: null }])
+                                }
+                            }}
+                        >
+                            <DialogTrigger asChild>
+                                <Button className="bg-[#4b734e] font-semibold scale-95 active:scale-85">+ Add Product</Button>                                                        
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Add Product Offering</DialogTitle>
+                                    <DialogDescription>
+                                        Please fill all the fields below to add a new product offering.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="flex flex-col gap-2">
+                                    <Label>Product Name</Label>
+                                    <Input
+                                        type="text"
+                                        value={newProductName}
+                                        onChange={(n) => setNewProductName(n.target.value)}
+                                    />
                                 </div>
-                                
-                                <Button
-                                    className="my-2"
-                                    variant="outline"
-                                    onClick={() => setCompositionRow((prev) => [...prev, { crop_id: null, crop_ratio: null },])}
-                                >
-                                    + Add Crop
-                                </Button>
-                            </div>
 
-                            <Button onClick={handleAddProduct} disabled={adding}>
-                                {adding ? "Adding..." : "Add Product"}
-                            </Button>
-                        </DialogContent>
-                    </Dialog>
+                                <div className="flex flex-col gap-2">
+                                    <Label>Package Type</Label>
+                                    <Select
+                                        value={newPackageType}
+                                        onValueChange={(v) => {
+                                            setNewPackageType(v);
+                                            const pkg = packagingName.find(
+                                                (p) => p.size_type === v
+                                            );
+                                            if (isLiveTraySize(pkg?.size_type)) {
+                                                setNewWeight(null);
+                                            }
+                                        }}
+                                    >
+                                        <SelectTrigger><SelectValue placeholder="Select Package Type" /></SelectTrigger>
+                                        <SelectContent>
+                                            {packagingName.map((p) => (
+                                                <SelectItem key={p.size_type} value={p.size_type}>
+                                                    {p.size_type}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                <div className="flex flex-col gap-2">
+                                    <Label>Weight in grams</Label>
+                                    <Input
+                                        type="number"
+                                        min="1"
+                                        disabled={addIsliveTray}
+                                        placeholder={addIsliveTray ? "N/A for live tray" : "Enter weight"}
+                                        value={addIsliveTray ? "" : newWeight ?? ""}
+                                        onChange={(w) => setNewWeight(Number(w.target.value))}
+                                    />
+                                </div>
+
+                                <div className="flex flex-row gap-2 items-center">
+                                    <Label>Is Active?</Label>
+                                    <input
+                                        type="checkbox"
+                                        checked={isActive}
+                                        onChange={(a) => setIsActive(a.target.checked)}
+                                    />
+                                </div>
+
+                                <div className="flex flex-col gap-2">
+                                    <Label>Crop Composition (%)</Label>
+                                    <div className="space-y-2">
+                                        {compositionRow.map((row, index) => (
+                                            <div key={index} className="flex gap-2 items-center">
+                                                <Select
+                                                    value={row.crop_id !== null ? String(row.crop_id) : ""}
+                                                    onValueChange={(value) => {
+                                                        const cropId = Number(value);
+                                                        setCompositionRow((prev) => {
+                                                            const copy = [...prev];
+                                                            copy[index] = { ...copy[index], crop_id: cropId };
+                                                            return copy;
+                                                        });
+                                                    }}
+                                                >
+                                                    <SelectTrigger className="flex-1"><SelectValue placeholder="Select Crop" /></SelectTrigger>
+                                                    <SelectContent>
+                                                        {cropData.map((c) => (
+                                                            <SelectItem key={c.crop_id} value={String(c.crop_id)}>
+                                                                {c.crop_name}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                                <Input
+                                                    className="w-24"
+                                                    placeholder="%"
+                                                    type="number"
+                                                    min={0}
+                                                    max={100}
+                                                    value={row.crop_ratio ?? ""}
+                                                    onChange={(e) => {
+                                                        const value = e.target.value === "" ? null : Number(e.target.value);
+                                                        setCompositionRow((prev) => {
+                                                            const copy = [...prev];
+                                                            copy[index] = { ...copy[index], crop_ratio: value };
+                                                            return copy;
+                                                        });
+                                                    }}
+                                                />
+
+                                                {compositionRow.length > 1 && (
+                                                    <Button
+                                                        className="px-3 py-1 bg-transparent hover:bg-transparent hover:text-blue-600 hover:scale-105 active:scale-95 text-gray-500 cursor-pointer"
+                                                        onClick={() =>
+                                                            setCompositionRow((prev) => prev.filter((_, i) => i !== index))
+                                                        }
+                                                    >
+                                                        <FiTrash2 size={16} />
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    
+                                    <Button
+                                        className="my-2"
+                                        variant="outline"
+                                        onClick={() => setCompositionRow((prev) => [...prev, { crop_id: null, crop_ratio: null },])}
+                                    >
+                                        + Add Crop
+                                    </Button>
+                                </div>
+
+                                <Button onClick={handleAddProduct} disabled={adding}>
+                                    {adding ? "Adding..." : "Add Product"}
+                                </Button>
+                            </DialogContent>
+                        </Dialog>
+
+                        <Dialog
+                            onOpenChange={(open) => {
+                                if (!open) {
+                                    setPackagingEdit(null);
+                                    setNewPackagingName("");
+                                }
+                            }}
+                        >
+                            <DialogTrigger asChild>
+                                <Button className="bg-[#4b734e] font-semibold scale-95 active:scale-85">Packaging Options</Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Packaging Options</DialogTitle>
+                                    <DialogDescription>View, add, or edit packaging types.</DialogDescription>
+                                </DialogHeader>
+
+                                <div className="space-y-4 mt-2">
+                                    <div>
+                                        <div className="text-sm font-semibold mb-2">Existing Packaging Types</div>
+                                        <table className="w-full text-left text-sm border-collapse">
+                                            <tbody>
+                                                {packagingName.map((p) => {
+                                                    const isEditing = packagingEdit?.originalName === p.size_type;
+
+                                                    return (
+                                                        <tr key={p.package_id ?? p.size_type}>
+                                                            <td className="py-1 pr-2">
+                                                                {isEditing ? (
+                                                                    <Input
+                                                                        value={packagingEdit.sizeType}
+                                                                        onChange={(e) => setPackagingEdit((prev) => prev ? {...prev, sizeType: e.target.value} : prev)}
+                                                                        className="h-8"
+                                                                    />
+                                                                ) : (
+                                                                    p.size_type
+                                                                )}
+                                                            </td>
+                                                            <td className="py-1 text-right space-x-2">
+                                                                {isEditing ? (
+                                                                    <>
+                                                                        <Button size="sm" className="bg-green-700 hover:bg-green-700/60" onClick={handleUpdatePackaging}>
+                                                                            <FaSave size={16} />
+                                                                        </Button>
+                                                                        <Button size="sm" className="bg-red-700 hover:bg-red-700/60" onClick={() => setPackagingEdit(null)}>
+                                                                            <MdCancel size={16} />
+                                                                        </Button>
+                                                                    </>
+                                                                ) : (
+                                                                    <Button size="sm" onClick={() => setPackagingEdit({ originalName: p.size_type, sizeType: p.size_type })}>
+                                                                        <FiEdit size={16} />
+                                                                    </Button>
+                                                                )}
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <hr className="border-gray-300 my-6"/>
+                                    <div className="flex flex-col gap-3">
+                                        <Label>Add New Packaging Below</Label>
+                                        <Input
+                                            type="text"
+                                            value={newPackagingName}
+                                            onChange={(e) => setNewPackagingName(e.target.value)}
+                                            placeholder="i.e. Clamshell"
+                                        />
+
+                                        <Button
+                                            className="w-full mt-2"
+                                            onClick={handleAddPackaging}
+                                        >
+                                            Add Packaging
+                                        </Button>
+                                    </div>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
+                    </div>
                 </div>
                 <input
                     type="text"
