@@ -895,100 +895,101 @@ export default function Product() {
                         )}
                     </DialogContent>
                 </Dialog>
-
-                <div className="flex justify-center items-center">
-                    <Accordion type="single" collapsible>
-                        {filteredProductKeys.length === 0 ? (
-                            <div className="text-center text-gray-500 py-4">
-                                No products match your search.
-                            </div>
-                        ) : (filteredProductKeys.map((name) => (
-                            <AccordionItem key={name} value={name}>
-                                <AccordionTrigger>{productMap[name].displayName}</AccordionTrigger>
-                                <AccordionContent>
-                                    <div className="space-y-4 p-4 bg-white rounded-lg shadow w-full">
-                                        <div>
-                                            <div className="flex justify-between items-center gap-4">
-                                                <div className="flex items-center py-3 text-[#4b734e] font-semibold">Crop Composition</div>
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => openCompositionDialog(name)}
-                                                >
-                                                    Edit Composition
-                                                </Button>
+                <div className="flex-1 overflow-y-auto max-h-[60vh] mt-2">
+                    <div className="flex justify-center items-center">
+                        <Accordion type="single" collapsible>
+                            {filteredProductKeys.length === 0 ? (
+                                <div className="text-center text-gray-500 py-4">
+                                    No products match your search.
+                                </div>
+                            ) : (filteredProductKeys.map((name) => (
+                                <AccordionItem key={name} value={name}>
+                                    <AccordionTrigger>{productMap[name].displayName}</AccordionTrigger>
+                                    <AccordionContent>
+                                        <div className="space-y-4 p-4 bg-white rounded-lg shadow w-full">
+                                            <div>
+                                                <div className="flex justify-between items-center gap-4">
+                                                    <div className="flex items-center py-3 text-[#4b734e] font-semibold">Crop Composition</div>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => openCompositionDialog(name)}
+                                                    >
+                                                        Edit Composition
+                                                    </Button>
+                                                </div>
+                                                <table className="text-left mb-5 border-collapse text-sm">
+                                                    <tbody>
+                                                        {productMap[name].crops.map((c) => {
+                                                            const ratioPercent = (c.crop_ratio * 100).toFixed(1);
+                                                            return (
+                                                                <tr key={c.crop_name}>
+                                                                    <td className="px-6">{ratioPercent}%</td>
+                                                                    <td className="px-4 py-1 align-top">{c.crop_name}</td>
+                                                                </tr>
+                                                            );
+                                                        })}
+                                                    </tbody>
+                                                </table>
                                             </div>
-                                            <table className="text-left mb-5 border-collapse text-sm">
-                                                <tbody>
-                                                    {productMap[name].crops.map((c) => {
-                                                        const ratioPercent = (c.crop_ratio * 100).toFixed(1);
-                                                        return (
-                                                            <tr key={c.crop_name}>
-                                                                <td className="px-6">{ratioPercent}%</td>
-                                                                <td className="px-4 py-1 align-top">{c.crop_name}</td>
-                                                            </tr>
-                                                        );
-                                                    })}
-                                                </tbody>
-                                            </table>
-                                        </div>
 
-                                        <div>
-                                            <div className="flex justify-between items-center">
-                                                <div className="py-2 text-[#4b734e] font-semibold">Offering Sizes</div>
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => openAddSize(name)}
-                                                >
-                                                    + Add Size
-                                                </Button>
+                                            <div>
+                                                <div className="flex justify-between items-center">
+                                                    <div className="py-2 text-[#4b734e] font-semibold">Offering Sizes</div>
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => openAddSize(name)}
+                                                    >
+                                                        + Add Size
+                                                    </Button>
+                                                </div>
+                                                <table className="text-left mb-4 border-collapse text-sm w-full">
+                                                    <thead>
+                                                        <tr>
+                                                            <th className="px-6 py-2 font-semibold">Product Size</th>
+                                                            <th className="px-6 py-2 font-semibold">Weight (g)</th>
+                                                            <th className="px-6 py-2 font-semibold">Status</th>
+                                                            <th className="px-6 py-2 font-semibold text-center">Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {productMap[name].sizes.map((s) => {
+                                                            const weightVal = s.weight_grams === null ? "-" : `${String(s.weight_grams)}g`;
+                                                            const active = s.is_active === 1 ? "Active" : "Inactive";
+                                                            return (
+                                                                <tr key={s.size_type}>
+                                                                    <td className="px-6 py-2 align-top">{s.size_type}</td>
+                                                                    <td className="px-6 py-2 align-top">{weightVal}</td>
+                                                                    <td className="px-6 py-2 align-top">{active}</td>
+                                                                    <td className="flex justify-center">
+                                                                        <Button
+                                                                            className="bg-transparent hover:bg-transparent hover:text-blue-600 hover:scale-105 active:scale-95 text-black"
+                                                                            size="sm"
+                                                                            onClick={() =>
+                                                                                openEditSize(
+                                                                                    name,
+                                                                                    s.size_type,
+                                                                                    s.weight_grams,
+                                                                                    s.is_active
+                                                                                )
+                                                                            }
+                                                                        >
+                                                                            <FiEdit size={16} />
+                                                                        </Button>
+                                                                    </td>
+                                                                </tr>
+                                                            );
+                                                        })}
+                                                    </tbody>
+                                                </table>
                                             </div>
-                                            <table className="text-left mb-4 border-collapse text-sm w-full">
-                                                <thead>
-                                                    <tr>
-                                                        <th className="px-6 py-2 font-semibold">Product Size</th>
-                                                        <th className="px-6 py-2 font-semibold">Weight (g)</th>
-                                                        <th className="px-6 py-2 font-semibold">Status</th>
-                                                        <th className="px-6 py-2 font-semibold text-center">Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {productMap[name].sizes.map((s) => {
-                                                        const weightVal = s.weight_grams === null ? "-" : `${String(s.weight_grams)}g`;
-                                                        const active = s.is_active === 1 ? "Active" : "Inactive";
-                                                        return (
-                                                            <tr key={s.size_type}>
-                                                                <td className="px-6 py-2 align-top">{s.size_type}</td>
-                                                                <td className="px-6 py-2 align-top">{weightVal}</td>
-                                                                <td className="px-6 py-2 align-top">{active}</td>
-                                                                <td className="flex justify-center">
-                                                                    <Button
-                                                                        className="bg-transparent hover:bg-transparent hover:text-blue-600 hover:scale-105 active:scale-95 text-black"
-                                                                        size="sm"
-                                                                        onClick={() =>
-                                                                            openEditSize(
-                                                                                name,
-                                                                                s.size_type,
-                                                                                s.weight_grams,
-                                                                                s.is_active
-                                                                            )
-                                                                        }
-                                                                    >
-                                                                        <FiEdit size={16} />
-                                                                    </Button>
-                                                                </td>
-                                                            </tr>
-                                                        );
-                                                    })}
-                                                </tbody>
-                                            </table>
                                         </div>
-                                    </div>
-                                </AccordionContent>
-                            </AccordionItem>
-                        )))}
-                    </Accordion>
+                                    </AccordionContent>
+                                </AccordionItem>
+                            )))}
+                        </Accordion>
+                    </div>
                 </div>
             </div>
         </div>

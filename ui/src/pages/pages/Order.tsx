@@ -160,6 +160,7 @@ export default function Order() {
         setAdding(true);
 
         try {
+            const token = localStorage.getItem("token")
             const effectiveEndDate = orderType === "one-time" ? deliveryDate : endDate;
             const body = {
                 restaurant_name: restaurant.restaurant_name,
@@ -172,16 +173,17 @@ export default function Order() {
                 order_status: "scheduled",
             };
 
-            const res = await fetch("http://127.0.0.1:8000/orders/1", {
+            const res = await fetch("http://127.0.0.1:8000/orders/", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json",
+                           Authorization: token ? `Bearer ${token}` : "",
+                         },
                 body: JSON.stringify(body),
             });
 
-            if (!res.ok) {
-                const err = await res.json().catch(() => null);
-                console.error("Failed to add order", err);
-                toast.error("Failed to add order.")
+            if (!res.ok) {                
+                console.error("Failed to add order");
+                toast.error("Failed to add order.");
                 return;
             }
 
@@ -600,35 +602,37 @@ export default function Order() {
                             </Dialog>
                         </div>
                     </div>
-                    {!orderData || Object.keys(orderData).length === 0 ? (
-                        <div className="w-full flex justify-center items-center py-10">
-                            <div className="p-6 bg-white/80 rounded-lg shadow-md w-full max-w-md text-center font-bold text-red-600">
-                                No orders found for this date.
+                    <div className="flex-1 overflow-y-auto max-h-[60vh] mt-2">
+                        {!orderData || Object.keys(orderData).length === 0 ? (
+                            <div className="w-full flex justify-center items-center py-10">
+                                <div className="p-6 bg-white/80 rounded-lg shadow-md w-full max-w-md text-center font-bold text-red-600">
+                                    No orders found for this date.
+                                </div>
                             </div>
-                        </div>
-                    ) : (
-                        <div className="w-full flex justify-center items-center py-10">
-                            <Accordion type="single" collapsible>
-                                {Object.entries(orderData).map(([restaurantName, items]) => (
-                                    <AccordionItem key={restaurantName} value={restaurantName}>
-                                        <AccordionTrigger>{restaurantName} - {items.length} items</AccordionTrigger>
-                                        <AccordionContent>
-                                            <div className="grid gap-4 mx-1 grid-cols-1 sm:mx-4 lg:grid-cols-4">
-                                                {items.map((item) => (
-                                                    <Actions
-                                                        key={`${item.order_id}-${item.product_id}`}
-                                                        item={item}
-                                                        onUpdate={handleUpdate}
-                                                        onDelete={handleDelete}
-                                                    />
-                                                ))}
-                                            </div>
-                                        </AccordionContent>
-                                    </AccordionItem>
-                                ))}
-                            </Accordion>
-                        </div>
-                    )}
+                        ) : (
+                            <div className="w-full flex justify-center items-center">
+                                <Accordion type="single" collapsible>
+                                    {Object.entries(orderData).map(([restaurantName, items]) => (
+                                        <AccordionItem key={restaurantName} value={restaurantName}>
+                                            <AccordionTrigger>{restaurantName} - {items.length} items</AccordionTrigger>
+                                            <AccordionContent>
+                                                <div className="grid gap-4 mx-1 grid-cols-1 sm:mx-4 lg:grid-cols-4">
+                                                    {items.map((item) => (
+                                                        <Actions
+                                                            key={`${item.order_id}-${item.product_id}`}
+                                                            item={item}
+                                                            onUpdate={handleUpdate}
+                                                            onDelete={handleDelete}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                    ))}
+                                </Accordion>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
