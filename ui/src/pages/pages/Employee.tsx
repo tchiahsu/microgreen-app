@@ -146,14 +146,15 @@ export default function Employee() {
         }
 
         if (!registerPassword) {
-            toast.error("A password if required to register an employee.")
+            toast.error("A password is required to register an employee.")
             return;
         }
 
         try {
             const body = {
                 email: registerEmail,
-                password: registerPassword
+                password: registerPassword,
+                employee_id: selectedEmployee.employee_id,
             };
 
             const res = await fetch("http://127.0.0.1:8000/register", {
@@ -172,7 +173,7 @@ export default function Employee() {
 
             setRegisterEmail("");
             setRegisterPassword("");
-
+            setSelectedEmployee(null);
             setAddRegistration(false);
             await fetchEmployees();
         } catch {

@@ -417,7 +417,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'admin@abc.com','$2b$12$ZciKRPGS08U8S7s0JbJVjupvNZR.AzPvrdcBax9hMKHHPo3K9zKvq');
+INSERT INTO `users` VALUES (1,'admin@microgreen.boston','$2b$12$ZciKRPGS08U8S7s0JbJVjupvNZR.AzPvrdcBax9hMKHHPo3K9zKvq');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1504,6 +1504,25 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_last_registered_user_id` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_last_registered_user_id`()
+BEGIN
+	SELECT LAST_INSERT_ID() AS user_id;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `get_orders_to_deliver` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -1704,9 +1723,9 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_user_profile_info`(
 	user_id_p INT
 )
-BEGIN 
-	SELECT user.email, employee.first_name, employee.last_name FROM users
-		LEFT JOIN employee ON users.user_id = employee.user_id
+BEGIN
+	SELECT users.user_id, users.email, employee.employee_id, employee.first_name, employee.last_name FROM users
+		JOIN employee ON users.user_id = employee.user_id
         WHERE users.user_id = user_id_p;
 END ;;
 DELIMITER ;
@@ -1986,14 +2005,19 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `update_employee`(
     is_active_p BOOLEAN
 )
 BEGIN
-	DECLARE found_id VARCHAR(128);
+	DECLARE found_eid INT;
+    DECLARE found_uid INT;
+    DECLARE final_email VARCHAR(64);
+
     -- Check if value provided for employee_id is valid
-    SELECT employee_id_p INTO found_id FROM employee
+    SELECT employee_id, user_id INTO found_eid, found_uid FROM employee
 		WHERE employee_id = employee_id_p;
-	IF found_id IS NULL THEN
+
+	IF found_eid IS NULL THEN
 		SIGNAL SQLSTATE '45000'
 				SET MESSAGE_TEXT = 'The value provided for employee_id is not valid.';
     END IF;
+
     -- Update the employee info if employee_id is valid
 	UPDATE employee
     SET ssn = COALESCE(ssn_p, ssn),
@@ -2003,6 +2027,15 @@ BEGIN
         title = COALESCE(title_p, title),
         is_active = COALESCE(is_active_p, is_active)
 	WHERE employee_id = employee_id_p;
+    
+    SELECT email into final_email FROM employee
+		WHERE employee_id = employee_id_p;
+        
+	IF found_uid IS NOT NULL AND email_p IS NOT NULL THEN
+		UPDATE users
+        SET email = final_email
+        WHERE user_id = found_uid;
+	END IF;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -2396,4 +2429,4 @@ USE `microgreens_db`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-28 21:43:41
+-- Dump completed on 2025-11-29 17:03:54

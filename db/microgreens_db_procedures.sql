@@ -919,6 +919,7 @@ BEGIN
 END //
 DELIMITER ;
 
+
 /*
 PROCEDURE
 ---------
@@ -969,6 +970,18 @@ BEGIN
 END //
 DELIMITER ;
 
+/*
+PROCEDURE
+----------
+Gets the User ID of the last registered user
+*/
+DROP PROCEDURE IF EXISTS get_last_registered_user_id;
+DELIMITER //
+CREATE PROCEDURE get_last_registered_user_id()
+BEGIN
+	SELECT LAST_INSERT_ID() AS user_id;
+END //
+DELIMITER ;
 -- ======================== DELETE PROCEDURES =================================
  
 /*
@@ -1324,14 +1337,19 @@ CREATE PROCEDURE update_employee(
     is_active_p BOOLEAN
 )
 BEGIN
-	DECLARE found_id VARCHAR(128);
+	DECLARE found_eid INT;
+    DECLARE found_uid INT;
+    DECLARE final_email VARCHAR(64);
+
     -- Check if value provided for employee_id is valid
-    SELECT employee_id_p INTO found_id FROM employee
+    SELECT employee_id, user_id INTO found_eid, found_uid FROM employee
 		WHERE employee_id = employee_id_p;
-	IF found_id IS NULL THEN
+
+	IF found_eid IS NULL THEN
 		SIGNAL SQLSTATE '45000'
 				SET MESSAGE_TEXT = 'The value provided for employee_id is not valid.';
     END IF;
+
     -- Update the employee info if employee_id is valid
 	UPDATE employee
     SET ssn = COALESCE(ssn_p, ssn),
@@ -1341,6 +1359,15 @@ BEGIN
         title = COALESCE(title_p, title),
         is_active = COALESCE(is_active_p, is_active)
 	WHERE employee_id = employee_id_p;
+    
+    SELECT email into final_email FROM employee
+		WHERE employee_id = employee_id_p;
+        
+	IF found_uid IS NOT NULL AND email_p IS NOT NULL THEN
+		UPDATE users
+        SET email = final_email
+        WHERE user_id = found_uid;
+	END IF;
 END //
 DELIMITER ;
 
