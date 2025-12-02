@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from src.database import connect_db
 from src.models.employee import EmployeeData
+from src.auth import hash_password
 
 router = APIRouter(prefix="/employees", tags=["employees"])
 
@@ -63,6 +64,11 @@ async def update_employee(employee_id: int, data: EmployeeData):
             data.title,
             data.is_active
             ))
+        
+        if data.password:
+            hashed_pw = hash_password(data.password)
+            cursor.callproc("update_user_password", (employee_id, hashed_pw))
+
         db.commit()
         cursor.close()
         return {"message": "Employee info has been succesfully updated."}

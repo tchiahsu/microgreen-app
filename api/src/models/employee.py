@@ -9,3 +9,4 @@ class EmployeeData(BaseModel):
     email: Optional[str] = None
     title: Optional[str] = None
     is_active: Optional[bool] = None
+    password: Optional[str] = None
