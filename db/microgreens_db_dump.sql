@@ -417,7 +417,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'admin@microgreen.boston','$2b$12$ZciKRPGS08U8S7s0JbJVjupvNZR.AzPvrdcBax9hMKHHPo3K9zKvq');
+INSERT INTO `users` VALUES (1,'admin@mb.com','$2b$12$ZciKRPGS08U8S7s0JbJVjupvNZR.AzPvrdcBax9hMKHHPo3K9zKvq');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2395,6 +2395,42 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `update_user_password` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_user_password`(
+	employee_id_p INT, 
+    password_hash_p TEXT
+)
+BEGIN
+    DECLARE found_uid INT;
+
+    -- Check if value provided for employee_id is valid
+    SELECT user_id INTO found_uid FROM employee
+		WHERE employee_id = employee_id_p;
+
+	IF found_uid IS NULL THEN
+		SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'Employee is not registered as a user.';
+    END IF;
+    
+    UPDATE users
+    SET password_hash = password_hash_p
+    WHERE user_id = found_uid;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Current Database: `microgreens_db`
@@ -2429,4 +2465,4 @@ USE `microgreens_db`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-29 17:03:54
+-- Dump completed on 2025-12-02  1:38:21
