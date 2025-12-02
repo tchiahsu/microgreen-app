@@ -15,6 +15,7 @@ import type { Restaurant, RestaurantOption } from "../../types/order";
 import type { ProductName, PackageType } from "../../types/product";
 import type { DeliveryItem } from "../../types/delivery"
 import type { Columns } from "../../components/table";
+import type { EmployeeItem } from "../../types/employee";
 
 
 export default function Order() {
@@ -44,9 +45,15 @@ export default function Order() {
     const [addDeliveryOpen, setAddDeliveryOpen] = useState(false)
     const [updateDeliveryOpen, setUpdateDeliveryOpen] = useState(false)
 
+    const [assignDriverOpen, setAssignDriverOpen] = useState(false);
+    const [selectedDriver, setSelectedDriver] = useState<number | null>(null);
+    const [selectedDeliveryDate, setSelectedDeliveryDate] = useState<string>("");
+    const [employees, setEmployees] = useState<EmployeeItem[]>([]);
+
     const deliveryColumns: Columns[] = [
         {key: "delivery_date", header_name: "Delivery Date", align: "center"},
-        {key: "delivery_status", header_name: "Delivery Status", align: "center"}
+        {key: "delivery_status", header_name: "Delivery Status", align: "center"},
+        {key: "assigned_driver", header_name: "Assigned Driver", align: "center"}
     ];
 
 
@@ -61,6 +68,11 @@ export default function Order() {
             console.error(e);
             setOrderData(null);
         }
+    }
+
+    async function fetchEmployees() {
+        const response = await fetch('http://127.0.0.1:8000/employees/');
+        setEmployees(await response.json());
     }
 
     async function fetchProducts() {
@@ -313,6 +325,39 @@ export default function Order() {
             toast.error("Error deleting product.")
         }
     }
+
+    async function handleAssignEmployee() {
+        if (!selectedDriver || !selectedDeliveryDate) {
+            toast.error("Select a delivery date and driver");
+            return;
+        }
+
+        try {
+            const res = await fetch("http://127.0.0.1:8000/employees/assign_delivery", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    employee_id: selectedDriver,
+                    delivery_date: selectedDeliveryDate
+                })
+            });
+
+            if (!res.ok) {
+                console.error("Failed to assign driver.");
+                toast.error("Cannot assign a driver to a cancelled or completed delivery.");
+                return;
+            }
+            
+            toast.success("Driver was successfully assigned.")
+            await fetchDelivery();
+            setAssignDriverOpen(false);
+            setSelectedDriver(null);
+            setSelectedDeliveryDate("");
+        } catch (e) {
+            console.error(e)
+            toast.error("There was an error assigning driver to delivery.")
+        } 
+    }
     
     useEffect(() => {
         if (orderType === "one-time") {
@@ -329,6 +374,17 @@ export default function Order() {
         fetchRestaurants();
         fetchProducts();
     }, [])
+
+    useEffect(() => {
+        fetchEmployees();
+    }, []);
+
+    const driverData = deliveryData.map(d => ({
+        ...d,
+        assigned_driver: d.first_name && d.last_name
+            ? `${d.first_name} ${d.last_name}` 
+            : "Not Assigned"
+    }));
 
     return (
         <div className="flex justify-center text-sm font-mono px-3 sm:px-4 lg:px-10 pb-1">
@@ -495,11 +551,11 @@ export default function Order() {
                                     </DialogHeader>
 
 
-                                    <div className="flex flex-1 max-h-[50vh] w-sm overflow-y-auto px-auto mx-auto">
-                                        <Table columns={deliveryColumns} data={deliveryData} underlines={true} color={"green"} />
+                                    <div className="flex flex-1 max-h-[50vh] overflow-y-auto px-auto mx-auto">
+                                        <Table columns={deliveryColumns} data={driverData} underlines={true} color={"green"} />
                                     </div>
                                     
-                                    <div className="flex flex-row w-full gap-3 justify-center items-stretch mt-3 sm:flex-row sm:gap-4">
+                                    <div className="flex flex-row w-full gap-2 justify-center items-stretch mt-3 sm:flex-row">
                                         <Popover
                                             open={addDeliveryOpen}
                                             onOpenChange={(open) => {
@@ -555,7 +611,7 @@ export default function Order() {
                                                     }}
                                                     className="bg-[#308261] text-white font-semibold p-4 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100"
                                                 >
-                                                    Change Delivery Status
+                                                    Edit Delivery Status
                                                 </Button>
                                             </PopoverTrigger>
                                             <PopoverContent className="w-80 space-y-3">
@@ -592,6 +648,71 @@ export default function Order() {
                                                     disabled={adding}
                                                 >
                                                     {adding ? "Updating..." : "Update Delivery"}
+                                                </Button>
+                                            </PopoverContent>
+                                        </Popover>
+                                        <Popover
+                                            open={assignDriverOpen}
+                                            onOpenChange={setAssignDriverOpen}
+                                        >
+                                            <PopoverTrigger asChild>
+                                                <Button className="bg-[#308261] text-white font-semibold p-4 rounded-lg">
+                                                    Assign Driver
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-80 space-y-4">
+                                                <div>
+                                                    <Label>Delivery Date</Label>
+                                                    <Select
+                                                        value={selectedDeliveryDate}
+                                                        onValueChange={setSelectedDeliveryDate}
+                                                    >
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Select delivery date"/>
+                                                        </SelectTrigger>
+
+                                                        <SelectContent>
+                                                            {deliveryData.map((d) => (
+                                                                <SelectItem
+                                                                    key={d.delivery_date}
+                                                                    value={d.delivery_date}
+                                                                >
+                                                                    {d.delivery_date}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+                                                <div>
+                                                    <Label>Driver</Label>
+                                                    <Select
+                                                        value={selectedDriver?.toString() ?? ""}
+                                                        onValueChange={(v) => setSelectedDriver(Number(v))}
+                                                    >
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Select driver"/>
+                                                        </SelectTrigger>
+
+                                                        <SelectContent>
+                                                            {employees
+                                                                .filter(emp => emp.is_active)
+                                                                .map(emp => (
+                                                                    <SelectItem
+                                                                        key={emp.employee_id}
+                                                                        value={emp.employee_id.toString()}
+                                                                    >
+                                                                        {emp.first_name} {emp.last_name} - {emp.title}
+                                                                    </SelectItem>
+                                                                ))                                                            
+                                                            }
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+                                                <Button
+                                                    className="w-full"
+                                                    onClick={handleAssignEmployee}
+                                                >
+                                                    Assign Driver
                                                 </Button>
                                             </PopoverContent>
                                         </Popover>

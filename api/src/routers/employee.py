@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from src.database import connect_db
-from src.models.employee import EmployeeData
+from src.models.employee import EmployeeData, AssignPlanting, AssignDelivery
 from src.auth import hash_password
+from datetime import date
 
 router = APIRouter(prefix="/employees", tags=["employees"])
 
@@ -104,3 +105,57 @@ async def get_all_employees():
         db.close()
 
     return result
+
+# ----------------------------
+# ASSIGN EMPLOYEE TO DELIVERY
+# ----------------------------
+@router.put("/assign_delivery")
+async def assign_delivery(data: AssignDelivery):
+    '''
+    Assign an employee to delivery using id and date.
+    Example: PUT /assign_delivery/1/2025-12-01
+    '''
+    db = connect_db()
+    if db is None:
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
+    cursor = db.cursor()
+
+    try:
+        cursor.callproc("assign_employee_to_delivery", (data.employee_id, data.delivery_date))
+        db.commit()
+        cursor.close()
+        return {"message": "Employee successfully assigned to delivery."}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        db.close()
+
+
+# ----------------------------
+# ASSIGN EMPLOYEE TO PLANTING
+# ----------------------------
+@router.put("/assign_planting")
+async def assign_planting(data: AssignPlanting):
+    '''
+    Assign an employee to planting using employee and crop id.
+    Example: PUT /assign_planting/1/1
+    '''
+    db = connect_db()
+    if db is None:
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed.")
+    cursor = db.cursor()
+
+    try:
+        cursor.callproc("assign_employee_to_planting", (data.employee_id, data.crop_id))
+        db.commit()
+        cursor.close()
+        return {"message": "Employee successfully assigned to planting."}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        db.close()
+
