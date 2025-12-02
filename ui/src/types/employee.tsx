@@ -6,4 +6,5 @@ export type EmployeeItem = {
     email: string;
     title: string;
     is_active: boolean;
+    user_id?: number | null;
 };

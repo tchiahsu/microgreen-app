@@ -32,6 +32,8 @@ export default function Employee() {
     const [registerPassword, setRegisterPassword] = useState("");
     const [selectedEmployee, setSelectedEmployee] = useState<EmployeeItem | null>(null);
 
+    const [updatePassword, setUpdatePassword] = useState("");
+
 
     async function fetchEmployees() {
         try {
@@ -49,6 +51,7 @@ export default function Employee() {
     }
 
     async function handleUpdate(employee_id: number) {
+        
         try {
             const data: EmployeeItem = {
                 employee_id,
@@ -57,7 +60,7 @@ export default function Employee() {
                 last_name: lastName,
                 email,
                 title,
-                is_active: isActive,                
+                is_active: isActive
             }
 
             const res = await fetch(`http://127.0.0.1:8000/employees/update_employee/${data.employee_id}`,
@@ -71,6 +74,7 @@ export default function Employee() {
                         email: data.email,
                         title: data.title,
                         is_active: data.is_active,
+                        password: updatePassword || null 
                     }),
                 }
             );
@@ -83,6 +87,7 @@ export default function Employee() {
             
             toast.success("Employee has been update successfully.");
             setEditingId(null);
+            setUpdatePassword("");
             await fetchEmployees();
         } catch (e) {
             console.error("Update error:", e)
@@ -335,118 +340,133 @@ export default function Employee() {
                         </thead>
 
                         <tbody>
-                            {employeeData.map((e) => (
-                                <tr key={e.employee_id}>
-                                    <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] text-center sm:px-4 sm:py-3">
-                                        {e.employee_id}
-                                    </td>
-                                    <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
-                                        {e.ssn}
-                                    </td>
-                                    <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
-                                        {e.first_name}
-                                    </td>
-                                    <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
-                                        {e.last_name}
-                                    </td>
-                                    <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
-                                        {e.email}
-                                    </td>
-                                    <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
-                                        {e.title}
-                                    </td>
-                                    <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
-                                        {e.is_active ? "Active" : "Inactive"}
-                                    </td>
-                                    <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
-                                        <Dialog
-                                            open={editingId === e.employee_id}
-                                            onOpenChange={(open) => {
-                                                if (open) {
-                                                    openEditor(e);
-                                                } else {
-                                                    setEditingId(null);
-                                                }
-                                            }}
-                                        >
-                                            <DialogTrigger asChild>
-                                                <button className="hover:text-blue-600">
-                                                    <FiEdit size={16} />
-                                                </button>
-                                            </DialogTrigger>
-                                            <DialogContent>
-                                                <DialogHeader>
-                                                    <DialogTitle>Edit Employeee</DialogTitle>
-                                                    <DialogDescription>
-                                                        Update employee information and save your changes.
-                                                    </DialogDescription>
-                                                </DialogHeader>
+                            {employeeData.map((e) => {
+                                const isRegistered = e.user_id !== null && e.user_id !== undefined;
+                                return (
+                                    <tr key={e.employee_id}>
+                                        <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] text-center sm:px-4 sm:py-3">
+                                            {e.employee_id}
+                                        </td>
+                                        <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
+                                            {e.ssn}
+                                        </td>
+                                        <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
+                                            {e.first_name}
+                                        </td>
+                                        <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
+                                            {e.last_name}
+                                        </td>
+                                        <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
+                                            {e.email}
+                                        </td>
+                                        <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
+                                            {e.title}
+                                        </td>
+                                        <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
+                                            {e.is_active ? "Active" : "Inactive"}
+                                        </td>
+                                        <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
+                                            <Dialog
+                                                open={editingId === e.employee_id}
+                                                onOpenChange={(open) => {
+                                                    if (open) {
+                                                        openEditor(e);
+                                                    } else {
+                                                        setEditingId(null);
+                                                    }
+                                                }}
+                                            >
+                                                <DialogTrigger asChild>
+                                                    <button className="hover:text-blue-600">
+                                                        <FiEdit size={16} />
+                                                    </button>
+                                                </DialogTrigger>
+                                                <DialogContent>
+                                                    <DialogHeader>
+                                                        <DialogTitle>Edit Employeee</DialogTitle>
+                                                        <DialogDescription>
+                                                            Update employee information and save your changes.
+                                                        </DialogDescription>
+                                                    </DialogHeader>
 
-                                                <div className="flex flex-col gap-3 mt-2">
-                                                    <div className="flex flex-col gap-1">
-                                                        <Label>SSN</Label>
-                                                        <Input
-                                                            type="text"
-                                                            value={ssn}
-                                                            onChange={(e) => setSSN(e.target.value)}
-                                                        />
-                                                    </div>
-                                                    <div className="flex flex-col gap-1">
-                                                        <Label>First Name</Label>
-                                                        <Input
-                                                            type="text"
-                                                            value={firstName}
-                                                            onChange={(e) => setFirstName(e.target.value)}
-                                                        />
-                                                    </div>   
-                                                    <div className="flex flex-col gap-1">
-                                                        <Label>Last Name</Label>
-                                                        <Input
-                                                            type="text"
-                                                            value={lastName}
-                                                            onChange={(e) => setLastName(e.target.value)}
-                                                        />
-                                                    </div> 
-                                                    <div className="flex flex-col gap-1">
-                                                        <Label>Email</Label>
-                                                        <Input
-                                                            type="text"
-                                                            value={email}
-                                                            onChange={(e) => setEmail(e.target.value)}
-                                                        />
-                                                    </div>   
-                                                    <div className="flex flex-col gap-1">
-                                                        <Label>Title</Label>
-                                                        <Input
-                                                            type="text"
-                                                            value={title}
-                                                            onChange={(e) => setTitle(e.target.value)}
-                                                        />
-                                                    </div>   
-                                                    <div className="flex flex-col gap-1">
-                                                        <Label>Status</Label>
-                                                        <select 
-                                                            className="border rounded px-2 py-2"
-                                                            value={isActive ? "active" : "inactive"}
-                                                            onChange={(e) => setIsActive(e.target.value === "active")}
+                                                    <div className="flex flex-col gap-3 mt-2">
+                                                        <div className="flex flex-col gap-1">
+                                                            <Label>SSN</Label>
+                                                            <Input
+                                                                type="text"
+                                                                value={ssn}
+                                                                onChange={(e) => setSSN(e.target.value)}
+                                                            />
+                                                        </div>
+                                                        <div className="flex flex-col gap-1">
+                                                            <Label>First Name</Label>
+                                                            <Input
+                                                                type="text"
+                                                                value={firstName}
+                                                                onChange={(e) => setFirstName(e.target.value)}
+                                                            />
+                                                        </div>   
+                                                        <div className="flex flex-col gap-1">
+                                                            <Label>Last Name</Label>
+                                                            <Input
+                                                                type="text"
+                                                                value={lastName}
+                                                                onChange={(e) => setLastName(e.target.value)}
+                                                            />
+                                                        </div> 
+                                                        <div className="flex flex-col gap-1">
+                                                            <Label>Email</Label>
+                                                            <Input
+                                                                type="text"
+                                                                value={email}
+                                                                onChange={(e) => setEmail(e.target.value)}
+                                                            />
+                                                        </div>
+                                                        <div className="flex flex-col gap-1">
+                                                            <Label>Update Password</Label>
+                                                            <Input
+                                                                type="text"
+                                                                disabled={!isRegistered}
+                                                                placeholder={
+                                                                    isRegistered ? "Enter new password" : "Employee doesn't have an account"
+                                                                }
+                                                                value={updatePassword}
+                                                                onChange={(e) => setUpdatePassword(e.target.value)}
+                                                            />
+                                                        </div>      
+                                                        <div className="flex flex-col gap-1">
+                                                            <Label>Title</Label>
+                                                            <Input
+                                                                type="text"
+                                                                value={title}
+                                                                onChange={(e) => setTitle(e.target.value)}
+                                                            />
+                                                        </div>   
+                                                        <div className="flex flex-col gap-1">
+                                                            <Label>Status</Label>
+                                                            <select 
+                                                                className="border rounded px-2 py-2"
+                                                                value={isActive ? "active" : "inactive"}
+                                                                onChange={(e) => setIsActive(e.target.value === "active")}
+                                                            >
+                                                                <option value="active">Active</option>
+                                                                <option value="inactive">Inactive</option>
+                                                            </select>
+                                                        </div>
+
+                                                        <Button
+                                                            onClick={() => handleUpdate(e.employee_id)}
+                                                            className="w-full mt-3"
                                                         >
-                                                            <option value="active">Active</option>
-                                                            <option value="inactive">Inactive</option>
-                                                        </select>
+                                                            Save Changes
+                                                        </Button>                                                                                
                                                     </div>
-
-                                                    <Button
-                                                        onClick={() => handleUpdate(e.employee_id)}
-                                                        className="w-full mt-3"
-                                                    >
-                                                        Save Changes
-                                                    </Button>                                                                                
-                                                </div>
-                                            </DialogContent>
-                                        </Dialog>
-                                    </td>
-                                </tr>
-                            ))}
+                                                </DialogContent>
+                                            </Dialog>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
 
                             {employeeData.length === 0 && (
                                 <tr>

@@ -1323,7 +1323,7 @@ DELIMITER ;
 /*
 PROCEDURE
 ----------
-This procedure updates new client contact information provided on the contact_info table.
+This procedure updates the employee information.
 */
 DROP PROCEDURE IF EXISTS update_employee;
 DELIMITER //
@@ -1723,6 +1723,36 @@ BEGIN
     INSERT INTO composed_of (product_id, crop_id, crop_ratio)
     SELECT product.product_id, crop_id_p, crop_ratio_p FROM product
     WHERE product.product_name = product_name_p;
+
+END //
+DELIMITER ;
+
+/*
+PROCEDURE
+----------
+Change password of a registered user.
+*/
+DROP PROCEDURE IF EXISTS update_user_password;
+DELIMITER //
+CREATE PROCEDURE update_user_password(
+	employee_id_p INT, 
+    password_hash_p TEXT
+)
+BEGIN
+    DECLARE found_uid INT;
+
+    -- Check if value provided for employee_id is valid
+    SELECT user_id INTO found_uid FROM employee
+		WHERE employee_id = employee_id_p;
+
+	IF found_uid IS NULL THEN
+		SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'Employee is not registered as a user.';
+    END IF;
+    
+    UPDATE users
+    SET password_hash = password_hash_p
+    WHERE user_id = found_uid;
 
 END //
 DELIMITER ;
