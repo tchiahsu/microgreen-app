@@ -42,6 +42,48 @@ def decode_token(token):
     return jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
 
 
+def get_current_employee_id(token: str = Depends(oauth2)):
+    try:
+        payload = decode_token(token)
+        uid = payload.get("sub")
+        if uid is None:
+            raise HTTPException(status_code=401,
+                                detail="Invalid token payload")
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token.")
+
+    db = connect_db()
+    if db is None:
+        raise HTTPException(status_code=500,
+                            detail="Connection to database failed")
+
+    try:
+        cursor = db.cursor()
+        cursor.callproc("get_user_profile_info", (uid,))
+        rows = cursor.fetchall()
+        cursor.close()
+    except Exception:
+        db.rollback()
+        db.close()
+        raise HTTPException(status_code=400,
+                            detail="Error retrieving user profile.")
+    finally:
+        db.close()
+
+    if not rows:
+        raise HTTPException(status_code=404,
+                            detail="Profile not found for the user.")
+
+    profile = rows[0]
+
+    employee_id = profile.get("employee_id")
+    if employee_id is None:
+        raise HTTPException(status_code=403,
+                            detail="No employee linked to this user.")
+
+    return int(employee_id)
+
+
 @router.post("/register")
 async def register(data: RegisterUser):
     hashed = hash_password(data.password)

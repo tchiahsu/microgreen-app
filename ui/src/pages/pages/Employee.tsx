@@ -31,7 +31,6 @@ export default function Employee() {
     const [registerEmail, setRegisterEmail] = useState("");
     const [registerPassword, setRegisterPassword] = useState("");
     const [selectedEmployee, setSelectedEmployee] = useState<EmployeeItem | null>(null);
-
     const [updatePassword, setUpdatePassword] = useState("");
 
 
@@ -335,6 +334,7 @@ export default function Employee() {
                                 <th className="px-3 py-2 font-semibold text-left sm:px-4 sm:py-3">Email</th>
                                 <th className="px-3 py-2 font-semibold text-left sm:px-4 sm:py-3">Title</th>
                                 <th className="px-3 py-2 font-semibold text-left sm:px-4 sm:py-3">Status</th>
+                                <th className="px-3 py-2 font-semibold text-left sm:px-4 sm:py-3">Account</th>                                
                                 <th className="px-3 py-2 font-semibold text-left sm:px-4 sm:py-3"></th>
                             </tr>
                         </thead>
@@ -364,6 +364,13 @@ export default function Employee() {
                                         </td>
                                         <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
                                             {e.is_active ? "Active" : "Inactive"}
+                                        </td>
+                                        <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
+                                            {isRegistered? (
+                                                <span className="text-green-600 font-semibold">Registered</span>
+                                            ) : (
+                                                <span className="text-gray-600 font-semibold">Unregistered</span>
+                                            )}
                                         </td>
                                         <td className="px-3 py-2 align-top border-b-[0.9px] border-[#f6b8669c] sm:px-4 sm:py-3">
                                             <Dialog

@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from datetime import date
 from src.database import connect_db
 from typing import Any, Dict, List
 from src.models.order import OrderData, UpdateOrderProduct
+from src.auth import get_current_employee_id
 
 
 router = APIRouter(prefix="/orders", tags=["orders"])
@@ -66,12 +67,14 @@ async def get_orders(delivery_date: date):
 # ----------------------------------------
 # ADD A NEW ORDER
 # ----------------------------------------
-@router.post("/{employee_id}")
-async def add_order(employee_id: int, data: OrderData):
+@router.post("/")
+async def add_order(data: OrderData,
+                    employee_id: int = Depends(get_current_employee_id)):
     '''
     Add a new order to the system
     Example: POST /orders/
     '''
+    print("DEBUG add_order reached with:", data, "employee_id:", employee_id)
     db = connect_db()
 
     if db is None:
