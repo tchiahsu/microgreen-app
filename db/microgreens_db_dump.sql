@@ -1076,6 +1076,58 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `assign_employee_to_delivery` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `assign_employee_to_delivery`(
+	employee_id_p INT,
+    delivery_date_p DATE
+)
+BEGIN
+	DECLARE found_id INT;
+    DECLARE found_delivery INT;
+    DECLARE curr_status ENUM("scheduled", "completed", "cancelled");
+	-- Check if value provided for product_id is valid
+	SELECT employee_id INTO found_id FROM employee
+		WHERE employee_id = employee_id_p;
+		
+	IF found_id IS NULL THEN 
+		SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'The value provided for employee_id is not valid.';
+	END IF;
+	
+	SELECT COUNT(*) INTO found_delivery FROM delivery
+        WHERE delivery_date = delivery_date_p;
+	
+	IF found_delivery = 0 THEN 
+		SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'The delivery date provided is not valid.';
+	END IF;
+
+	SELECT delivery_status INTO curr_status FROM delivery
+        WHERE delivery_date = delivery_date_p;
+
+    IF curr_status <> 'scheduled' THEN 
+		SIGNAL SQLSTATE '45000'
+				SET MESSAGE_TEXT = 'Cannot assign employee to a cancelled or completed delivery.';
+	END IF;
+	
+	UPDATE delivery
+	SET employee_id = employee_id_p
+	WHERE delivery_date = delivery_date_p;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `assign_employee_to_planting` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -1455,7 +1507,8 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_delivery_info`()
 BEGIN
-	SELECT delivery_date, delivery_status FROM delivery;
+	SELECT delivery_date, delivery_status, employee.employee_id, employee.first_name, employee.last_name FROM delivery
+		LEFT JOIN employee ON delivery.employee_id = employee.employee_id;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -2465,4 +2518,4 @@ USE `microgreens_db`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-02  1:38:21
+-- Dump completed on 2025-12-02 22:41:59
