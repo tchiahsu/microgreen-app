@@ -238,6 +238,7 @@ export default function Header() {
                             <li key={item.href}>
                                 <NavLink
                                     to={item.href}
+                                    end={item.href === "/app"}
                                     onClick={() => setIsOpen(false)}
                                     className={({ isActive }) =>
                                         ["cursor-pointer transition_colors hover:text-[#2b5766]",
