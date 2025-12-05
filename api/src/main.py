@@ -10,7 +10,9 @@ from src.routers.client import router as client_router
 from src.routers.employee import router as employee_router
 from src.routers.delivery import router as delivery_router
 from src.auth import router as auth_router
+from dotenv import load_dotenv
 
+load_dotenv()
 app = FastAPI()
 
 origins = [
