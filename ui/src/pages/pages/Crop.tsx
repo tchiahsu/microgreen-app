@@ -465,6 +465,7 @@ export default function Crop() {
                                 columns={cropInformation} 
                                 data={searchCrops} 
                                 underlines={true}
+                                rowKey={(row) => row.crop_id}
                                 useActions={(row) => (
                                     <CropActions item={row as CropInfo} onUpdate={handleUpdate}/>
                                 )}
