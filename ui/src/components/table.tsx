@@ -13,9 +13,10 @@ export type TableProps = {
     underlines?: boolean;
     color?: string;
     useActions?: (row: any) => JSX.Element;
+    rowKey?: (row: any) => string | number;
 }
 
-export function Table({columns, data, underlines, color, useActions}: TableProps){
+export function Table({columns, data, underlines, color, useActions, rowKey}: TableProps){
     return (
         <table className="w-full text-left">
             <thead>
@@ -36,7 +37,8 @@ export function Table({columns, data, underlines, color, useActions}: TableProps
 
             <tbody>
                 {data.map((row, index) => (
-                    <tr key={index}>
+                    <tr key={rowKey ? rowKey(row) : row.id ?? row.crop_id ?? index}
+                    >
                         {columns.map((column) => (
                         <td key={column.key} 
                             className={clsx(         
