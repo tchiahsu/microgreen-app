@@ -22,14 +22,23 @@ oauth2 = OAuth2PasswordBearer(tokenUrl="/login")
 
 
 def hash_password(pw):
+    '''
+    Hashes a password using the specified hashing algorithm.
+    '''
     return pwd.hash(pw)
 
 
 def verify_password(pw, hashed):
+    '''
+    Verifies the password against the hashed version.
+    '''
     return pwd.verify(pw, hashed)
 
 
 def create_token(uid):
+    '''
+    Creates a signed JWT token for a given user ID.
+    '''
     payload = {
         "sub": str(uid),
         "exp": datetime.now(timezone.utc) +
@@ -39,10 +48,18 @@ def create_token(uid):
 
 
 def decode_token(token):
+    '''
+    Decodes and verifies a JWT token.
+    '''
     return jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
 
 
 def get_current_employee_id(token: str = Depends(oauth2)):
+    '''
+    Dependency used in some routes.
+    It decodes the JWT and gets the user ID off of it. Looks up the employee
+    that is associated with that user ID.
+    '''
     try:
         payload = decode_token(token)
         uid = payload.get("sub")
@@ -84,8 +101,15 @@ def get_current_employee_id(token: str = Depends(oauth2)):
     return int(employee_id)
 
 
+# ----------------------------------------
+# REGISTERS A NEW USER TO THE WEB APP
+# ----------------------------------------
 @router.post("/register")
 async def register(data: RegisterUser):
+    '''
+    Registers a new user.
+    Example: POST /register
+    '''
     hashed = hash_password(data.password)
 
     db = connect_db()
@@ -106,10 +130,11 @@ async def register(data: RegisterUser):
         cursor.callproc("link_employee_user", (data.employee_id, new_user_id))
         db.commit()
         cursor.close()
-    except Exception:
+    except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=400,
-                            detail="Error registering user.")
+        # raise HTTPException(status_code=400,
+        #                     detail="Error registering user.")
+        raise HTTPException(status_code=400, detail=str(e))
     finally:
         db.close()
 
@@ -121,6 +146,11 @@ async def register(data: RegisterUser):
 # ----------------------------------------
 @router.post("/login")
 async def login(data: LoginUser):
+    '''
+    Validates email and password. If successfull it returns
+    a JWT token.
+    Example: POST /login
+    '''
     db = connect_db()
     if db is None:
         raise HTTPException(status_code=500,
@@ -159,6 +189,10 @@ async def login(data: LoginUser):
 # ----------------------------------------
 @router.get("/profile")
 async def profile(token: str = Depends(oauth2)):
+    '''
+    Retrieves the user's profile information.
+    Example GET /profile
+    '''
     try:
         payload = decode_token(token)
         uid = payload["sub"]

@@ -1103,6 +1103,7 @@ BEGIN
 				SET MESSAGE_TEXT = 'The value provided for employee_id is not valid.';
 	END IF;
 	
+    -- Check if the delivery date exists
 	SELECT COUNT(*) INTO found_delivery FROM delivery
         WHERE delivery_date = delivery_date_p;
 	
@@ -1111,6 +1112,7 @@ BEGIN
 				SET MESSAGE_TEXT = 'The delivery date provided is not valid.';
 	END IF;
 
+	-- Can only assign employee to a scheduled delivery
 	SELECT delivery_status INTO curr_status FROM delivery
         WHERE delivery_date = delivery_date_p;
 
@@ -1119,6 +1121,7 @@ BEGIN
 				SET MESSAGE_TEXT = 'Cannot assign employee to a cancelled or completed delivery.';
 	END IF;
 	
+    -- Assign employee to delivery
 	UPDATE delivery
 	SET employee_id = employee_id_p
 	WHERE delivery_date = delivery_date_p;
@@ -1145,6 +1148,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `assign_employee_to_planting`(
 BEGIN
 	DECLARE found_id1 INT;
     DECLARE found_id2 INT;
+
 	-- Check if value provided for product_id is valid
 	SELECT employee_id INTO found_id1 FROM employee
 		WHERE employee_id = employee_id_p;
@@ -1154,6 +1158,7 @@ BEGIN
 				SET MESSAGE_TEXT = 'The value provided for employee_id is not valid.';
 	END IF;
 	
+    -- Check that the crop exists
 	SELECT crop_id INTO found_id2 FROM crop 
 		WHERE crop_id = crop_id_p;
 	
@@ -1162,8 +1167,10 @@ BEGIN
 				SET MESSAGE_TEXT = 'The value provided for crop_id is not valid.';
 	END IF;
 	
+    -- Ensure only one employee is assigned to a crop
 	DELETE FROM plants WHERE crop_id = crop_id_p;
 	
+    -- Create the task assignment
 	INSERT INTO plants (employee_id, crop_id)
 	VALUES (employee_id_p, crop_id_p);
 END ;;
@@ -2020,11 +2027,15 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `update_delivery`(
 )
 BEGIN
 	-- Validate delivery date
-    IF delivery_date_p < CURDATE() THEN
+    DECLARE date_count INT;
+    SELECT COUNT(*) INTO date_count FROM delivery
+		WHERE delivery_date = delivery_date_p;
+	
+    IF date_count = 0 THEN 
 		SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'Delivery date cannot be before today';
+			SET MESSAGE_TEXT = 'Invalid delivery date';
 	END IF;
-    
+
     -- Validate delivery status
     IF delivery_status_p NOT IN ("scheduled", "completed", "cancelled") THEN
 		SIGNAL SQLSTATE '45000'
@@ -2084,9 +2095,11 @@ BEGIN
         is_active = COALESCE(is_active_p, is_active)
 	WHERE employee_id = employee_id_p;
     
+    -- Get the final email so we can sync it to with the user table
     SELECT email into final_email FROM employee
 		WHERE employee_id = employee_id_p;
-        
+	
+    -- If employee has a user, keep them in sync
 	IF found_uid IS NOT NULL AND email_p IS NOT NULL THEN
 		UPDATE users
         SET email = final_email
@@ -2131,12 +2144,6 @@ BEGIN
     IF order_status_p IS NOT NULL AND order_status_p NOT IN ("scheduled", "completed", "cancelled") THEN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'Invalid Order Status. Valid Option: scheduled, completed, cancelled';
-	END IF;
-
-	-- Validate delivery date
-    IF delivery_date_p IS NOT NULL AND delivery_date_p < CURDATE() THEN
-		SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'Delivery data cannot be before today';
 	END IF;
 	
     -- Validate employee
@@ -2471,12 +2478,14 @@ BEGIN
     -- Check if value provided for employee_id is valid
     SELECT user_id INTO found_uid FROM employee
 		WHERE employee_id = employee_id_p;
-
+	
+    -- If no user is linked, we cant update password
 	IF found_uid IS NULL THEN
 		SIGNAL SQLSTATE '45000'
 				SET MESSAGE_TEXT = 'Employee is not registered as a user.';
     END IF;
     
+    -- Update the password
     UPDATE users
     SET password_hash = password_hash_p
     WHERE user_id = found_uid;
@@ -2521,4 +2530,4 @@ USE `microgreens_db`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-04 20:07:25
+-- Dump completed on 2025-12-05  0:08:55

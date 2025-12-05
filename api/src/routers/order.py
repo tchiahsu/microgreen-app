@@ -10,6 +10,10 @@ router = APIRouter(prefix="/orders", tags=["orders"])
 
 
 def group_by_restaurant(data: List[Dict[str, Any]]):
+    '''
+    Groups orders by restaurants name and collects
+    the necessary fields.
+    '''
     result: Dict[str, List[Dict[str, Any]]] = {}
 
     for order in data:

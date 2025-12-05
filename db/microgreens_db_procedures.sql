@@ -1364,9 +1364,11 @@ BEGIN
         is_active = COALESCE(is_active_p, is_active)
 	WHERE employee_id = employee_id_p;
     
+    -- Get the final email so we can sync it to with the user table
     SELECT email into final_email FROM employee
 		WHERE employee_id = employee_id_p;
-        
+	
+    -- If employee has a user, keep them in sync
 	IF found_uid IS NOT NULL AND email_p IS NOT NULL THEN
 		UPDATE users
         SET email = final_email
@@ -1389,6 +1391,7 @@ CREATE PROCEDURE assign_employee_to_planting(
 BEGIN
 	DECLARE found_id1 INT;
     DECLARE found_id2 INT;
+
 	-- Check if value provided for product_id is valid
 	SELECT employee_id INTO found_id1 FROM employee
 		WHERE employee_id = employee_id_p;
@@ -1398,6 +1401,7 @@ BEGIN
 				SET MESSAGE_TEXT = 'The value provided for employee_id is not valid.';
 	END IF;
 	
+    -- Check that the crop exists
 	SELECT crop_id INTO found_id2 FROM crop 
 		WHERE crop_id = crop_id_p;
 	
@@ -1406,8 +1410,10 @@ BEGIN
 				SET MESSAGE_TEXT = 'The value provided for crop_id is not valid.';
 	END IF;
 	
+    -- Ensure only one employee is assigned to a crop
 	DELETE FROM plants WHERE crop_id = crop_id_p;
 	
+    -- Create the task assignment
 	INSERT INTO plants (employee_id, crop_id)
 	VALUES (employee_id_p, crop_id_p);
 END //
@@ -1438,6 +1444,7 @@ BEGIN
 				SET MESSAGE_TEXT = 'The value provided for employee_id is not valid.';
 	END IF;
 	
+    -- Check if the delivery date exists
 	SELECT COUNT(*) INTO found_delivery FROM delivery
         WHERE delivery_date = delivery_date_p;
 	
@@ -1446,6 +1453,7 @@ BEGIN
 				SET MESSAGE_TEXT = 'The delivery date provided is not valid.';
 	END IF;
 
+	-- Can only assign employee to a scheduled delivery
 	SELECT delivery_status INTO curr_status FROM delivery
         WHERE delivery_date = delivery_date_p;
 
@@ -1454,6 +1462,7 @@ BEGIN
 				SET MESSAGE_TEXT = 'Cannot assign employee to a cancelled or completed delivery.';
 	END IF;
 	
+    -- Assign employee to delivery
 	UPDATE delivery
 	SET employee_id = employee_id_p
 	WHERE delivery_date = delivery_date_p;
@@ -1793,12 +1802,14 @@ BEGIN
     -- Check if value provided for employee_id is valid
     SELECT user_id INTO found_uid FROM employee
 		WHERE employee_id = employee_id_p;
-
+	
+    -- If no user is linked, we cant update password
 	IF found_uid IS NULL THEN
 		SIGNAL SQLSTATE '45000'
 				SET MESSAGE_TEXT = 'Employee is not registered as a user.';
     END IF;
     
+    -- Update the password
     UPDATE users
     SET password_hash = password_hash_p
     WHERE user_id = found_uid;
