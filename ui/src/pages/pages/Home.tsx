@@ -5,7 +5,13 @@ import { Calendar28 } from "../../components/date";
 import type { Columns } from "../../components/table";
 
 export default function Home() {
-    const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().slice(0,10));
+    const [selectedDate, setSelectedDate] = useState(() => {
+        const date = new Date()
+        const year = date.getFullYear()
+        const month = String(date.getMonth() + 1).padStart(2, "0")
+        const day = String(date.getDate()).padStart(2, "0")
+        return `${year}-${month}-${day}`
+    });
     const [plantingInfo, setPlantingInfo] = useState<PlantingItem[]>([]);
     const [outGerm, setOutGerm] = useState<GermItem[]>([]);
     const [switchGerm, setSwitchGerm] = useState<GermItem[]>([]);
