@@ -1618,11 +1618,15 @@ CREATE PROCEDURE update_delivery(
 )
 BEGIN
 	-- Validate delivery date
-    IF delivery_date_p < CURDATE() THEN
+    DECLARE date_count INT;
+    SELECT COUNT(*) INTO date_count FROM delivery
+		WHERE delivery_date = delivery_date_p;
+	
+    IF date_count = 0 THEN 
 		SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'Delivery date cannot be before today';
+			SET MESSAGE_TEXT = 'Invalid delivery date';
 	END IF;
-    
+
     -- Validate delivery status
     IF delivery_status_p NOT IN ("scheduled", "completed", "cancelled") THEN
 		SIGNAL SQLSTATE '45000'
