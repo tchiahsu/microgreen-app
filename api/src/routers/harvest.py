@@ -20,13 +20,14 @@ def get_week(input_date: date):
 
 # ----------------------------------------
 # GET ALL CROPS HARVESTED AND PRODUCTS
-# FOR EACH HARVEST DAY IN A WEEK
+# FOR EACH HARVEST DAY
 # ----------------------------------------
 @router.get("/week")
 async def get_harvest(input_date: date | None = Query(default=None)):
     '''
     Shows the harvest for the week for this week if not date is provided.
     Shows the harvest for the week the given date is in.
+    GET /home/week
     '''
     db = connect_db()
 

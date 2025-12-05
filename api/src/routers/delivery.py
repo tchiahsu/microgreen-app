@@ -13,6 +13,7 @@ router = APIRouter(prefix="/deliveries", tags=["deliveries"])
 async def get_delivery_info():
     '''
     Gets all delivery information
+    Example: GET /deliveries/
     '''
     db = connect_db()
     if db is None:

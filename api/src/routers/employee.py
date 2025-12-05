@@ -46,7 +46,7 @@ async def add_employee(data: EmployeeData):
 async def update_employee(employee_id: int, data: EmployeeData):
     '''
     Update an employee using employee id.
-    Example: PUT /update_employee/10
+    Example: PUT /employee/update_employee/10
     '''
     db = connect_db()
     if db is None:
@@ -86,6 +86,7 @@ async def update_employee(employee_id: int, data: EmployeeData):
 async def get_all_employees():
     '''
     Retrieve the name of all active employees
+    Example GET /employee/
     '''
     db = connect_db()
     if db is None:
@@ -113,7 +114,7 @@ async def get_all_employees():
 async def assign_delivery(data: AssignDelivery):
     '''
     Assign an employee to delivery using id and date.
-    Example: PUT /assign_delivery/1/2025-12-01
+    Example: PUT employee/assign_delivery/1/2025-12-01
     '''
     db = connect_db()
     if db is None:
@@ -141,7 +142,7 @@ async def assign_delivery(data: AssignDelivery):
 async def assign_planting(data: AssignPlanting):
     '''
     Assign an employee to planting using employee and crop id.
-    Example: PUT /assign_planting/1/1
+    Example: PUT employee/assign_planting/1/1
     '''
     db = connect_db()
     if db is None:

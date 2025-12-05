@@ -78,7 +78,10 @@ async def add_crop(data: CropData):
 # ----------------------------------------
 @router.put("/")
 async def edit_crop(data: CropUpdate):
-
+    '''
+    Edit crop information
+    Example PUT /crops/
+    '''
     db = connect_db()
 
     if db is None:
