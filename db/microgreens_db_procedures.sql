@@ -1491,12 +1491,6 @@ BEGIN
 		SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'Invalid Order Status. Valid Option: scheduled, completed, cancelled';
 	END IF;
-
-	-- Validate delivery date
-    IF delivery_date_p IS NOT NULL AND delivery_date_p < CURDATE() THEN
-		SIGNAL SQLSTATE '45000'
-			SET MESSAGE_TEXT = 'Delivery data cannot be before today';
-	END IF;
 	
     -- Validate employee
 	IF employee_id_p IS NOT NULL AND NOT EXISTS (SELECT 1 FROM employee WHERE employee.employee_id = employee_id_p) THEN

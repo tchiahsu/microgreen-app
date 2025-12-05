@@ -2,7 +2,6 @@ from fastapi import APIRouter, HTTPException
 from src.database import connect_db
 from src.models.employee import EmployeeData, AssignPlanting, AssignDelivery
 from src.auth import hash_password
-from datetime import date
 
 router = APIRouter(prefix="/employees", tags=["employees"])
 
@@ -65,7 +64,7 @@ async def update_employee(employee_id: int, data: EmployeeData):
             data.title,
             data.is_active
             ))
-        
+
         if data.password:
             hashed_pw = hash_password(data.password)
             cursor.callproc("update_user_password", (employee_id, hashed_pw))
@@ -105,6 +104,7 @@ async def get_all_employees():
         db.close()
 
     return result
+
 
 # ----------------------------
 # ASSIGN EMPLOYEE TO DELIVERY
@@ -158,4 +158,3 @@ async def assign_planting(data: AssignPlanting):
         raise HTTPException(status_code=400, detail=str(e))
     finally:
         db.close()
-
