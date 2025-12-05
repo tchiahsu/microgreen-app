@@ -1112,6 +1112,9 @@ BEGIN
 	DELETE FROM contains
 		WHERE order_id = order_id_p
 		AND product_id = product_id_p;
+
+	DELETE FROM customer_order
+		WHERE order_id = order_id_p;
 END //
 DELIMITER ;
 

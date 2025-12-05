@@ -150,19 +150,19 @@ INSERT INTO contact_info (restaurant_id, email, first_name, last_name, phone) VA
     (71, 'tobias.grant@asta.test', 'Tobias', 'Grant', '(617) 555-4127');
 
 INSERT INTO users (user_id, email, password_hash) VALUES
-	(1, "admin@mb.com", "$2b$12$ZciKRPGS08U8S7s0JbJVjupvNZR.AzPvrdcBax9hMKHHPo3K9zKvq");
+	(1, "mishell@mb.com", "$2b$12$ZciKRPGS08U8S7s0JbJVjupvNZR.AzPvrdcBax9hMKHHPo3K9zKvq");
 
 INSERT INTO employee (ssn, first_name, last_name, email, title, is_active, user_id) VALUES
-	('512-83-4091', 'Mishell', 'Cardenas', 'mishell@microgreens.boston', 'CEO', TRUE, 1),
-	('239-51-7180', 'Liam', 'Carter', 'liam.carter@microgreens.boston', 'Farm Manager', TRUE, NULL),
-	('684-16-9335', 'Maya', 'Thompson', 'maya.thompson@microgreens.boston', 'Operations Manager', TRUE, NULL),
-	('401-72-5829', 'Ethan', 'Morales', 'ethan.morales@microgreens.boston', 'Plant Scientist', TRUE, NULL),
-	('159-63-0442', 'Sofia', 'Bennett', 'sofia.bennett@microgreens.boston', 'Crop Associate', TRUE, NULL),
-	('773-25-9014', 'Noah', 'Patel', 'noah.patel@microgreens.boston', 'Crop Associate', TRUE, NULL),
-	('328-90-5573', 'Julian', 'Brook', 'julian.brook@microgreens.boston', 'Delivery Driver', TRUE, NULL),
-	('546-12-7820', 'Chloe', 'Kim', 'chloe.kim@microgreens.boston', 'Sanitaion Associate', TRUE, NULL),
-	('817-45-9123', 'Jason', 'Gonzalez', 'jason.gonzalez@microgreens.boston', 'Sales Associate', TRUE, NULL),
-	('917-65-9810', 'Michael', 'Aaronson', 'michael.aaronson@microgreens.boston', 'Sales Associate', TRUE, NULL);
+	('512-83-4091', 'Mishell', 'Cardenas', 'mishell@mb.com', 'CEO', TRUE, 1),
+	('239-51-7180', 'Liam', 'Carter', 'liam@mb.com', 'Farm Manager', TRUE, NULL),
+	('684-16-9335', 'Maya', 'Thompson', 'maya@mb.com', 'Operations Manager', TRUE, NULL),
+	('401-72-5829', 'Ethan', 'Morales', 'ethan@mb.com', 'Plant Scientist', TRUE, NULL),
+	('159-63-0442', 'Sofia', 'Bennett', 'sofia@mb.com', 'Crop Associate', TRUE, NULL),
+	('773-25-9014', 'Noah', 'Patel', 'noah@mb.com', 'Crop Associate', TRUE, NULL),
+	('328-90-5573', 'Julian', 'Brook', 'julian@mb.com', 'Delivery Driver', TRUE, NULL),
+	('546-12-7820', 'Chloe', 'Kim', 'chloe@mb.com', 'Sanitaion Associate', TRUE, NULL),
+	('817-45-9123', 'Jason', 'Gonzalez', 'jason@mb.com', 'Sales Associate', TRUE, NULL),
+	('917-65-9810', 'Michael', 'Aaronson', 'michael@mb.com', 'Sales Associate', TRUE, NULL);
 
 INSERT INTO delivery (delivery_date, delivery_status, employee_id) VALUES
 	('2025-12-02', 'scheduled', 7),
