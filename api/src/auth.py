@@ -106,10 +106,11 @@ async def register(data: RegisterUser):
         cursor.callproc("link_employee_user", (data.employee_id, new_user_id))
         db.commit()
         cursor.close()
-    except Exception:
+    except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=400,
-                            detail="Error registering user.")
+        # raise HTTPException(status_code=400,
+        #                     detail="Error registering user.")
+        raise HTTPException(status_code=400, detail=str(e))
     finally:
         db.close()
 

@@ -122,7 +122,8 @@ async def assign_delivery(data: AssignDelivery):
     cursor = db.cursor()
 
     try:
-        cursor.callproc("assign_employee_to_delivery", (data.employee_id, data.delivery_date))
+        cursor.callproc("assign_employee_to_delivery", (data.employee_id,
+                                                        data.delivery_date))
         db.commit()
         cursor.close()
         return {"message": "Employee successfully assigned to delivery."}
@@ -149,7 +150,8 @@ async def assign_planting(data: AssignPlanting):
     cursor = db.cursor()
 
     try:
-        cursor.callproc("assign_employee_to_planting", (data.employee_id, data.crop_id))
+        cursor.callproc("assign_employee_to_planting", (data.employee_id,
+                                                        data.crop_id))
         db.commit()
         cursor.close()
         return {"message": "Employee successfully assigned to planting."}
