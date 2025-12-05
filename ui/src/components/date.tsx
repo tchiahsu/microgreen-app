@@ -41,8 +41,6 @@ export function Calendar28({
     selectedDate: string
     onChange: (value:string) => void
 }) {
-
-    console.log("SelectedDate: ", selectedDate)
     const [open, setOpen] = React.useState(false)
 
     const startDate = formatDateToToday(selectedDate)
