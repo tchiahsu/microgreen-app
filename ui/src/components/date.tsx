@@ -21,16 +21,17 @@ function formatDate(date: Date | undefined) {
   })
 }
 
-function isValidDate(date: Date | undefined) {
-  if (!date) {
-    return false
-  }
-  return !isNaN(date.getTime())
-}
 
 function formatDateToToday(iso: string): Date{
   const [year, month, day] = iso.split("-").map(Number)
-  return new Date(year, month - 1, day)
+  return new Date(year, month - 1, day, 12)
+}
+
+function formatISO(date: Date): string {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const day = String(date.getDate()).padStart(2, "0")
+  return `${year}-${month}-${day}`
 }
 
 export function Calendar28({
@@ -40,6 +41,8 @@ export function Calendar28({
     selectedDate: string
     onChange: (value:string) => void
 }) {
+
+    console.log("SelectedDate: ", selectedDate)
     const [open, setOpen] = React.useState(false)
 
     const startDate = formatDateToToday(selectedDate)
@@ -47,7 +50,13 @@ export function Calendar28({
     const [date, setDate] = React.useState<Date | undefined>(startDate)
     const [month, setMonth] = React.useState<Date | undefined>(startDate)
 
-    const [value, setValue] = React.useState(formatDate(startDate))
+    const value = formatDate(date)
+
+    React.useEffect(() => {
+      const updateDate = formatDateToToday(selectedDate)
+      setDate(updateDate)
+      setMonth(updateDate)
+    }, [selectedDate])
 
     return (
         <div className="flex flex-col gap-3">
@@ -55,23 +64,14 @@ export function Calendar28({
             <Input
             id="date"
             value={value}
+            readOnly
             placeholder="June 01, 2025"
             className="bg-white/60 pr-10"
-            onChange={(e) => {
-                const newDate = new Date(e.target.value)
-                setValue(e.target.value)
-                if (isValidDate(newDate)) {
-                setDate(newDate)
-                setMonth(newDate)
-                const iso = newDate.toISOString().slice(0, 10)
-                onChange(iso)
-                }
-            }}
             onKeyDown={(e) => {
-                if (e.key === "ArrowDown") {
+              if (e.key == "ArrowDown"){
                 e.preventDefault()
                 setOpen(true)
-                }
+              }
             }}
             />
             <Popover open={open} onOpenChange={setOpen}>
@@ -97,17 +97,19 @@ export function Calendar28({
                 captionLayout="dropdown"
                 month={month}
                 onMonthChange={setMonth}
+                startMonth={new Date(2020, 0)}
+                endMonth={new Date(2026, 11)}
                 onSelect={(newDate) => {
-                    setDate(newDate)
-                    setValue(formatDate(newDate))
-                    const iso = newDate?.toISOString().slice(0, 10)
-                    if (iso) onChange(iso)
-                    setOpen(false)
+                  if (!newDate) return 
+                  setDate(newDate)
+                  const iso = formatISO(newDate)
+                  onChange(iso)
+                  setOpen(false)
                 }}
                 />
             </PopoverContent>
             </Popover>
         </div>
-        </div>
+      </div>
     )
-    }
+  }
