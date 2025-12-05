@@ -23,14 +23,17 @@ type ActionsProp = {
     onDelete: (orderId: number, productId: number) => Promise<void>;
 }
 
+function todaysDate() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+}
+
 function isBeforeToday(date: string) {
-    const input = new Date(date);
-    const today = new Date();
-
-    input.setHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
-
-    return input < today;
+    const today = todaysDate();
+    return date < today;
 }
 
 export function Actions({ item, onUpdate, onDelete }: ActionsProp) {
@@ -51,7 +54,7 @@ export function Actions({ item, onUpdate, onDelete }: ActionsProp) {
             return;
         }
 
-        if (isBeforeToday(deliveryDate)) {
+        if (dateChanged && isBeforeToday(deliveryDate)) {
             toast.error("Delivery date cannot be before today.")
             return;
         }
