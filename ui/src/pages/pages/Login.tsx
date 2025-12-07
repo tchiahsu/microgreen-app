@@ -74,12 +74,12 @@ export default function Login() {
                         />
                         <button
                             onClick={() => setShowPassword(!showPassword)}
-                            className="px-1 text-lg text-gray-500 hover:text-gray-700"
+                            className="px-1 text-lg text-gray-500 hover:text-gray-700 cursor-pointer"
                         >
                             {showPassword ? <IoEyeOffOutline/> : <IoEyeOutline/>}
                         </button>
                     </div>
-                    <Button className="mt-2" type="submit" onClick={handleSubmit}>
+                    <Button className="mt-2 cursor-pointer" type="submit" onClick={handleSubmit}>
                         Log In
                     </Button>
                 </div>

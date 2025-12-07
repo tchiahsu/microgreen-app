@@ -93,7 +93,7 @@ export function Actions({ item, onUpdate, onDelete }: ActionsProp) {
                     <div className="flex flex-row items-end gap-2 mt-2">
                         <Popover open={open} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
-                                <button className="hover:text-blue-600">
+                                <button className="hover:text-blue-600 cursor-pointer">
                                     <FiEdit size={16} />
                                 </button>
                             </PopoverTrigger>
@@ -139,13 +139,13 @@ export function Actions({ item, onUpdate, onDelete }: ActionsProp) {
                                     <Label className="text-xs">Apply to all future orders</Label>
                                 </div>
 
-                                <Button onClick={handleConfirm} size="sm" disabled={submitting}>
+                                <Button onClick={handleConfirm} size="sm" disabled={submitting} className="cursor-pointer">
                                     {submitting ? "Saving..." : "Confirm"}
                                 </Button>
                             </PopoverContent>
                         </Popover>
 
-                        <button className="hover:text-red-500" onClick={() => onDelete(item.order_id, item.product_id)}>
+                        <button className="hover:text-red-500 cursor-pointer" onClick={() => onDelete(item.order_id, item.product_id)}>
                             <FiTrash2 size={16} />
                         </button>
                     </div>

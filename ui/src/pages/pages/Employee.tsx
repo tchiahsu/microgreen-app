@@ -201,7 +201,7 @@ export default function Employee() {
                         <Dialog open={addRegistration} onOpenChange={setAddRegistration}>
                             <DialogTrigger asChild>
                                 <Button
-                                    className="bg-[#308261] text-white font-semibold"
+                                    className="bg-[#308261] text-white font-semibold cursor-pointer"
                                     size="sm"
                                 >
                                     + Register User
@@ -246,7 +246,7 @@ export default function Employee() {
 
                                     <Button
                                         onClick={handleRegisterEmployee}
-                                        className="w-full"
+                                        className="w-full cursor-pointer"
                                     >
                                         Create Registration
                                     </Button>
@@ -256,7 +256,7 @@ export default function Employee() {
                         <Dialog open={addOpen} onOpenChange={setAddOpen}>
                             <DialogTrigger asChild>
                                 <Button
-                                    className="bg-[#308261] text-white font-semibold"
+                                    className="bg-[#308261] text-white font-semibold cursor-pointer"
                                     size="sm"
                                 >
                                     + Add Employee
@@ -314,7 +314,7 @@ export default function Employee() {
 
                                     <Button
                                         onClick={handleAddEmployee}
-                                        className="w-full mt-3"
+                                        className="w-full mt-3 cursor-pointer"
                                     >
                                         Save Employee
                                     </Button>
@@ -463,7 +463,7 @@ export default function Employee() {
 
                                                         <Button
                                                             onClick={() => handleUpdate(e.employee_id)}
-                                                            className="w-full mt-3"
+                                                            className="w-full mt-3 cursor-pointer"
                                                         >
                                                             Save Changes
                                                         </Button>                                                                                

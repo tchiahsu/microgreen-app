@@ -89,7 +89,7 @@ export function CropActions({item, onUpdate}: CropActionsProps){
         <div className="flex justify-center">
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                    <button className="hover:text-blue-600">
+                    <button className="hover:text-blue-600 cursor-pointer">
                         <FiEdit size={16} />
                     </button>
                 </DialogTrigger>

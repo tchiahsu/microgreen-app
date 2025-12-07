@@ -410,7 +410,7 @@ export default function Order() {
                             <Dialog open={addOpen} onOpenChange={setAddOpen}>
                                 <DialogTrigger asChild>
                                     <Button
-                                        className="bg-[#308261] text-white font-semibold px-4 py-2 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100 sm:gap-4"
+                                        className="cursor-pointer bg-[#308261] text-white font-semibold px-4 py-2 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100 sm:gap-4"
                                         variant="outline"
                                     >
                                         Add Order
@@ -534,7 +534,7 @@ export default function Order() {
                                         />
                                     </div>
 
-                                    <Button className="mt-2" onClick={handleAddOrder} size="sm" disabled={adding}>
+                                    <Button className="mt-2 cursor-pointer" onClick={handleAddOrder} size="sm" disabled={adding}>
                                         {adding ? "Adding..." : "Add Order"}
                                     </Button>
                                 </DialogContent>
@@ -543,7 +543,7 @@ export default function Order() {
                             <Dialog open={deliveryOpen} onOpenChange={setDeliveryOpen}>
                                 <DialogTrigger asChild>
                                     <Button
-                                        className="bg-[#308261] text-white font-semibold p-4 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100"
+                                        className="cursor-pointer bg-[#308261] text-white font-semibold p-4 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100"
                                         variant="outline"
                                         onClick={fetchDelivery}
                                     >
@@ -578,7 +578,7 @@ export default function Order() {
                                                     onClick={() => {
                                                         setAddDeliveryOpen(true);
                                                     }}
-                                                    className="bg-[#308261] text-white font-semibold p-4 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100"
+                                                    className="cursor-pointer bg-[#308261] text-white font-semibold p-4 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100"
                                                 >
                                                     Add Delivery
                                                 </Button>
@@ -593,7 +593,7 @@ export default function Order() {
                                                     />
                                                 </div>
                                                 <Button
-                                                    className="w-full"
+                                                    className="w-full cursor-pointer"
                                                     size="sm"
                                                     onClick={handleAddDelivery}
                                                     disabled={adding}
@@ -617,7 +617,7 @@ export default function Order() {
                                                     onClick={() => {
                                                         setUpdateDeliveryOpen(true);
                                                     }}
-                                                    className="bg-[#308261] text-white font-semibold p-4 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100"
+                                                    className="cursor-pointer bg-[#308261] text-white font-semibold p-4 rounded-lg hover:opacity-85 hover:scale-105 active:scale-100"
                                                 >
                                                     Edit Delivery Status
                                                 </Button>
@@ -650,7 +650,7 @@ export default function Order() {
                                                 </div>
 
                                                 <Button
-                                                    className="w-full"
+                                                    className="w-full cursor-pointer"
                                                     size="sm"
                                                     onClick={handleUpdateDelivery}
                                                     disabled={adding}
@@ -664,7 +664,7 @@ export default function Order() {
                                             onOpenChange={setAssignDriverOpen}
                                         >
                                             <PopoverTrigger asChild>
-                                                <Button className="bg-[#308261] text-white font-semibold p-4 rounded-lg">
+                                                <Button className="bg-[#308261] text-white font-semibold p-4 rounded-lg cursor-pointer">
                                                     Assign Driver
                                                 </Button>
                                             </PopoverTrigger>
@@ -717,7 +717,7 @@ export default function Order() {
                                                     </Select>
                                                 </div>
                                                 <Button
-                                                    className="w-full"
+                                                    className="w-full cursor-pointer"
                                                     onClick={handleAssignEmployee}
                                                 >
                                                     Assign Driver

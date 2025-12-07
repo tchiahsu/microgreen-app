@@ -462,7 +462,7 @@ export default function Client() {
                         <Dialog open={addOpen} onOpenChange={setAddOpen}>
                             <DialogTrigger asChild>
                                 <Button 
-                                    className="mt-2 bg-[#308261] text-white font-semibold" 
+                                    className="mt-2 bg-[#308261] text-white font-semibold cursor-pointer" 
                                     size="sm"
                                 >
                                     Add Client
@@ -583,7 +583,7 @@ export default function Client() {
                                     </div>
 
                                     <Button
-                                        className="mt-2 bg-[#308261] text-white"
+                                        className="mt-2 bg-[#308261] text-white cursor-pointer"
                                         onClick={handleAddClient}
                                         disabled={adding}
                                     >
@@ -637,7 +637,7 @@ export default function Client() {
                                             <div className="flex flex-col gap-2 mt-5 sm:flex-row">
                                                 <Button
                                                     size="sm"
-                                                    className="bg-[#308261] text-white sm:mr-2"
+                                                    className="bg-[#308261] text-white sm:mr-2 cursor-pointer"
                                                     onClick={() => openAddNewContactModal(clientInfo[restaurant][0].restaurant_id)}                                                    
                                                 >
                                                     Add Contact
@@ -646,7 +646,7 @@ export default function Client() {
                                                 <Button
                                                     size="sm"
                                                     variant="outline"
-                                                    className="bg-[#308261] text-white sm:mr-2"
+                                                    className="bg-[#308261] text-white sm:mr-2 cursor-pointer"
                                                     onClick={() => openEditRestaurantModal(clientInfo[restaurant][0])}                                                    
                                                 >
                                                     Edit Restaurant
@@ -709,7 +709,7 @@ export default function Client() {
                             </div>
 
                             <Button
-                                className="mt-2 bg-[#308261] text-white"
+                                className="mt-2 bg-[#308261] text-white cursor-pointer"
                                 onClick={handleAddContact}
                             >
                                 Add Contact
@@ -787,7 +787,7 @@ export default function Client() {
                                 <div className="flex flex-col">
                                     <label className="font-semibold">Is Active?</label>
                                     <div className="flex flex-wrap items-center gap-4">
-                                        <label className="flex items-center">
+                                        <label className="flex flex-row gap-2 items-center">
                                             <input
                                                 type="checkbox"
                                                 checked={editIsActive === true}
@@ -796,7 +796,7 @@ export default function Client() {
                                             <span>Yes</span>
                                         </label>
 
-                                        <label className="flex items-center">
+                                        <label className="flex flex-row gap-2 items-center">
                                             <input
                                                 type="checkbox"
                                                 checked={editIsActive === false}
@@ -808,7 +808,7 @@ export default function Client() {
                                 </div>
                             </div>
                             <Button
-                                className="mt-2 bg-[#308261] text-white"
+                                className="mt-2 bg-[#308261] text-white cursor-pointer"
                                 onClick={handleUpdateRestaurant}
                             >
                                 Save Changes
@@ -863,7 +863,7 @@ export default function Client() {
                                 </div>
                             </div>
                             <Button
-                                className="mt-2 bg-[#308261] text-white"
+                                className="mt-2 bg-[#308261] text-white cursor-pointer"
                                 onClick={handleUpdateContactInfo}
                             >
                                 Save Changes

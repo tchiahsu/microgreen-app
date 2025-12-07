@@ -485,7 +485,7 @@ export default function Product() {
                             }}
                         >
                             <DialogTrigger asChild>
-                                <Button className="bg-[#4b734e] font-semibold scale-95 active:scale-85">+ Add Product</Button>                                                        
+                                <Button className="bg-[#4b734e] font-semibold scale-95 active:scale-85 cursor-pointer">+ Add Product</Button>                                                        
                             </DialogTrigger>
                             <DialogContent>
                                 <DialogHeader>
@@ -606,7 +606,7 @@ export default function Product() {
                                     </div>
                                     
                                     <Button
-                                        className="my-2"
+                                        className="my-2 cursor-pointer"
                                         variant="outline"
                                         onClick={() => setCompositionRow((prev) => [...prev, { crop_id: null, crop_ratio: null },])}
                                     >
@@ -614,7 +614,7 @@ export default function Product() {
                                     </Button>
                                 </div>
 
-                                <Button onClick={handleAddProduct} disabled={adding}>
+                                <Button onClick={handleAddProduct} disabled={adding} className="cursor-pointer">
                                     {adding ? "Adding..." : "Add Product"}
                                 </Button>
                             </DialogContent>
@@ -629,7 +629,7 @@ export default function Product() {
                             }}
                         >
                             <DialogTrigger asChild>
-                                <Button className="bg-[#4b734e] font-semibold scale-95 active:scale-85">Packaging Options</Button>
+                                <Button className="bg-[#4b734e] font-semibold scale-95 active:scale-85 cursor-pointer">Packaging Options</Button>
                             </DialogTrigger>
                             <DialogContent>
                                 <DialogHeader>
@@ -661,15 +661,15 @@ export default function Product() {
                                                             <td className="py-1 text-right space-x-2">
                                                                 {isEditing ? (
                                                                     <>
-                                                                        <Button size="sm" className="bg-green-700 hover:bg-green-700/60" onClick={handleUpdatePackaging}>
+                                                                        <Button size="sm" className="bg-green-700 hover:bg-green-700/60 cursor-pointer" onClick={handleUpdatePackaging}>
                                                                             <FaSave size={16} />
                                                                         </Button>
-                                                                        <Button size="sm" className="bg-red-700 hover:bg-red-700/60" onClick={() => setPackagingEdit(null)}>
+                                                                        <Button size="sm" className="bg-red-700 hover:bg-red-700/60 cursor-pointer" onClick={() => setPackagingEdit(null)}>
                                                                             <MdCancel size={16} />
                                                                         </Button>
                                                                     </>
                                                                 ) : (
-                                                                    <Button size="sm" onClick={() => setPackagingEdit({ originalName: p.size_type, sizeType: p.size_type })}>
+                                                                    <Button size="sm" onClick={() => setPackagingEdit({ originalName: p.size_type, sizeType: p.size_type })} className="cursor-pointer">
                                                                         <FiEdit size={16} />
                                                                     </Button>
                                                                 )}
@@ -691,7 +691,7 @@ export default function Product() {
                                         />
 
                                         <Button
-                                            className="w-full mt-2"
+                                            className="w-full mt-2 cursor-pointer"
                                             onClick={handleAddPackaging}
                                         >
                                             Add Packaging
@@ -789,7 +789,7 @@ export default function Product() {
                                     />
                                 </div>
 
-                                <Button onClick={handleSaveSize} className="w-full mt-2">
+                                <Button onClick={handleSaveSize} className="w-full mt-2 cursor-pointer">
                                     Save
                                 </Button>
                             </div>
@@ -874,7 +874,7 @@ export default function Product() {
                                 </div>
                                 
                                 <Button
-                                    className="my-2"
+                                    className="my-2 cursor-pointer"
                                     variant="outline"
                                     onClick={() =>
                                         setCompDialog(prev =>
@@ -888,7 +888,7 @@ export default function Product() {
                                     + Add Crop
                                 </Button>
 
-                                <Button onClick={handleSaveComposition} className="w-full mt-2">
+                                <Button onClick={handleSaveComposition} className="w-full mt-2 cursor-pointer">
                                     Save Composition
                                 </Button>
                             </div>
@@ -913,6 +913,7 @@ export default function Product() {
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
+                                                        className="cursor-pointer"
                                                         onClick={() => openCompositionDialog(name)}
                                                     >
                                                         Edit Composition
@@ -939,6 +940,7 @@ export default function Product() {
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
+                                                        className="cursor-pointer"
                                                         onClick={() => openAddSize(name)}
                                                     >
                                                         + Add Size
@@ -964,7 +966,7 @@ export default function Product() {
                                                                     <td className="px-6 py-2 align-top">{active}</td>
                                                                     <td className="flex justify-center">
                                                                         <Button
-                                                                            className="bg-transparent hover:bg-transparent hover:text-blue-600 hover:scale-105 active:scale-95 text-black"
+                                                                            className="cursor-pointer bg-transparent hover:bg-transparent hover:text-blue-600 hover:scale-105 active:scale-95 text-black"
                                                                             size="sm"
                                                                             onClick={() =>
                                                                                 openEditSize(

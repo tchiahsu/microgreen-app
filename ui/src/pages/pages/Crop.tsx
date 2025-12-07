@@ -246,7 +246,7 @@ export default function Crop() {
                             <Dialog open={assignOpen} onOpenChange={setAssignOpen}>
                                 <DialogTrigger asChild>
                                     <Button 
-                                        className="bg-[#308261] text-white font-semibold" 
+                                        className="bg-[#308261] text-white font-semibold cursor-pointer" 
                                         size="sm"
                                     >
                                         Assign Employee
@@ -311,7 +311,7 @@ export default function Crop() {
 
                                         <Button
                                             onClick={handleAssignPlanting}
-                                            className="bg-[#308261]"
+                                            className="bg-[#308261] cursor-pointer"
                                         >
                                             Assign Planting
                                         </Button>
@@ -323,7 +323,7 @@ export default function Crop() {
                             <Dialog open={addOpen} onOpenChange={setAddOpen}>
                                 <DialogTrigger asChild>
                                     <Button 
-                                        className="bg-[#308261] text-white font-semibold" 
+                                        className="bg-[#308261] text-white font-semibold cursor-pointer" 
                                         size="sm"
                                     >
                                         Add Crop
@@ -439,7 +439,7 @@ export default function Crop() {
                                         </div>
 
                                         <Button
-                                            className="mt-2 bg-[#308261] text-white"
+                                            className="mt-2 bg-[#308261] text-white cursor-pointer"
                                             onClick={handleAddCrop}
                                             disabled={adding}
                                         >
