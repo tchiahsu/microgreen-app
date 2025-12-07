@@ -1,17 +1,14 @@
 # GreenTrack
 
-GreenTrack is a web-based application designed for farms and suppliers to manage **microgreen orders** from restaurants and customers.  
-It provides an easy way to record, organize, and track orders, while also keeping a clear overview of clients, products, and deliveries.  
+GreenTrack is a web-based application designed for farms and suppliers to manage **microgreen orders** from restaurants and customers. It provides an easy way to record, organize, and track orders, while also keeping a clear overview of clients, products, and deliveries.  
+
+This project was **developed and tested on macOS**
 
 ## Features
 - Manage customer and restaurant profiles  
 - Track microgreen product offerings  
 - Record and monitor orders in real time  
-- Generate delivery records for clients  
 - Gain a clear overview of daily operations (seeding and germination)
-
-## Why GreenTrack?
-Microgreen businesses often work on a **grow-to-order model**, where crop cycles depend directly on incoming orders. GreenTrack streamlines this process by giving employees the tools they need to understand operations at both a **macro and micro level**—from individual order details to overall business trends.  
 
 # Local Installation
 
@@ -21,13 +18,45 @@ The project is divided into two main directories:
 
 ### Prerequisites
 - **Python 3.12+**  
-- **Node.js 22+**  
+- **Node.js 22+**
+- **MySQL Server 8+**
 
-### Database Migration
+## Database Migration
+The database is provided as a MySQL dump file located in
+```bash
+/db/microgreen_db_dump.sql
+```
+You can load the database using either MySQL Workbench or the MySQL command line.
 
-...
+### Using MySQL Workbench
+1. Open MySQL Workbench
+2. Open and run the file:
+```bash
+db/microgreen_db_dump.sql
+```
+3. This will create the database:
+```bash
+microgreens_db
+```
 
-### Backend Setup
+### Using MySQL Command Line
+From the root of the project:
+```bash
+mysql -u YOUR_USERNAME -p < db/microgreen_db_dump.sql
+```
+The enter your MySQL password when prompted.
+
+## Environment Configuration
+In the **root directory**, locate the **`.env`** file and update it with your MySQL credentials:
+```bash
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=YOUR_SQL_USERNAME
+DB_PASSWORD=YOUR_SQL_USERNAME
+DB_NAME=microgreens_db
+```
+
+## Backend Setup
 
 The backend is built with **FastAPI** and runs on **Python**. It provides the REST API used by the React frontend to manage orders, customers, products, and deliveries. To get started, you’ll set up a Python environment, install the required dependencies, and run the server using **uv** (a fast Python package runner).  
  
@@ -41,17 +70,15 @@ python -m venv .venv
 # activate the environment (Linux/Mac)
 . ./.venv/bin/activate
 
-# install UV Python package
-pip install uv
-
-# install project dependencies
-uv sync
+# install backend dependencies
+pip install -r requirements.txt
 
 # start the development server
 uvicorn src.main:app --reload --port 8000
 ```
+The backend will now be running at: **`http://127.0.0.1:8000`**
 
-### Frontend Setup
+## Frontend Setup
 
 The frontend is built with **React** and bundled with **Vite** for fast development. It provides the user interface where employees can view and manage microgreen orders, customer profiles, and deliveries. To get started, you’ll install the Node.js dependencies and run the development server, which will issue requests to the FastAPI backend.  
 
@@ -64,4 +91,12 @@ npm install
 
 # run the React development server (via Vite)
 npm run dev
+```
+
+## Login Credentials (DEMO Admin)
+
+The project currently includes only the Admin view, which has full system access:
+```bash
+Username: mishell@mb.com
+Password: password
 ```
