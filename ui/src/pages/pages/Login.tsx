@@ -1,3 +1,4 @@
+import { apiFetch, enterDemo } from "@/lib/api";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "../../components/ui/input";
@@ -12,9 +13,15 @@ export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
+    function startDemo() {
+        enterDemo();
+        toast.success("Entered demo mode!");
+        navigate("/app");
+    }
+
     async function login(email: string, password: string){
         try {
-            const res = await fetch("http://127.0.0.1:8000/login", {
+            const res = await apiFetch("/login", {
                 method: "POST", 
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({ email, password })
@@ -82,6 +89,24 @@ export default function Login() {
                     <Button className="mt-2 cursor-pointer" type="submit" onClick={handleSubmit}>
                         Log In
                     </Button>
+
+                    <div className="flex flex-row items-center">
+                        <hr className="grow border-gray-300" />
+                        <span className="px-3 text-xs text-gray-400">or</span>
+                        <hr className="grow border-gray-300" />
+                    </div>
+
+                    <Button
+                        variant="outline"
+                        className="cursor-pointer"
+                        type="button"
+                        onClick={startDemo}
+                    >
+                        Try the demo
+                    </Button>
+                    <p className="text-center text-xs text-gray-500">
+                        Explore the app with sample data — no account needed.
+                    </p>
                 </div>
             </div>
         </div>

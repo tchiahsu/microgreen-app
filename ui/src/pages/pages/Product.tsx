@@ -1,3 +1,4 @@
+import { apiFetch } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../components/ui/accordion";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog";
@@ -88,7 +89,7 @@ export default function Product() {
 
     async function fetchProducts() {
         try {
-            const res = await fetch("http://127.0.0.1:8000/product/product_information")
+            const res = await apiFetch("/product/product_information")
             if (!res.ok) {
                 throw new Error("Failed to fetch product data")
             }
@@ -101,7 +102,7 @@ export default function Product() {
 
     async function fetchPackaging() {
         try {
-            const res = await fetch("http://127.0.0.1:8000/product/packaging_options")
+            const res = await apiFetch("/product/packaging_options")
             if (!res.ok) {
                 throw new Error("Failed to fetch packaging data")
             }
@@ -114,7 +115,7 @@ export default function Product() {
 
     async function fetchCrops() {
         try {
-            const res = await fetch(`http://127.0.0.1:8000/crops/grow_information`);
+            const res = await apiFetch(`/crops/grow_information`);
  
             if (!res.ok) {
                 throw new Error("Failed to fetch crop data");
@@ -192,7 +193,7 @@ export default function Product() {
                 list_of_composition
             }
 
-            const res = await fetch("http://127.0.0.1:8000/product/add_product", {
+            const res = await apiFetch("/product/add_product", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body),
@@ -277,10 +278,10 @@ export default function Product() {
 
         try {
             const url = mode === "add"
-                ? "http://127.0.0.1:8000/product/add_product_size"
-                : "http://127.0.0.1:8000/product/update_product_size";
+                ? "/product/add_product_size"
+                : "/product/update_product_size";
             
-            const res = await fetch(url, {
+            const res = await apiFetch(url, {
                 method: mode === "add" ? "POST" : "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body),
@@ -357,7 +358,7 @@ export default function Product() {
         };
 
         try {
-            const res = await fetch("http://127.0.0.1:8000/product/update_composition", {
+            const res = await apiFetch("/product/update_composition", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body),
@@ -392,7 +393,7 @@ export default function Product() {
         }
 
         try {
-            const res = await fetch("http://127.0.0.1:8000/product/add_packaging", {
+            const res = await apiFetch("/product/add_packaging", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ size_type: trimmed })
@@ -432,7 +433,7 @@ export default function Product() {
         }
 
         try {
-            const res = await fetch(`http://127.0.0.1:8000/product/update_packaging/${packagingEdit.originalName}`, {
+            const res = await apiFetch(`/product/update_packaging/${packagingEdit.originalName}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ size_type: trimmed }),

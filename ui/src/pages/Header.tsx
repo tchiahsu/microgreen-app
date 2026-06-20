@@ -1,3 +1,4 @@
+import { apiFetch, exitDemo } from "@/lib/api";
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogDescription } from "../components/ui/dialog";
@@ -46,7 +47,7 @@ export default function Header() {
                 throw new Error("Not logged in.");
             }
 
-            const res = await fetch("http://127.0.0.1:8000/profile", {
+            const res = await apiFetch("/profile", {
                 headers: {
                     Authorization: `Bearer ${token}`
                 },
@@ -71,6 +72,7 @@ export default function Header() {
     }
 
     function handleLogout() {
+        exitDemo();
         localStorage.removeItem("token");
         setProfile(null);
         setProfileOpen(false);
@@ -86,7 +88,7 @@ export default function Header() {
         try {
             setLoading(true);
 
-            const res = await fetch(`http://127.0.0.1:8000/employees/update_employee/${profile.employee_id}`,
+            const res = await apiFetch(`/employees/update_employee/${profile.employee_id}`,
                 {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },

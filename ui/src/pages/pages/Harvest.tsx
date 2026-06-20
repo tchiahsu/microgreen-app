@@ -1,3 +1,4 @@
+import { apiFetch } from "@/lib/api";
 import { useEffect, useState } from "react";
 import type { DailyOrderItem } from "../../types/order"
 import type { GermItem } from "../../types/crop"
@@ -20,8 +21,8 @@ export default function Harvest() {
         async function fetchData() {
             try {
                 const [orderInfo, cropInfo] = await Promise.all([
-                    fetch(`http://127.0.0.1:8000/harvests/get_orders_to_deliver/${selectedDate}`),
-                    fetch(`http://127.0.0.1:8000/harvests/get_crops_to_harvest/${selectedDate}`),
+                    apiFetch(`/harvests/get_orders_to_deliver/${selectedDate}`),
+                    apiFetch(`/harvests/get_crops_to_harvest/${selectedDate}`),
                 ]);
 
                 if (!orderInfo.ok || !cropInfo.ok) {

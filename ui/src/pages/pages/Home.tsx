@@ -1,3 +1,4 @@
+import { apiFetch } from "@/lib/api";
 import { useEffect, useState } from "react";
 import type { PlantingItem, GermItem } from "../../types/crop";
 import { Table } from "../../components/table";
@@ -20,9 +21,9 @@ export default function Home() {
         async function fetchData() {
             try {
                 const [plantInfo, germInfo, switchInfo] = await Promise.all([
-                    fetch(`http://127.0.0.1:8000/home/planting_summary/${selectedDate}`),
-                    fetch(`http://127.0.0.1:8000/home/germination_summary/${selectedDate}`),
-                    fetch(`http://127.0.0.1:8000/home/light_switch_summary/${selectedDate}`),
+                    apiFetch(`/home/planting_summary/${selectedDate}`),
+                    apiFetch(`/home/germination_summary/${selectedDate}`),
+                    apiFetch(`/home/light_switch_summary/${selectedDate}`),
                 ]);
 
                 if (!plantInfo.ok || !germInfo.ok || !switchInfo.ok) {

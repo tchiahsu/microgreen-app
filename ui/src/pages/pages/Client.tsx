@@ -1,3 +1,4 @@
+import { apiFetch } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { Button } from "../../components/ui/button";
 import { toast } from "sonner";
@@ -57,7 +58,7 @@ export default function Client() {
 
     async function fetchData() {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/clients/restaurant_information`);
+            const response = await apiFetch(`/clients/restaurant_information`);
 
             if (!response.ok) {
                 throw new Error("Failed to fetch client data");
@@ -146,7 +147,7 @@ export default function Client() {
                 zip_code: zipCode,
             };
 
-            const restaruantRes = await fetch("http://127.0.0.1:8000/clients/", {
+            const restaruantRes = await apiFetch("/clients/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(restaurantBody),
@@ -172,7 +173,7 @@ export default function Client() {
                 phone: phone,
             }
 
-            const contactRes = await fetch("http://127.0.0.1:8000/clients/contact_info", {
+            const contactRes = await apiFetch("/clients/contact_info", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(contactBody),
@@ -239,7 +240,7 @@ export default function Client() {
                 phone: contactPhone,
             }
 
-            const contactRes = await fetch("http://127.0.0.1:8000/clients/contact_info", {
+            const contactRes = await apiFetch("/clients/contact_info", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(contactBody),
@@ -302,7 +303,7 @@ export default function Client() {
         };
 
         try{
-            const res = await fetch("http://127.0.0.1:8000/clients/restaurant_info", {
+            const res = await apiFetch("/clients/restaurant_info", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(restaurantBody),
@@ -350,7 +351,7 @@ export default function Client() {
                 phone: editPhone,
             };
 
-            const res = await fetch("http://127.0.0.1:8000/clients/contact_info", {
+            const res = await apiFetch("/clients/contact_info", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(contactBody),
@@ -377,7 +378,7 @@ export default function Client() {
         if(!confirmDelete) return;
 
          try {
-            const response = await fetch(`http://127.0.0.1:8000/clients/contact_info`, {
+            const response = await apiFetch(`/clients/contact_info`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({contact_id}),

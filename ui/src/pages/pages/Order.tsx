@@ -1,3 +1,4 @@
+import { apiFetch } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../components/ui/accordion";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "../../components/ui/select";
@@ -65,7 +66,7 @@ export default function Order() {
 
     async function fetchOrders(date: string) {
         try {
-            const res = await fetch(`http://127.0.0.1:8000/orders/${date}`);
+            const res = await apiFetch(`/orders/${date}`);
             if (!res.ok) {
                 throw new Error("Failed to fetch order data");
             }
@@ -77,13 +78,13 @@ export default function Order() {
     }
 
     async function fetchEmployees() {
-        const response = await fetch('http://127.0.0.1:8000/employees/');
+        const response = await apiFetch('/employees/');
         setEmployees(await response.json());
     }
 
     async function fetchProducts() {
         try {
-            const res = await fetch('http://127.0.0.1:8000/product/product_information');
+            const res = await apiFetch('/product/product_information');
             if (!res.ok) {
                 throw new Error("Failed to fetch product data");
             }
@@ -99,7 +100,7 @@ export default function Order() {
 
     async function fetchPackaging(product_name: string) {
         try {
-            const res = await fetch(`http://127.0.0.1:8000/product/${product_name}/packaging_options`);
+            const res = await apiFetch(`/product/${product_name}/packaging_options`);
             if (!res.ok) {
                 throw new Error("Failed to fetch packaging data")
             }
@@ -112,7 +113,7 @@ export default function Order() {
 
     async function fetchRestaurants() {
         try {
-            const res = await fetch('http://127.0.0.1:8000/clients/restaurant_information');
+            const res = await apiFetch('/clients/restaurant_information');
             if (!res.ok) {
                 throw new Error("Failed to fetch restaurant data");
             }
@@ -125,7 +126,7 @@ export default function Order() {
 
     async function fetchDelivery() {
         try {
-            const res = await fetch("http://127.0.0.1:8000/deliveries/");
+            const res = await apiFetch("/deliveries/");
 
             if (!res.ok) {
                 console.error("Failed to fetch delivery information");
@@ -191,7 +192,7 @@ export default function Order() {
                 order_status: "scheduled",
             };
 
-            const res = await fetch("http://127.0.0.1:8000/orders/", {
+            const res = await apiFetch("/orders/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json",
                            Authorization: token ? `Bearer ${token}` : "",
@@ -232,7 +233,7 @@ export default function Order() {
         setAdding(true);
 
         try {
-            const res = await fetch(`http://127.0.0.1:8000/deliveries/${newDeliveryDate}`,
+            const res = await apiFetch(`/deliveries/${newDeliveryDate}`,
                 { method: "POST", }
             );
 
@@ -268,7 +269,7 @@ export default function Order() {
         setAdding(true);
 
         try {
-            const res = await fetch("http://127.0.0.1:8000/deliveries/", {
+            const res = await apiFetch("/deliveries/", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -298,7 +299,7 @@ export default function Order() {
 
     async function handleUpdate(orderId: number, productId: number, body: unknown) {
         try {
-            const res = await fetch(`http://127.0.0.1:8000/orders/${orderId}/update_product/${productId}`, {
+            const res = await apiFetch(`/orders/${orderId}/update_product/${productId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body)
@@ -317,7 +318,7 @@ export default function Order() {
 
     async function handleDelete(orderId: number, productId: number) {
         try {
-            const res = await fetch(`http://127.0.0.1:8000/orders/${orderId}/delete_product/${productId}`, {
+            const res = await apiFetch(`/orders/${orderId}/delete_product/${productId}`, {
                 method: "DELETE",
             });
 
@@ -341,7 +342,7 @@ export default function Order() {
         }
 
         try {
-            const res = await fetch("http://127.0.0.1:8000/employees/assign_delivery", {
+            const res = await apiFetch("/employees/assign_delivery", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

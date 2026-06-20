@@ -1,3 +1,4 @@
+import { apiFetch } from "@/lib/api";
 import { useState, useEffect } from "react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -36,7 +37,7 @@ export default function Employee() {
 
     async function fetchEmployees() {
         try {
-            const res = await fetch(`http://127.0.0.1:8000/employees/`);
+            const res = await apiFetch(`/employees/`);
             if (!res.ok) {
                 throw new Error("Failed to fetch employee data");
             }
@@ -62,7 +63,7 @@ export default function Employee() {
                 is_active: isActive
             }
 
-            const res = await fetch(`http://127.0.0.1:8000/employees/update_employee/${data.employee_id}`,
+            const res = await apiFetch(`/employees/update_employee/${data.employee_id}`,
                 {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
@@ -115,7 +116,7 @@ export default function Employee() {
                 title: newTitle
             };
 
-            const res = await fetch("http://127.0.0.1:8000/employees/add_employee", {
+            const res = await apiFetch("/employees/add_employee", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body),
@@ -161,7 +162,7 @@ export default function Employee() {
                 employee_id: selectedEmployee.employee_id,
             };
 
-            const res = await fetch("http://127.0.0.1:8000/register", {
+            const res = await apiFetch("/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body),

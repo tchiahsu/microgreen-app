@@ -49,7 +49,7 @@ export function Table({columns, data, underlines, color, useActions, rowKey}: Ta
                                 color === "green" ? "border-[#bcd5ad]" : "border-[#f6b8669c]"
                             )}
                         >
-                            {column.key === "actions" ? useActions(row) : row[column.key]}
+                            {column.key === "actions" ? useActions?.(row) : row[column.key]}
                         </td>
                         ))}
                     </tr>

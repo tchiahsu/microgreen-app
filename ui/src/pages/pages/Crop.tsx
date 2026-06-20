@@ -1,3 +1,4 @@
+import { apiFetch } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { Table } from "../../components/table";
 import { CropActions } from "../../components/cropActions";
@@ -33,7 +34,7 @@ export default function Crop() {
 
     async function fetchData() {
         try {
-            const cropInfo = await fetch(`http://127.0.0.1:8000/crops/grow_information`);
+            const cropInfo = await apiFetch(`/crops/grow_information`);
 
             if (!cropInfo.ok) {
                 throw new Error("Failed to fetch crop data");
@@ -47,7 +48,7 @@ export default function Crop() {
 
     async function fetchEmployees() {
         try {
-            const employeeInfo = await fetch(`http://127.0.0.1:8000/employees/`);
+            const employeeInfo = await apiFetch(`/employees/`);
 
             if (!employeeInfo.ok) {
                 throw new Error("Failed to fetch employee data");
@@ -64,7 +65,7 @@ export default function Crop() {
                 Object.entries(updated).filter(([value]) => value != null)
             );
 
-            const res = await fetch("http://127.0.0.1:8000/crops/", {
+            const res = await apiFetch("/crops/", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(cleanedData)
@@ -139,7 +140,7 @@ export default function Crop() {
                 yield_per_tray: yieldTray,
             };
 
-            const res = await fetch("http://127.0.0.1:8000/crops/", {
+            const res = await apiFetch("/crops/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(body),
@@ -180,7 +181,7 @@ export default function Crop() {
         }
 
         try{
-            const response = await fetch("http://127.0.0.1:8000/employees/assign_planting", {
+            const response = await apiFetch("/employees/assign_planting", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

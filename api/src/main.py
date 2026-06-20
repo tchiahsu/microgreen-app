@@ -1,5 +1,8 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
 
 from src.routers.home import router as home_router
 from src.routers.product import router as product_router
@@ -11,11 +14,17 @@ from src.routers.employee import router as employee_router
 from src.routers.delivery import router as delivery_router
 from src.auth import router as auth_router
 
+load_dotenv()
+
 app = FastAPI()
 
+# Comma-separated list of allowed frontend origins. Defaults to the local Vite
+# dev server; set CORS_ORIGINS to your deployed frontend URL(s) in production.
+_default_origins = "http://localhost:5173,http://127.0.0.1:5173"
 origins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
+    origin.strip()
+    for origin in os.getenv("CORS_ORIGINS", _default_origins).split(",")
+    if origin.strip()
 ]
 
 app.add_middleware(
