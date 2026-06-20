@@ -126,7 +126,7 @@ export default function Header() {
             <div className="flex w-full h-full mx-auto max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
                 <NavLink to="/app" className="flex items-center">
-                    <img src="/public/logo.png" alt="Logo" className="h-18 w-auto sm:h-20" />
+                    <img src="/logo.png" alt="Logo" className="h-18 w-auto sm:h-20" />
                 </NavLink>
 
                 <nav className="hidden md:block">
