@@ -97,8 +97,7 @@ export default function Login() {
                     </div>
 
                     <Button
-                        variant="outline"
-                        className="cursor-pointer"
+                        className="cursor-pointer bg-[#308261] text-white hover:bg-[#266b4f]"
                         type="button"
                         onClick={startDemo}
                     >
