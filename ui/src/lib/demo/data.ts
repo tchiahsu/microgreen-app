@@ -145,14 +145,17 @@ const PACKAGINGS: Packaging[] = [
   { package_id: 5, size_type: "Live Tray" },
 ];
 
-// Two package sizes per crop-product.
-const PRODUCTS: Product[] = CROPS.flatMap((crop) => {
-  const productId = crop.crop_id;
-  return [
-    { product_id: productId, crop_id: crop.crop_id, product_name: crop.crop_name, weight_grams: 113, crop_ratio: 1, crop_name: crop.crop_name, package_id: 1, size_type: "Clamshell 4oz", is_active: 1 },
-    { product_id: productId, crop_id: crop.crop_id, product_name: crop.crop_name, weight_grams: 57, crop_ratio: 1, crop_name: crop.crop_name, package_id: 3, size_type: "Bag 2oz", is_active: 1 },
-  ];
-});
+// Seven products spanning all five crops; Sunflower and Pea Shoots each offer a
+// second package size (grouped by product_name in the packaging-options route).
+const PRODUCTS: Product[] = [
+  { product_id: 1, crop_id: 1, product_name: "Sunflower", weight_grams: 113, crop_ratio: 1, crop_name: "Sunflower", package_id: 1, size_type: "Clamshell 4oz", is_active: 1 },
+  { product_id: 2, crop_id: 1, product_name: "Sunflower", weight_grams: 57, crop_ratio: 1, crop_name: "Sunflower", package_id: 3, size_type: "Bag 2oz", is_active: 1 },
+  { product_id: 3, crop_id: 2, product_name: "Pea Shoots", weight_grams: 113, crop_ratio: 1, crop_name: "Pea Shoots", package_id: 1, size_type: "Clamshell 4oz", is_active: 1 },
+  { product_id: 4, crop_id: 2, product_name: "Pea Shoots", weight_grams: 57, crop_ratio: 1, crop_name: "Pea Shoots", package_id: 3, size_type: "Bag 2oz", is_active: 1 },
+  { product_id: 5, crop_id: 3, product_name: "Radish", weight_grams: 113, crop_ratio: 1, crop_name: "Radish", package_id: 1, size_type: "Clamshell 4oz", is_active: 1 },
+  { product_id: 6, crop_id: 4, product_name: "Broccoli", weight_grams: 113, crop_ratio: 1, crop_name: "Broccoli", package_id: 1, size_type: "Clamshell 4oz", is_active: 1 },
+  { product_id: 7, crop_id: 5, product_name: "Arugula", weight_grams: 113, crop_ratio: 1, crop_name: "Arugula", package_id: 2, size_type: "Clamshell 8oz", is_active: 1 },
+];
 
 const EMPLOYEES: Employee[] = [
   { employee_id: 1, ssn: "***-**-1001", first_name: "Maya", last_name: "Reyes", email: "maya@greenleaf.demo", title: "Grower", is_active: true, user_id: 1 },
@@ -167,6 +170,12 @@ const CLIENTS: Client[] = [
   { restaurant_id: 2, restaurant_name: "Harvest Table", street_num: 45, street_name: "Beacon St", city: "Cambridge", state: "MA", zip_code: "02139", is_active: true, contact_id: 2, email: "chef@harvesttable.demo", first_name: "Priya", last_name: "Shah", phone: "617-555-0102", contact_name: "Priya Shah", contact_address: "45 Beacon St, Cambridge, MA" },
   { restaurant_id: 3, restaurant_name: "Bistro Verde", street_num: 8, street_name: "Elm St", city: "Somerville", state: "MA", zip_code: "02143", is_active: true, contact_id: 3, email: "hello@bistroverde.demo", first_name: "Marco", last_name: "Ferraro", phone: "617-555-0103", contact_name: "Marco Ferraro", contact_address: "8 Elm St, Somerville, MA" },
   { restaurant_id: 4, restaurant_name: "Root & Stem", street_num: 210, street_name: "Highland Rd", city: "Brookline", state: "MA", zip_code: "02445", is_active: false, contact_id: 4, email: "team@rootandstem.demo", first_name: "Dana", last_name: "Lim", phone: "617-555-0104", contact_name: "Dana Lim", contact_address: "210 Highland Rd, Brookline, MA" },
+  { restaurant_id: 5, restaurant_name: "Sage & Salt", street_num: 77, street_name: "Newbury St", city: "Boston", state: "MA", zip_code: "02116", is_active: true, contact_id: 5, email: "orders@sageandsalt.demo", first_name: "Owen", last_name: "Walsh", phone: "617-555-0105", contact_name: "Owen Walsh", contact_address: "77 Newbury St, Boston, MA" },
+  { restaurant_id: 6, restaurant_name: "The Daily Sprout", street_num: 312, street_name: "Cambridge St", city: "Cambridge", state: "MA", zip_code: "02141", is_active: true, contact_id: 6, email: "hello@dailysprout.demo", first_name: "Nina", last_name: "Castro", phone: "617-555-0106", contact_name: "Nina Castro", contact_address: "312 Cambridge St, Cambridge, MA" },
+  { restaurant_id: 7, restaurant_name: "Field Notes Cafe", street_num: 19, street_name: "Washington St", city: "Somerville", state: "MA", zip_code: "02143", is_active: true, contact_id: 7, email: "team@fieldnotes.demo", first_name: "Jonah", last_name: "Berg", phone: "617-555-0107", contact_name: "Jonah Berg", contact_address: "19 Washington St, Somerville, MA" },
+  { restaurant_id: 8, restaurant_name: "Marrow & Vine", street_num: 540, street_name: "Boylston St", city: "Boston", state: "MA", zip_code: "02215", is_active: true, contact_id: 8, email: "chef@marrowandvine.demo", first_name: "Lena", last_name: "Okafor", phone: "617-555-0108", contact_name: "Lena Okafor", contact_address: "540 Boylston St, Boston, MA" },
+  { restaurant_id: 9, restaurant_name: "Copper Kettle", street_num: 88, street_name: "Hampshire St", city: "Cambridge", state: "MA", zip_code: "02139", is_active: false, contact_id: 9, email: "info@copperkettle.demo", first_name: "Ravi", last_name: "Menon", phone: "617-555-0109", contact_name: "Ravi Menon", contact_address: "88 Hampshire St, Cambridge, MA" },
+  { restaurant_id: 10, restaurant_name: "Lantern Room", street_num: 6, street_name: "Holland St", city: "Somerville", state: "MA", zip_code: "02144", is_active: true, contact_id: 10, email: "orders@lanternroom.demo", first_name: "Tess", last_name: "Ardvisson", phone: "617-555-0110", contact_name: "Tess Ardvisson", contact_address: "6 Holland St, Somerville, MA" },
 ];
 
 // ----------------------------------------------------------------------------
@@ -267,30 +276,31 @@ function makeDeliveries(): Delivery[] {
   });
 }
 
+const ORDERS_PER_DAY = 15;
+
 function makeOrders(): Order[] {
   const orders: Order[] = [];
   let orderId = 1000;
+  // Only active restaurants receive orders; rotated deterministically so each
+  // delivery day spreads its 15 orders across clients and the 7 products.
+  const activeClients = CLIENTS.filter((c) => c.is_active);
   DELIVERY_OFFSETS.forEach((off, di) => {
-    // Two restaurants per delivery date, one or two product lines each.
-    const restaurants = [CLIENTS[di % 3], CLIENTS[(di + 1) % 3]];
-    restaurants.forEach((r, ri) => {
-      const lineCount = 1 + ((di + ri) % 2);
-      for (let line = 0; line <= lineCount; line++) {
-        const product = PRODUCTS[(di + ri + line) % PRODUCTS.length];
-        orders.push({
-          order_id: orderId++,
-          restaurant_id: r.restaurant_id,
-          product_id: product.product_id,
-          product_name: product.product_name,
-          package_type: product.size_type,
-          quantity: 3 + ((di + ri + line) % 6),
-          order_status: off < 0 ? "completed" : "scheduled",
-          employee_id: 0,
-          delivery_date: dayOffset(off),
-          is_forced: false,
-        });
-      }
-    });
+    for (let n = 0; n < ORDERS_PER_DAY; n++) {
+      const client = activeClients[(di + n) % activeClients.length];
+      const product = PRODUCTS[(di * 3 + n) % PRODUCTS.length];
+      orders.push({
+        order_id: orderId++,
+        restaurant_id: client.restaurant_id,
+        product_id: product.product_id,
+        product_name: product.product_name,
+        package_type: product.size_type,
+        quantity: 3 + ((di + n) % 8),
+        order_status: off < 0 ? "completed" : "scheduled",
+        employee_id: 0,
+        delivery_date: dayOffset(off),
+        is_forced: false,
+      });
+    }
   });
   return orders;
 }
