@@ -173,10 +173,21 @@ const CLIENTS: Client[] = [
 // Date-driven generation (offsets resolved against ANCHOR)
 // ----------------------------------------------------------------------------
 
+// Forward window (in days) the demo should stay populated for. ~194 days
+// reaches Dec 31 when opened mid-June; 200 leaves a little headroom and, because
+// everything is offset-based, the window slides forward whenever the demo opens.
+const FORWARD_DAYS = 200;
+
+/** Inclusive integer range [start, end]. */
+function range(start: number, end: number): number[] {
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+}
+
 // Every crop is grown at every offset in this window. The summary resolvers
-// filter by exact date, so "today" is guaranteed to have planting, germination,
-// light-switch and harvest activity regardless of when the demo is opened.
-const LOT_OFFSETS = [-3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+// filter by exact date, so any day from a few days back through the end of the
+// year has planting, germination, light-switch and harvest activity regardless
+// of when the demo is opened.
+const LOT_OFFSETS = range(-3, FORWARD_DAYS);
 
 const LOTS: Lot[] = LOT_OFFSETS.flatMap((harvestOffset) =>
   CROPS.map((crop) => ({
@@ -239,8 +250,9 @@ export function cropsToHarvest(dateStr: string) {
   }));
 }
 
-// Deliveries and the orders tied to them, clustered around today.
-const DELIVERY_OFFSETS = [-2, -1, 0, 1, 2, 3, 5, 7];
+// Deliveries (and the orders tied to them) run daily from a couple of days back
+// through the end-of-year forward window, so the orders page stays populated.
+const DELIVERY_OFFSETS = range(-2, FORWARD_DAYS);
 
 function makeDeliveries(): Delivery[] {
   return DELIVERY_OFFSETS.map((off, i) => {
